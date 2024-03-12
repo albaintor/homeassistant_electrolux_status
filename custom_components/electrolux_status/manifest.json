@@ -11,7 +11,7 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/albaintor/homeassistant_electrolux_status/issues",
   "requirements": [
-    "pyelectroluxocp==0.0.14"
+    "pyelectroluxocp==0.0.17"
   ],
   "ssdp": [],
   "version": "1.0.0",

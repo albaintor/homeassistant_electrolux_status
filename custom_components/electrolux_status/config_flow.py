@@ -109,7 +109,7 @@ class ElectroluxStatusFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _test_credentials(self, username, password):
         """Return true if credentials is valid."""
         try:
-            client = pyelectroluxconnect_util.get_session(username, password)
+            client = pyelectroluxconnect_util.get_session(username, password, _LOGGER)
             await self.hass.async_add_executor_job(client.get_appliances_list)
             return True
         except Exception as inst:  # pylint: disable=broad-except

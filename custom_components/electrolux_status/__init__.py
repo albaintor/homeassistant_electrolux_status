@@ -43,7 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     password = entry.data.get(CONF_PASSWORD)
     language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
 
-    client = pyelectroluxconnect_util.get_session(username, password, language)
+    client = pyelectroluxconnect_util.get_session(username, password, _LOGGER, language)
     coordinator = ElectroluxCoordinator(hass, client=client, renew_interval=renew_interval)
     if not await coordinator.async_login():
         raise Exception("Electrolux wrong credentials")
