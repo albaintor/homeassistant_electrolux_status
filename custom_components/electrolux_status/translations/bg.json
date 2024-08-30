@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Устройството вече е конфигурирано",
+            "already_configured_account": "Акаунт вече е конфигуриран",
+            "reconfigure_successful": "Повторното конфигурация беше успешна",
+            "single_instance_allowed": "Вече конфигуриран.Възможна е само една конфигурация."
+        },
+        "error": {
+            "invalid_auth": "Невалидна автентификация"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Език",
+                    "notifications": "Изпратете известия за повдигнати сигнали",
+                    "password": "Парола",
+                    "username": "Потребителско име"
+                },
+                "description": "Ако имате нужда от помощ при конфигурацията посетете: https://github.com/albaintor/homeassistant_electorux_status",
+                "title": "Electrolux статус"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Език",
+                    "notifications": "Изпратете известия за повдигнати сигнали",
+                    "password": "Парола",
+                    "renew_interval": "Интервал на подновяване на WebSocket (секунди)"
+                }
+            }
+        }
+    }
+}

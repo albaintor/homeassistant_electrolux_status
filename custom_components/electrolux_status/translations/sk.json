@@ -1,31 +1,37 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status",
-        "description": "Ak potrebujete pomoc s konfiguráciou, pozrite sa sem:https://github.com/mauro-midolo/homeassistant_electrolux_status",
-        "data": {
-          "username": "Užívateľské meno",
-          "password": "Heslo",
-          "region": "Región (emea, apac, na, latam alebo frigidaire)",
-          "language": "Electrolux poskytol názvy senzorov a jazyk hodnôt"
+    "config": {
+        "abort": {
+            "already_configured": "Zariadenie je už nakonfigurované",
+            "already_configured_account": "Účet je už nakonfigurovaný",
+            "reconfigure_successful": "Opätovná konfigurácia bola úspešná",
+            "single_instance_allowed": "Už nakonfigurované.Iba jedna možná konfigurácia."
+        },
+        "error": {
+            "invalid_auth": "Neplatné overovanie"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jazyk",
+                    "notifications": "Pošlite upozornenia na zvýšené upozornenia",
+                    "password": "Heslo",
+                    "username": "Užívateľské meno"
+                },
+                "description": "Ak potrebujete pomoc s konfiguráciou, navštívte: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Status"
+            }
         }
-      }
     },
-    "error": {
-      "auth": "Používateľské meno/heslo je nesprávne."
-    },
-    "abort": {
-      "single_instance_allowed": "Povolený je len jeden prípad."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "data": {
-          "renew_interval": "Interval aktualizácie API (sekundy)"
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jazyk",
+                    "notifications": "Pošlite upozornenia na zvýšené upozornenia",
+                    "password": "Heslo",
+                    "renew_interval": "Interval obnovy WebSocket (sekundy)"
+                }
+            }
         }
-      }
     }
-  }
 }

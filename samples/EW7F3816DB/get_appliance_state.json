@@ -1,0 +1,161 @@
+{
+  "applianceId": "12345678_01:00700404-443E07055462",
+  "applianceData": {
+    "applianceName": "Lave-linge",
+    "created": "2022-02-10T07:52:09.611Z",
+    "modelName": "WM"
+  },
+  "properties": {
+    "desired": {},
+    "reported": {
+      "timeToEnd": 0,
+      "doorState": "CLOSED",
+      "displayLight": "DISPLAY_LIGHT_0",
+      "applianceUiSwVersion": "UDC0M400",
+      "applianceTotalWorkingTime": 6026400,
+      "remoteControl": "NOT_SAFETY_RELEVANT_ENABLED",
+      "fCMiscellaneousState": {
+        "detergentExtradosage": 40,
+        "tankAReserve": true,
+        "tankBReserve": true,
+        "softenerExtradosage": 20,
+        "optisenseResult": 65535,
+        "waterUsage": 0,
+        "tankADetLoadForNominalWeight": 0,
+        "tankBDetLoadForNominalWeight": 0
+      },
+      "cyclePhase": "UNAVAILABLE",
+      "endOfCycleSound": "SHORT_SOUND",
+      "startTime": -1,
+      "userSelections": {
+        "extraRinseNumber": "NONE",
+        "analogTemperature": "40_CELSIUS",
+        "steamValue": "STEAM_OFF",
+        "programUID": "COTTON_PR_COTTONS",
+        "analogSpinSpeed": "1600_RPM",
+        "anticreaseNoSteam": false,
+        "adTankASel": "AUTODOSE_DETERGENT_DUAL_OFF",
+        "preWashPhase": false,
+        "adTankBSel": "AUTODOSE_SOFTENER_OFF",
+        "adFineTuneSoftLevel": "FINE_TUNE_SOFT_NOT_AVAILABLE",
+        "timeManagerLevel": "TIME_MANAGER_LEV_4",
+        "anticreaseWSteam": false,
+        "nightCycle": false,
+        "adFineTuneDetLevel": "FINE_TUNE_DET_LEV_3",
+        "wmEconomy": false,
+        "rinseHold": false,
+        "intensive": false,
+        "tcSensor": false,
+        "EWX1493A_preWashPhase": false,
+        "EWX1493A_rinseHold": false,
+        "EWX1493A_wmEconomy": false,
+        "EWX1493A_nightCycle": false,
+        "EWX1493A_tcSensor": false,
+        "EWX1493A_anticreaseNoSteam": false,
+        "EWX1493A_anticreaseWSteam": false,
+        "EWX1493A_intensive": false,
+        "EWX1493A_stain": false,
+        "EWX1493A_pod": false,
+        "EWX1493A_wetMode": false,
+        "EWX1493A_dryMode": false,
+        "EWX1493A_steamMode": false,
+        "EWX1493A_easyIron": false,
+        "EWX1493A_ultraMix": false
+      },
+      "defaultExtraRinse": "EXTRA_RINSE_OFF",
+      "waterHardness": "STEP_4",
+      "totalWashingTime": 6022800,
+      "applianceInfo": {
+        "applianceType": "WM"
+      },
+      "doorLock": "OFF",
+      "uiLockMode": false,
+      "washingNominalLoadWeight": 9000,
+      "totalWashCyclesCount": 1310,
+      "waterSoftenerMode": "WASH_ONLY",
+      "fcOptisenseLoadWeight": 65535,
+      "applianceState": "OFF",
+      "applianceMode": "NORMAL",
+      "applianceMainBoardSwVersion": "WL13A010",
+      "totalCycleCounter": 1310,
+      "measuredLoadWeight": 65535,
+      "alerts": [],
+      "networkInterface": {
+        "otaState": "IDLE",
+        "swVersion": "v5.3.1",
+        "linkQualityIndicator": "GOOD",
+        "niuSwUpdateCurrentDescription": "A07491702B-S00006962A",
+        "swAncAndRevision": "S00006962A"
+      },
+      "applianceCareAndMaintenance0": {
+        "1": {
+          "occured": false,
+          "threshold": 60
+        },
+        "2": {
+          "occured": false,
+          "threshold": 80
+        },
+        "3": {
+          "occured": false,
+          "threshold": 80
+        },
+        "4": {
+          "occured": false,
+          "threshold": 240
+        },
+        "5": {
+          "occured": false,
+          "threshold": 240
+        }
+      },
+      "applianceCareAndMaintenance1": {
+        "6": {
+          "occured": false,
+          "threshold": 0
+        },
+        "7": {
+          "occured": false,
+          "threshold": 0
+        },
+        "8": {
+          "occured": false,
+          "threshold": 0
+        },
+        "9": {
+          "occured": false,
+          "threshold": 0
+        },
+        "10": {
+          "occured": false,
+          "threshold": 0
+        }
+      },
+      "applianceCareAndMaintenance2": {
+        "11": {
+          "occured": false,
+          "threshold": 0
+        }
+      },
+      "applianceCareAndMaintenance3": {
+        "16": {
+          "occured": false,
+          "threshold": 0
+        }
+      },
+      "autoDosing": {
+        "adTankBDetStandardDose": 90,
+        "adLocalFineTuning": false,
+        "adTankAConfiguration": "DETERGENT_DUAL",
+        "adTankBSoftStandardDose": 25,
+        "adTankBConfiguration": "SOFTENER",
+        "adTankADetStandardDose": 90
+      },
+      "cycleSubPhase": "NOT_AVAILABLE",
+      "connectivityState": "disconnected"
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "connectionState": "disconnected"
+}

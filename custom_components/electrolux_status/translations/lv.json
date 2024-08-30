@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Ierīce jau ir konfigurēta",
+            "already_configured_account": "Konts jau ir konfigurēts",
+            "reconfigure_successful": "Atkārtota konfigurācija bija veiksmīga",
+            "single_instance_allowed": "Jau konfigurēts.Iespējama tikai viena konfigurācija."
+        },
+        "error": {
+            "invalid_auth": "Nederīga autentifikācija"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Valoda",
+                    "notifications": "Nosūtiet paziņojumus par paaugstinātiem brīdinājumiem",
+                    "password": "Parole",
+                    "username": "Lietotājvārds"
+                },
+                "description": "Ja jums ir nepieciešama palīdzība konfigurācijas apmeklējumā: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Elektrolux statuss"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Valoda",
+                    "notifications": "Nosūtiet paziņojumus par paaugstinātiem brīdinājumiem",
+                    "password": "Parole",
+                    "renew_interval": "WebSocket atjaunošanas intervāls (sekundes)"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Az eszköz már konfigurálva van",
+            "already_configured_account": "A fiók már konfigurálva van",
+            "reconfigure_successful": "Az újrakonfiguráció sikeres volt",
+            "single_instance_allowed": "Már konfigurálva.Csak egyetlen konfiguráció lehetséges."
+        },
+        "error": {
+            "invalid_auth": "Érvénytelen hitelesítés"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Nyelv",
+                    "notifications": "Értesítések küldése az emelt riasztásokért",
+                    "password": "Jelszó",
+                    "username": "Felhasználónév"
+                },
+                "description": "Ha segítségre van szüksége a konfigurációhoz, látogasson el: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Elektrolux állapot"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Nyelv",
+                    "notifications": "Értesítések küldése az emelt riasztásokért",
+                    "password": "Jelszó",
+                    "renew_interval": "A WebSocket megújítási intervalluma (másodperc)"
+                }
+            }
+        }
+    }
+}

@@ -1,31 +1,37 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status",
-        "description": "Se hai bisogno di aiuto con la configurazione, dai un'occhiata qui: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "username": "Username",
-          "password": "Password",
-          "region": "Regione (emea, apac, na, latam o frigidaire)",
-          "language": "Lingua dei nomi e dei valori dei sensori forniti da Electrolux"
+    "config": {
+        "abort": {
+            "already_configured": "Il dispositivo è già configurato",
+            "already_configured_account": "L'account è già configurato",
+            "reconfigure_successful": "La riconfigurazione ha avuto successo",
+            "single_instance_allowed": "Già configurato.Solo una singola configurazione possibile."
+        },
+        "error": {
+            "invalid_auth": "Autenticazione non valida"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Lingua",
+                    "notifications": "Invia notifiche per gli avvisi rialzati",
+                    "password": "Password",
+                    "username": "Nome utente"
+                },
+                "description": "Se hai bisogno di aiuto con la visita di configurazione: https://github.com/albaintor/homeeasistant_electrolux_status",
+                "title": "Stato Electrolux"
+            }
         }
-      }
     },
-    "error": {
-      "auth": "Username  o password errati."
-    },
-    "abort": {
-      "single_instance_allowed": "È consentita una sola istanza."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "data": {
-          "renew_interval": "Intervallo di aggiornamento API in secondi"
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Lingua",
+                    "notifications": "Invia notifiche per gli avvisi rialzati",
+                    "password": "Password",
+                    "renew_interval": "Intervallo di rinnovo di WebSocket (secondi)"
+                }
+            }
         }
-      }
     }
-  }
 }

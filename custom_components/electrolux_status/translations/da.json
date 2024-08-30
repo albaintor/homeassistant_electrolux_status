@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Enheden er allerede konfigureret",
+            "already_configured_account": "Konto er allerede konfigureret",
+            "reconfigure_successful": "Re-konfiguration var vellykket",
+            "single_instance_allowed": "Allerede konfigureret.Kun en enkelt konfiguration mulig."
+        },
+        "error": {
+            "invalid_auth": "Ugyldig godkendelse"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprog",
+                    "notifications": "Send meddelelser til hævede alarmer",
+                    "password": "Adgangskode",
+                    "username": "Brugernavn"
+                },
+                "description": "Hvis du har brug for hjælp til konfigurationsbesøget: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Elektrolux -status"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprog",
+                    "notifications": "Send meddelelser til hævede alarmer",
+                    "password": "Adgangskode",
+                    "renew_interval": "Fornyelsesinterval på WebSocket (sekunder)"
+                }
+            }
+        }
+    }
+}

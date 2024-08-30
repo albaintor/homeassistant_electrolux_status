@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Dispozitivul este deja configurat",
+            "already_configured_account": "Contul este deja configurat",
+            "reconfigure_successful": "Re-configurarea a avut succes",
+            "single_instance_allowed": "Deja configurat.Doar o singură configurație posibilă."
+        },
+        "error": {
+            "invalid_auth": "Autentificare nevalide"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Limbă",
+                    "notifications": "Trimiteți notificări pentru alerte ridicate",
+                    "password": "Parolă",
+                    "username": "Nume de utilizator"
+                },
+                "description": "Dacă aveți nevoie de ajutor cu configurația, vizitați: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Stare electrolux"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Limbă",
+                    "notifications": "Trimiteți notificări pentru alerte ridicate",
+                    "password": "Parolă",
+                    "renew_interval": "Intervalul de reînnoire a WebSocket (secunde)"
+                }
+            }
+        }
+    }
+}

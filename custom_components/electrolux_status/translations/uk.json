@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Пристрій вже налаштований",
+            "already_configured_account": "Обліковий запис вже налаштований",
+            "reconfigure_successful": "Реконфігурація була успішною",
+            "single_instance_allowed": "Вже налаштований.Можлива лише одна конфігурація."
+        },
+        "error": {
+            "invalid_auth": "Недійсна автентифікація"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Мова",
+                    "notifications": "Надішліть сповіщення про підняті сповіщення",
+                    "password": "Пароль",
+                    "username": "Ім'я користувача"
+                },
+                "description": "Якщо вам потрібна допомога з конфігураційною відвідуванням: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Статус електролукс"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Мова",
+                    "notifications": "Надішліть сповіщення про підняті сповіщення",
+                    "password": "Пароль",
+                    "renew_interval": "Інтервал відновлення WebSocket (секунди)"
+                }
+            }
+        }
+    }
+}

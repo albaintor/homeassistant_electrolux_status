@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Apparat ass scho konfiguréiert",
+            "already_configured_account": "Kont ass scho konfiguréiert",
+            "reconfigure_successful": "Nei Konfiguratioun war erfollegräich",
+            "single_instance_allowed": "Scho konfiguréiert.Nëmmen eng eenzeg Konfiguratioun méiglech."
+        },
+        "error": {
+            "invalid_auth": "Ongëlteg Authentifikatioun"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprooche",
+                    "notifications": "Schéckt Notifikatiounen fir opgehuewe Alarmer",
+                    "password": "Passwuert",
+                    "username": "Benotzernumm"
+                },
+                "description": "Wann Dir Hëllef braucht mat der Konfiguratiounsshop: https://github.com/albaintor.homeassistant_EleChruus",
+                "title": "Eloss 2013 Status"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprooche",
+                    "notifications": "Schéckt Notifikatiounen fir opgehuewe Alarmer",
+                    "password": "Passwuert",
+                    "renew_interval": "Erneierungsintervall vun der WebShetket (Sekonnen)"
+                }
+            }
+        }
+    }
+}

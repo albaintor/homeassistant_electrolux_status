@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Apparaat is al geconfigureerd",
+            "already_configured_account": "Account is al geconfigureerd",
+            "reconfigure_successful": "De herconfiguratie was succesvol",
+            "single_instance_allowed": "Al geconfigureerd.Slechts een enkele configuratie mogelijk."
+        },
+        "error": {
+            "invalid_auth": "Ongeldige authenticatie"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Taal",
+                    "notifications": "Stuur meldingen voor verhoogde meldingen",
+                    "password": "Wachtwoord",
+                    "username": "Gebruikersnaam"
+                },
+                "description": "Als u hulp nodig hebt bij het configuratiebezoek: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux -status"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Taal",
+                    "notifications": "Stuur meldingen voor verhoogde meldingen",
+                    "password": "Wachtwoord",
+                    "renew_interval": "Vernieuwingsinterval van Websocket (seconden)"
+                }
+            }
+        }
+    }
+}

@@ -1,31 +1,37 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status",
-        "description": "If you need help with the configuration have a look here: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "username": "Username",
-          "password": "Password",
-          "region": "Region (emea, apac, na, latam or frigidaire)",
-          "language": "Electrolux provided sensor names and values language"
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured",
+            "already_configured_account": "Account is already configured",
+            "reconfigure_successful": "Re-configuration was successful",
+            "single_instance_allowed": "Already configured. Only a single configuration possible."
+        },
+        "error": {
+            "invalid_auth": "Invalid authentication"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Language",
+                    "notifications": "Send notifications for raised alerts",
+                    "password": "Password",
+                    "username": "Username"
+                },
+                "description": "If you need help with the configuration visit: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Status"
+            }
         }
-      }
     },
-    "error": {
-      "auth": "Username/Password is wrong."
-    },
-    "abort": {
-      "single_instance_allowed": "Only a single instance is allowed."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "data": {
-          "renew_interval": "Renewal interval of websocket (seconds)"
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Language",
+                    "notifications": "Send notifications for raised alerts",
+                    "password": "Password",
+                    "renew_interval": "Renewal interval of websocket (seconds)"
+                }
+            }
         }
-      }
     }
-  }
 }

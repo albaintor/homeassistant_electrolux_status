@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Naprava je že konfigurirana",
+            "already_configured_account": "Račun je že konfiguriran",
+            "reconfigure_successful": "Ponovna konfiguracija je bila uspešna",
+            "single_instance_allowed": "Že konfiguriran.Možna je le ena konfiguracija."
+        },
+        "error": {
+            "invalid_auth": "Neveljavna overjanje"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jezik",
+                    "notifications": "Pošljite obvestila za dvignjena opozorila",
+                    "password": "Geslo",
+                    "username": "Uporabniško ime"
+                },
+                "description": "Če potrebujete pomoč pri konfiguraciji, obiščite: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Status elektroluksa"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jezik",
+                    "notifications": "Pošljite obvestila za dvignjena opozorila",
+                    "password": "Geslo",
+                    "renew_interval": "Interval obnove WebSocket (sekunde)"
+                }
+            }
+        }
+    }
+}

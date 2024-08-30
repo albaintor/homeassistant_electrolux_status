@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Įrenginys jau sukonfigūruotas",
+            "already_configured_account": "Sąskaita jau sukonfigūruota",
+            "reconfigure_successful": "Pakartotinis konfigūracija buvo sėkminga",
+            "single_instance_allowed": "Jau sukonfigūruotas.Tik viena įmanoma konfigūracija."
+        },
+        "error": {
+            "invalid_auth": "Neteisingas autentifikavimas"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Kalba",
+                    "notifications": "Siųsti pranešimus apie iškeltus perspėjimus",
+                    "password": "Slaptažodis",
+                    "username": "Vartotojo vardas"
+                },
+                "description": "Jei jums reikia pagalbos apsilankant konfigūracijoje: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "„Electrolux“ būsena"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Kalba",
+                    "notifications": "Siųsti pranešimus apie iškeltus perspėjimus",
+                    "password": "Slaptažodis",
+                    "renew_interval": "„WebSocket“ atnaujinimo intervalas (sekundės)"
+                }
+            }
+        }
+    }
+}

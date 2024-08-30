@@ -1,18 +1,11 @@
-{
-  "applianceId": "914555224_01:00700404-443E07055462",
-  "applianceData": {
-    "applianceName": "Lave-linge",
-    "created": "2022-02-10T07:52:09.611Z",
-    "modelName": "WM"
-  },
-  "properties": {
-    "desired": {},
-    "reported": {
+[
+  {
+    "12345678_01:00700404-443E07055462": {
       "timeToEnd": 0,
       "doorState": "CLOSED",
       "displayLight": "DISPLAY_LIGHT_0",
       "applianceUiSwVersion": "UDC0M400",
-      "applianceTotalWorkingTime": 6026400,
+      "applianceTotalWorkingTime": 6019200,
       "remoteControl": "NOT_SAFETY_RELEVANT_ENABLED",
       "fCMiscellaneousState": {
         "detergentExtradosage": 40,
@@ -38,7 +31,7 @@
         "preWashPhase": false,
         "adTankBSel": "AUTODOSE_SOFTENER_OFF",
         "adFineTuneSoftLevel": "FINE_TUNE_SOFT_NOT_AVAILABLE",
-        "timeManagerLevel": "TIME_MANAGER_LEV_4",
+        "timeManagerLevel": "SUPER_QUICK",
         "anticreaseWSteam": false,
         "nightCycle": false,
         "adFineTuneDetLevel": "FINE_TUNE_DET_LEV_3",
@@ -64,26 +57,26 @@
       },
       "defaultExtraRinse": "EXTRA_RINSE_OFF",
       "waterHardness": "STEP_4",
-      "totalWashingTime": 6022800,
+      "totalWashingTime": 6015600,
       "applianceInfo": {
         "applianceType": "WM"
       },
       "doorLock": "OFF",
       "uiLockMode": false,
       "washingNominalLoadWeight": 9000,
-      "totalWashCyclesCount": 1310,
+      "totalWashCyclesCount": 1309,
       "waterSoftenerMode": "WASH_ONLY",
       "fcOptisenseLoadWeight": 65535,
-      "applianceState": "OFF",
+      "applianceState": "END_OF_CYCLE",
       "applianceMode": "NORMAL",
       "applianceMainBoardSwVersion": "WL13A010",
-      "totalCycleCounter": 1310,
+      "totalCycleCounter": 1309,
       "measuredLoadWeight": 65535,
       "alerts": [],
       "networkInterface": {
         "otaState": "IDLE",
         "swVersion": "v5.3.1",
-        "linkQualityIndicator": "GOOD",
+        "linkQualityIndicator": "UNDEFINED",
         "niuSwUpdateCurrentDescription": "A07491702B-S00006962A",
         "swAncAndRevision": "S00006962A"
       },
@@ -152,10 +145,7 @@
         "adTankADetStandardDose": 90
       },
       "cycleSubPhase": "NOT_AVAILABLE",
-      "connectivityState": "disconnected"
-    },
-    "metadata": {}
-  },
-  "status": "enabled",
-  "connectionState": "disconnected"
-}
+      "connectivityState": "connected"
+    }
+  }
+]

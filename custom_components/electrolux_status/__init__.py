@@ -1,34 +1,40 @@
 """electrolux status integration."""
-import asyncio
+
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP
-from homeassistant.core import Config
+from homeassistant.const import (
+    CONF_LANGUAGE,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    EVENT_HOMEASSISTANT_STOP,
+)
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.typing import ConfigType
 
-from .api import Appliance, Appliances, ElectroluxLibraryEntity
-from .const import CONF_LANGUAGE, DEFAULT_LANGUAGE, DEFAULT_WEBSOCKET_RENEWAL_DELAY, CONF_RENEW_INTERVAL, \
-    TIME_ENTITIES_TO_UPDATE
-from .const import CONF_PASSWORD
-from .const import CONF_USERNAME
-from .const import DOMAIN
-from .const import PLATFORMS
-from .const import languages
+from .const import (
+    CONF_RENEW_INTERVAL,
+    DEFAULT_LANGUAGE,
+    DEFAULT_WEBSOCKET_RENEWAL_DELAY,
+    DOMAIN,
+    PLATFORMS,
+    languages,
+)
 from .coordinator import ElectroluxCoordinator
-from .pyelectroluxconnect_util import pyelectroluxconnect_util
+from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 # noinspection PyUnusedLocal
-async def async_setup(hass: HomeAssistant, config: Config):
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up this integration using YAML is not supported."""
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
@@ -40,11 +46,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
     language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
+    session = async_get_clientsession(hass)
 
-    client = pyelectroluxconnect_util.get_session(username, password, language)
-    coordinator = ElectroluxCoordinator(hass, client=client, renew_interval=renew_interval)
+    client = get_electrolux_session(username, password, session, language)
+    coordinator = ElectroluxCoordinator(
+        hass,
+        client=client,
+        renew_interval=renew_interval,
+        username=username,
+    )
+
+    await coordinator.get_stored_token()
     if not await coordinator.async_login():
-        raise Exception("Electrolux wrong credentials")
+        raise ConfigEntryAuthFailed("Electrolux wrong credentials")
 
     # Bug ?
     if coordinator.config_entry is None:
@@ -57,12 +71,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     await coordinator.setup_entities()
     _LOGGER.debug("async_setup_entry listen_websocket")
     coordinator.listen_websocket()
-    #_LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
-    #await coordinator.launch_websocket_renewal_task()
+    # _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
+    # await coordinator.launch_websocket_renewal_task()
 
     entry.async_on_unload(
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close)
     )
+
+    entry.async_on_unload(entry.add_update_listener(update_listener))
 
     _LOGGER.debug("async_setup_entry async_config_entry_first_refresh")
     # Fill in the values for first time
@@ -73,32 +89,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     _LOGGER.debug("async_setup_entry extend PLATFORMS")
     coordinator.platforms.extend(PLATFORMS)
+
     # Call async_setup_entry in entity files
     _LOGGER.debug("async_setup_entry async_forward_entry_setups")
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    _LOGGER.debug("async_setup_entry add_update_listener")
-    entry.add_update_listener(async_reload_entry)
+
     _LOGGER.debug("async_setup_entry OVER")
     return True
 
 
+async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    """Update listener."""
+    await hass.config_entries.async_reload(config_entry.entry_id)
+
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
-    coordinator:ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
     await coordinator.close_websocket()
-    unloaded = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, platform)
-                for platform in PLATFORMS
-                if platform in coordinator.platforms
-            ]
-        )
-    )
-    if unloaded:
-        hass.data[DOMAIN].pop(entry.entry_id)
-
-    return unloaded
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

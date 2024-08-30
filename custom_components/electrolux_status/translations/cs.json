@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Zařízení je již nakonfigurováno",
+            "already_configured_account": "Účet je již nakonfigurován",
+            "reconfigure_successful": "Rekonfigurace byla úspěšná",
+            "single_instance_allowed": "Již nakonfigurováno.Je možné pouze jedinou konfiguraci."
+        },
+        "error": {
+            "invalid_auth": "Neplatná ověřování"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jazyk",
+                    "notifications": "Odeslat oznámení pro zvýšená upozornění",
+                    "password": "Heslo",
+                    "username": "Uživatelské jméno"
+                },
+                "description": "Pokud potřebujete pomoc s konfigurací návštěva: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Stav elektroluxu"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jazyk",
+                    "notifications": "Odeslat oznámení pro zvýšená upozornění",
+                    "password": "Heslo",
+                    "renew_interval": "Interval obnovy WebSocket (sekundy)"
+                }
+            }
+        }
+    }
+}

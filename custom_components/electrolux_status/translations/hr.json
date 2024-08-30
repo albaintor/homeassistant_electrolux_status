@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Uređaj je već konfiguriran",
+            "already_configured_account": "Račun je već konfiguriran",
+            "reconfigure_successful": "Ponovna konfiguracija bila je uspješna",
+            "single_instance_allowed": "Već konfigurirano.Moguća je samo jedna konfiguracija."
+        },
+        "error": {
+            "invalid_auth": "Nevažeća autentifikacija"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jezik",
+                    "notifications": "Pošaljite obavijesti za povišena upozorenja",
+                    "password": "Lozinka",
+                    "username": "Korisničko ime"
+                },
+                "description": "Ako vam je potrebna pomoć u konfiguraciji posjetite: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Elektrolux status"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Jezik",
+                    "notifications": "Pošaljite obavijesti za povišena upozorenja",
+                    "password": "Lozinka",
+                    "renew_interval": "Interval obnavljanja web mjesta (sekunde)"
+                }
+            }
+        }
+    }
+}

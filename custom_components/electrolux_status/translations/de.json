@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Das Gerät ist bereits konfiguriert",
+            "already_configured_account": "Konto ist bereits konfiguriert",
+            "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
+            "single_instance_allowed": "Bereits konfiguriert.Nur eine einzelne Konfiguration möglich."
+        },
+        "error": {
+            "invalid_auth": "Ungültige Authentifizierung"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprache",
+                    "notifications": "Senden Sie Benachrichtigungen für erhöhte Warnungen",
+                    "password": "Passwort",
+                    "username": "Benutzername"
+                },
+                "description": "Wenn Sie bei der Konfiguration Hilfe benötigen",
+                "title": "Elektroluxstatus"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Sprache",
+                    "notifications": "Senden Sie Benachrichtigungen für erhöhte Warnungen",
+                    "password": "Passwort",
+                    "renew_interval": "Erneuerungsintervall von WebSocket (Sekunden)"
+                }
+            }
+        }
+    }
+}

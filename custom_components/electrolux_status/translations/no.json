@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Enheten er allerede konfigurert",
+            "already_configured_account": "Konto er allerede konfigurert",
+            "reconfigure_successful": "Re-konfigurasjon var vellykket",
+            "single_instance_allowed": "Allerede konfigurert.Bare en enkelt konfigurasjon mulig."
+        },
+        "error": {
+            "invalid_auth": "Ugyldig autentisering"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Språk",
+                    "notifications": "Send varsler for hevede varsler",
+                    "password": "Passord",
+                    "username": "Brukernavn"
+                },
+                "description": "Hvis du trenger hjelp med konfigurasjonsbesøket: https://github.com/albainTor/homeassistant_electrolux_status",
+                "title": "Electrolux -status"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Språk",
+                    "notifications": "Send varsler for hevede varsler",
+                    "password": "Passord",
+                    "renew_interval": "Fornyelsesintervall av WebSocket (sekunder)"
+                }
+            }
+        }
+    }
+}

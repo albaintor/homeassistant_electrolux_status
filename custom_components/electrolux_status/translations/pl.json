@@ -1,31 +1,37 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status",
-        "description": "Jeśli potrzebujesz pomocy przy konfiguracji, zerknij tutaj: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "username": "Nazwa użytkownika",
-          "password": "Hasło",
-          "region": "Region (emea, apac, na, latam or frigidaire)",
-          "language": "Język nazw czujników i wartości, dostarczony przez Electrolux."
+    "config": {
+        "abort": {
+            "already_configured": "Urządzenie jest już skonfigurowane",
+            "already_configured_account": "Konto jest już skonfigurowane",
+            "reconfigure_successful": "Ponowna konfiguracja zakończyła się powodzeniem",
+            "single_instance_allowed": "Już skonfigurowane.Możliwa tylko jedna konfiguracja."
+        },
+        "error": {
+            "invalid_auth": "Nieprawidłowe uwierzytelnianie"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Język",
+                    "notifications": "Wyślij powiadomienia o podniesionych alertach",
+                    "password": "Hasło",
+                    "username": "Nazwa użytkownika"
+                },
+                "description": "Jeśli potrzebujesz pomocy w konfiguracji Odwiedź: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Status elektrolux"
+            }
         }
-      }
     },
-    "error": {
-      "auth": "Nazwa użytkownika lub hasło jest nieprawidłowe."
-    },
-    "abort": {
-      "single_instance_allowed": "Dozwolona jest tylko jedna instancja."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "data": {
-          "renew_interval": "Interwał aktualizacji API (sekundy)"
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Język",
+                    "notifications": "Wyślij powiadomienia o podniesionych alertach",
+                    "password": "Hasło",
+                    "renew_interval": "Odnowienie odnowienia WebSocket (sekundy)"
+                }
+            }
         }
-      }
     }
-  }
 }

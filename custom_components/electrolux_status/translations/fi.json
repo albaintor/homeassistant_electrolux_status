@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Laite on jo määritetty",
+            "already_configured_account": "Tili on jo määritetty",
+            "reconfigure_successful": "Uudelleenmääritys oli onnistunut",
+            "single_instance_allowed": "Jo määritetty.Vain yksi mahdollinen kokoonpano."
+        },
+        "error": {
+            "invalid_auth": "Virheellinen todennus"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Kieli",
+                    "notifications": "Lähetä ilmoituksia korotetuista hälytyksistä",
+                    "password": "Salasana",
+                    "username": "Käyttäjänimi"
+                },
+                "description": "Jos tarvitset apua kokoonpano -vierailussa",
+                "title": "Elektrolux -tila"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Kieli",
+                    "notifications": "Lähetä ilmoituksia korotetuista hälytyksistä",
+                    "password": "Salasana",
+                    "renew_interval": "WebSockin (sekuntien) uusintaväli (sekuntia)"
+                }
+            }
+        }
+    }
+}

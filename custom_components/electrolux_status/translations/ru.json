@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Устройство уже настроено",
+            "already_configured_account": "Учетная запись уже настроена",
+            "reconfigure_successful": "Повторная конфигурация была успешной",
+            "single_instance_allowed": "Уже настроен.Возможно только одна конфигурация."
+        },
+        "error": {
+            "invalid_auth": "Неверная аутентификация"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Язык",
+                    "notifications": "Отправить уведомления о повышенных предупреждениях",
+                    "password": "Пароль",
+                    "username": "Имя пользователя"
+                },
+                "description": "Если вам нужна помощь с посещением конфигурации: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Статус электролюса"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Язык",
+                    "notifications": "Отправить уведомления о повышенных предупреждениях",
+                    "password": "Пароль",
+                    "renew_interval": "Интервал обновления WebSocket (секунды)"
+                }
+            }
+        }
+    }
+}

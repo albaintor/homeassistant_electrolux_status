@@ -1,31 +1,37 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status",
-        "description": "Si vous avez besoin d'aide dans la configuration consultez ce site: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "username": "Identifiant",
-          "password": "Mot de passe",
-          "region": "Région (emea, apac, na, latam ou frigidaire)",
-          "language": "Electrolux fournit les capteurs"
+    "config": {
+        "abort": {
+            "already_configured": "Le périphérique est déjà configuré",
+            "already_configured_account": "Le compte est déjà configuré",
+            "reconfigure_successful": "La reconfiguration a réussi",
+            "single_instance_allowed": "Déjà configuré.Une seule configuration possible."
+        },
+        "error": {
+            "invalid_auth": "Authentification non valide"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Langue",
+                    "notifications": "Envoyer des notifications pour les alertes surélevées",
+                    "password": "Mot de passe",
+                    "username": "Nom d'utilisateur"
+                },
+                "description": "Si vous avez besoin d'aide pour la configuration, visitez: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Status"
+            }
         }
-      }
     },
-    "error": {
-      "auth": "Identifiant/mot de passe incorrect."
-    },
-    "abort": {
-      "single_instance_allowed": "Une seule instance est autorisée."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "data": {
-          "renew_interval": "Fréquence de renouvellement de la websocket (secondes)"
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Langue",
+                    "notifications": "Envoyer des notifications pour les alertes surélevées",
+                    "password": "Mot de passe",
+                    "renew_interval": "Intervalle de renouvellement de WebSocket (secondes)"
+                }
+            }
         }
-      }
     }
-  }
 }

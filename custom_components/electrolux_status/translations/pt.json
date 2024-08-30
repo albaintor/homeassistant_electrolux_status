@@ -1,0 +1,37 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "O dispositivo já está configurado",
+            "already_configured_account": "Conta já está configurada",
+            "reconfigure_successful": "A reconfiguração foi bem-sucedida",
+            "single_instance_allowed": "Já configurado.Apenas uma única configuração possível."
+        },
+        "error": {
+            "invalid_auth": "Autenticação inválida"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Linguagem",
+                    "notifications": "Enviar notificações para alertas elevados",
+                    "password": "Senha",
+                    "username": "Nome de usuário"
+                },
+                "description": "Se precisar de ajuda com a configuração, visite: https://github.com/albaintor/homeasistant_electrolux_status",
+                "title": "Status Electrolux"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Linguagem",
+                    "notifications": "Enviar notificações para alertas elevados",
+                    "password": "Senha",
+                    "renew_interval": "Intervalo de renovação do WebSocket (segundos)"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status",
+        "description": "If you need help with the configuration visit: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]",
+          "language": "[%key:common::config_flow::data::language%]",
+          "notifications": "Send notifications for raised alerts"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]"
+    },
+    "abort": {
+      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_configured_account": "[%key:common::config_flow::abort::already_configured_account%]",
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "data": {
+          "password": "[%key:common::config_flow::data::password%]",
+          "language": "[%key:common::config_flow::data::language%]",
+          "renew_interval": "Renewal interval of websocket (seconds)",
+          "notifications": "Send notifications for raised alerts"
+        }
+      }
+    }
+  }
+}
