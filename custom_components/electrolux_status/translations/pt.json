@@ -3,8 +3,8 @@
         "abort": {
             "already_configured": "O dispositivo já está configurado",
             "already_configured_account": "Conta já está configurada",
-            "reconfigure_successful": "A reconfiguração foi bem-sucedida",
-            "single_instance_allowed": "Já configurado.Apenas uma única configuração possível."
+            "reconfigure_successful": "A reconfiguração foi bem sucedida",
+            "single_instance_allowed": "Já configurado. Só é possivel uma configuração."
         },
         "error": {
             "invalid_auth": "Autenticação inválida"
@@ -12,15 +12,15 @@
         "step": {
             "user": {
                 "data": {
-                    "language": "Linguagem",
-                    "notifications": "Levante notificações para avisos de nível de alerta",
+                    "language": "Lingua",
+                    "notifications": "Activar notificações para avisos de nível de alerta",
                     "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
                     "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
                     "password": "Senha",
-                    "username": "Nome de usuário"
+                    "username": "Nome de Utilizador"
                 },
                 "description": "Se precisar de ajuda com a configuração, visite: https://github.com/albaintor/homeasistant_electrolux_status",
-                "title": "Status Electrolux"
+                "title": "Electrolux"
             }
         }
     },
@@ -28,12 +28,12 @@
         "step": {
             "user": {
                 "data": {
-                    "language": "Linguagem",
-                    "notifications": "Levante notificações para avisos de nível de alerta",
+                    "language": "Lingua",
+                    "notifications": "Activar notificações para avisos de nível de alerta",
                     "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
                     "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
                     "password": "Senha",
-                    "renew_interval": "Intervalo de renovação do WebSocket (segundos)"
+                    "renew_interval": "Intervalo de atualização do WebSocket (segundos)"
                 }
             }
         }
