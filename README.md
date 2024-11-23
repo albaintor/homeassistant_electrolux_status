@@ -60,6 +60,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | ELECTROLUX | EEM69410W | GlassCare 700 |
 | ELECTROLUX | KEGB9300W | GlassCare 700 |
 | ELECTROLUX | EEG69410W | GlassCare 700 |
+| ELECTROLUX | TWSL6IE301 | N/A |
 | AEG | FSE76738P | 7000 GlassCare |
 
 **Dryer**
@@ -80,6 +81,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | ELECTROLUX | EWF1041ZDWA | UltimateCare 900 AutoDose |
 | ELECTROLUX | EW8F8669Q8 | PerfectCare 800 |
 | ELECTROLUX | EW9F149SP | PerfectCare 900 |
+| ELECTROLUX | WASL6IE300 | N/A |
 | AEG | L6FBG841CA | 6000 Series Autodose |
 | AEG | L7FENQ96 | 7000 Series ProSteam Autodose |
 | AEG | L7FBE941Q | 7000 Series Prosense Autodose |
