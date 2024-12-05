@@ -1,6 +1,7 @@
 """electrolux status integration."""
 
 import asyncio
+import aiofiles
 import base64
 from datetime import UTC, timedelta
 import json
@@ -19,7 +20,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 
 from .api import Appliance, Appliances, ElectroluxLibraryEntity
-from .const import DOMAIN, TIME_ENTITIES_TO_UPDATE
+from .const import DOMAIN, TIME_ENTITIES_TO_UPDATE, LOOKUP_DIRECTORY_PATH
 from .model import ElectroluxTokenStore
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -357,6 +358,9 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 appliance_name = appliance_json.get("applianceData").get(
                     "applianceName"
                 )
+                model_name = appliance_json.get("applianceData").get(
+                    "modelName"
+                )
                 appliance_infos = await self.api.get_appliances_info([appliance_id])
                 _LOGGER.debug(
                     "Electrolux get_appliances_info result: %s",
@@ -368,9 +372,16 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     json.dumps(appliance_state),
                 )
                 try:
-                    appliance_capabilities = await self.api.get_appliance_capabilities(
-                        appliance_id
-                    )
+                    #json_test = '{"DoorOpen":{"access": "read", "type": "boolean"},"FilterType":{"access": "read", "type": "number"},"FilterLife":{"access": "read", "max":100,"min":0,"step":1,"type": "number"},"ECO2":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"Humidity":{"access":"read","step":1,"type":"number"},"Temp":{"access":"read","step":1,"type":"number"},"PM1":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"PM10":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"PM2_5":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"TVOC":{"access":"read","max":4295,"min":0,"step":1,"type":"number"},"Fanspeed":{"access":"readwrite","max":9,"min":1,"schedulable":true,"step":1,"type":"int"},"Workmode":{"access":"readwrite","schedulable":true,"triggers":[{"action":{"Fanspeed":{"access":"readwrite","disabled":true,"max":9,"min":1,"step":1,"type":"int"}},"condition":{"operand_1":"value","operand_2":"Auto","operator":"eq"}},{"action":{"Fanspeed":{"access":"readwrite","max":9,"min":1,"step":1,"type":"int"}},"condition":{"operand_1":"value","operand_2":"Manual","operator":"eq"}},{"action":{"Fanspeed":{"access":"readwrite","disabled":true,"type":"int"}},"condition":{"operand_1":"value","operand_2":"PowerOff","operator":"eq"}}],"type":"string","values":{"Manual":{},"PowerOff":{},"Auto":{}}},"UILight":{"access":"readwrite","default":true,"schedulable":true,"type":"boolean"},"SafetyLock":{"access":"readwrite","default":false,"type":"boolean"},"Ionizer":{"access":"readwrite","schedulable":true,"type":"boolean"}}'
+                    if model_name == "PUREA9":
+                        appliance_definition_json_path = self.hass.config.path(LOOKUP_DIRECTORY_PATH + model_name + ".json")
+                        async with aiofiles.open(appliance_definition_json_path, mode='r') as handle:
+                            appliance_definition_json = await handle.read()
+                        appliance_capabilities = json.loads(appliance_definition_json)
+                    else:
+                        appliance_capabilities = await self.api.get_appliance_capabilities(
+                            appliance_id
+                        )
                     _LOGGER.debug(
                         "Electrolux get_appliance_capabilities result: %s",
                         json.dumps(appliance_capabilities),

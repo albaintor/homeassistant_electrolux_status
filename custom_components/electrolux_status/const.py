@@ -8,6 +8,9 @@ from homeassistant.const import Platform
 NAME = "Electrolux status"
 DOMAIN = "electrolux_status"
 DOMAIN_DATA = f"{DOMAIN}_data"
+COMPONENTS_DIRECTORY = "custom_components"
+LOOKUP_DIRECTORY = "appliance_definitions"
+LOOKUP_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 
 # Platforms
 BINARY_SENSOR = Platform.BINARY_SENSOR

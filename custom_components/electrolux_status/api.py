@@ -158,8 +158,6 @@ class ElectroluxLibraryEntity:
 
         May contain slashes for nested keys.
         """
-
-        # Some capabilities are not stored in hierarchy but directly in a key with format "a/b" like useSelections
         if self.capabilities.get(attr_name, None):
             return self.capabilities.get(attr_name)
 

@@ -64,10 +64,23 @@ async def _async_get_diagnostics(
     }
     for appliance in appliances_list:
         appliance_id = appliance["applianceId"]
-        data["appliances_detail"][appliance_id] = {
-            "capabilities": await app_entry.api.get_appliance_capabilities(appliance_id),
-            "state": await app_entry.api.get_appliance_state(appliance_id),
-        }
+        model_name = appliance.get("applianceData").get(
+            "modelName"
+        )
+        if model_name == "PUREA9":
+            appliance_definition_json_path = hass.config.path(LOOKUP_DIRECTORY_PATH + model_name + ".json")
+            async with aiofiles.open(appliance_definition_json_path, mode='r') as handle:
+                appliance_definition_json = await handle.read()
+            appliance_capabilities = json.loads(appliance_definition_json)
+            data["appliances_detail"][appliance_id] = {
+                "capabilities": appliance_capabilities,
+                "state": await app_entry.api.get_appliance_state(appliance_id),
+            }
+        else:
+            data["appliances_detail"][appliance_id] = {
+                "capabilities": await app_entry.api.get_appliance_capabilities(appliance_id),
+                "state": await app_entry.api.get_appliance_state(appliance_id),
+            }
     return async_redact_data(data, REDACT_CONFIG)
 
 
