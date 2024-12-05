@@ -1,0 +1,145 @@
+{
+  "DoorOpen": {
+    "access": "read",
+    "type": "boolean"
+  },
+  "FilterType": {
+    "access": "read",
+    "type": "number"
+  },
+  "FilterLife": {
+    "access": "read",
+    "max": 100,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "ECO2": {
+    "access": "read",
+    "max": 65535,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "Humidity": {
+    "access": "read",
+    "step": 1,
+    "type": "number"
+  },
+  "Temp": {
+    "access": "read",
+    "step": 1,
+    "type": "number"
+  },
+  "PM1": {
+    "access": "read",
+    "max": 65535,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "PM10": {
+    "access": "read",
+    "max": 65535,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "PM2_5": {
+    "access": "read",
+    "max": 65535,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "TVOC": {
+    "access": "read",
+    "max": 4295,
+    "min": 0,
+    "step": 1,
+    "type": "number"
+  },
+  "Fanspeed": {
+    "access": "readwrite",
+    "max": 9,
+    "min": 1,
+    "schedulable": true,
+    "step": 1,
+    "type": "int"
+  },
+  "Workmode": {
+    "access": "readwrite",
+    "schedulable": true,
+    "triggers": [
+      {
+        "action": {
+          "Fanspeed": {
+            "access": "readwrite",
+            "disabled": true,
+            "max": 9,
+            "min": 1,
+            "step": 1,
+            "type": "int"
+          }
+        },
+        "condition": {
+          "operand_1": "value",
+          "operand_2": "Auto",
+          "operator": "eq"
+        }
+      },
+      {
+        "action": {
+          "Fanspeed": {
+            "access": "readwrite",
+            "max": 9,
+            "min": 1,
+            "step": 1,
+            "type": "int"
+          }
+        },
+        "condition": {
+          "operand_1": "value",
+          "operand_2": "Manual",
+          "operator": "eq"
+        }
+      },
+      {
+        "action": {
+          "Fanspeed": {
+            "access": "readwrite",
+            "disabled": true,
+            "type": "int"
+          }
+        },
+        "condition": {
+          "operand_1": "value",
+          "operand_2": "PowerOff",
+          "operator": "eq"
+        }
+      }
+    ],
+    "type": "string",
+    "values": {
+      "Manual": {},
+      "PowerOff": {},
+      "Auto": {}
+    }
+  },
+  "UILight": {
+    "access": "readwrite",
+    "default": true,
+    "schedulable": true,
+    "type": "boolean"
+  },
+  "SafetyLock": {
+    "access": "readwrite",
+    "default": false,
+    "type": "boolean"
+  },
+  "Ionizer": {
+    "access": "readwrite",
+    "schedulable": true,
+    "type": "boolean"
+  }
+}

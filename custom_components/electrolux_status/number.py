@@ -92,6 +92,8 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         """Update the current value."""
         if self.unit == UnitOfTime.SECONDS:
             value = time_minutes_to_seconds(value)
+        if self.capability.get("step", 1) == 1:
+            value = int(value)
         client: OneAppApi = self.api
         if self.entity_source:
             command = {self.entity_source: {self.entity_attr: value}}

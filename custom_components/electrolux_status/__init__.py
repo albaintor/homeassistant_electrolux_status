@@ -27,7 +27,6 @@ from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
-
 # noinspection PyUnusedLocal
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up this integration using YAML is not supported."""

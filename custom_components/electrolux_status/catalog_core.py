@@ -15,12 +15,14 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import EntityCategory
 
 from .catalog_refridgerator import EHE6899SA
+from .catalog_purifier import A9
 from .model import ElectroluxDevice
 
 # definitions of model explicit overrides. These will be used to
 # create a new catalog with a merged definition of properties
 CATALOG_MODEL: dict[str, dict[str, ElectroluxDevice]] = {
     "EHE6899SA": EHE6899SA,
+    "A9": A9,
 }
 
 CATALOG_BASE: dict[str, ElectroluxDevice] = {
