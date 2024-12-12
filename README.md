@@ -72,6 +72,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | ELECTROLUX | EW9H869E9 | PerfectCare 900 |
 | ELECTROLUX | EW9H188SPC | PerfectCare 900 |
 | ELECTROLUX | YH7W979P9 | Airdryer |
+| AEG | TR9BW75680 | 9000 Series AbsoluteCare |
 
 **Washing Machine**
 
@@ -85,6 +86,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | AEG | L7FBE941Q | 7000 Series Prosense Autodose |
 | AEG | L8FEC96QS | 8000 Series Ökomix Autodose |
 | AEG | L9WBA61BC | 9000 Series ÖKOKombi DualSense SensiDry |
+| AEG | LR9W75490 | 9000 Series AbsoluteCare |
 
 **Washer / Dryer Combo**
 
