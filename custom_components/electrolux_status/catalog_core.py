@@ -16,6 +16,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 from .catalog_refridgerator import EHE6899SA
 from .catalog_purifier import A9
+from .catalog_air_conditioner import CATALOG_AIR_CONDITIONER
 from .model import ElectroluxDevice
 
 # definitions of model explicit overrides. These will be used to
@@ -23,6 +24,7 @@ from .model import ElectroluxDevice
 CATALOG_MODEL: dict[str, dict[str, ElectroluxDevice]] = {
     "EHE6899SA": EHE6899SA,
     "A9": A9,
+    "EXP34U339CW": CATALOG_AIR_CONDITIONER,
 }
 
 CATALOG_BASE: dict[str, ElectroluxDevice] = {
@@ -680,8 +682,9 @@ CATALOG_BASE: dict[str, ElectroluxDevice] = {
         unit=UnitOfPower.WATT,
         entity_category=None,
         entity_icon="mdi:microwave",
-    ),
-    "targetTemperatureC": ElectroluxDevice(
+    ),    "targetTemperatureC": ElectroluxDevice(
+        # NOTE: This definition is for ovens/general appliances (0-300°C, step 5°C)
+        # Air conditioners use catalog_air_conditioner.py (15.56-32.22°C, step 1°C, type "temperature")
         capability_info={
             "access": "readwrite",
             "type": "number",
