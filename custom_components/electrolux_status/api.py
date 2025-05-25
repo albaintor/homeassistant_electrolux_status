@@ -382,14 +382,12 @@ class Appliance:
         """
         return self.reported_state.get("applianceInfo", {}).get(
             "applianceType"
-        ) or self.state.get("applianceData", {}).get("modelName")
-
-    @property
+        ) or self.state.get("applianceData", {}).get("modelName")    @property
     def catalog(self) -> dict[str, ElectroluxDevice]:
         """Return the defined catalog for the appliance."""
-        # TODO: Use appliance_type as opposed to model?
+        # Check specific model first
         if self.model in CATALOG_MODEL:
-            _LOGGER.debug("Extending catalog for %s", self.model)
+            _LOGGER.debug("Extending catalog for model %s", self.model)
             # Make a deep copy of the base catalog to preserve it
             new_catalog = copy.deepcopy(CATALOG_BASE)
 
@@ -401,6 +399,21 @@ class Appliance:
                 new_catalog[key] = device
 
             return new_catalog
+        
+        # Check appliance type for air conditioners
+        appliance_type = self.appliance_type
+        if appliance_type and "AC" in str(appliance_type):
+            _LOGGER.debug("Using air conditioner catalog for appliance type %s", appliance_type)
+            # Make a deep copy of the base catalog to preserve it
+            new_catalog = copy.deepcopy(CATALOG_BASE)
+            
+            # Merge air conditioner specific catalog
+            from .catalog_air_conditioner import CATALOG_AIR_CONDITIONER
+            for key, device in CATALOG_AIR_CONDITIONER.items():
+                new_catalog[key] = device
+                
+            return new_catalog
+            
         return CATALOG_BASE
 
     def update_missing_entities(self) -> None:
