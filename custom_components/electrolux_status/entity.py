@@ -180,7 +180,7 @@ class ElectroluxEntity(CoordinatorEntity):
     def device_info(self):
         """Return identifiers of the device."""
         return {
-            "identifiers": {(DOMAIN, self.get_appliance.name)},
+            "identifiers": {(DOMAIN, self.pnc_id)},
             "name": self.get_appliance.name,
             "model": self.get_appliance.model,
             "manufacturer": self.get_appliance.brand,
