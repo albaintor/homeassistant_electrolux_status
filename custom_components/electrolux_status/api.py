@@ -127,7 +127,7 @@ class ElectroluxLibraryEntity:
                 words.append(group)
             else:
                 words.append(group.lower())
-        return " ".join(words).lower()
+        return " ".join(words).lower().capitalize()
 
     # def get_sensor_name_old(self, attr_name: str, container: str | None = None):
     #     """Convert sensor format.
@@ -463,7 +463,7 @@ class Appliance:
         entity_category = None
         entity_icon = None
         unit = self.data.get_entity_unit(capability)
-        display_name = f"{self.data.get_name()} {self.data.get_sensor_name(capability)}"
+        display_name = self.data.get_sensor_name(capability)
 
         # get the item definition from the catalog
         catalog_item = self.catalog.get(capability, None)
