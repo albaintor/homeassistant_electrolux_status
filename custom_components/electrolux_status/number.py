@@ -99,18 +99,38 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         if self.capability.get("step", 1) == 1:
             value = int(value)
         client: OneAppApi = self.api
-        if self.entity_source:
-            if self.entity_source == "userSelections":
-                command = {
-                    self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
-                    },
-                }
-            else:
-                command = {self.entity_source: {self.entity_attr: value}}
+        
+        # --- START OF OUR FIX ---
+        command = {}
+        if self.entity_source == "latamUserSelections":
+            _LOGGER.debug("Electrolux: Detected latamUserSelections, building full command.")
+            # Get the current state of all latam selections
+            current_selections = self.appliance_status.get("properties", {}).get("reported", {}).get("latamUserSelections", {})
+            if not current_selections:
+                _LOGGER.error("Could not retrieve current latamUserSelections to build command.")
+                return
+
+            # Create a copy to modify
+            new_selections = current_selections.copy()
+            # Update only the value we want to change
+            new_selections[self.entity_attr] = value
+            # Assemble the final command with the entire block
+            command = {"latamUserSelections": new_selections}
+        # --- END OF OUR FIX ---
+
+        # Original logic as a fallback for other entities
+        elif self.entity_source == "userSelections":
+            command = {
+                self.entity_source: {
+                    "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
+                    self.entity_attr: value
+                },
+            }
+        elif self.entity_source:
+            command = {self.entity_source: {self.entity_attr: value}}
         else:
             command = {self.entity_attr: value}
+
         _LOGGER.debug("Electrolux set value %s", command)
         result = await client.execute_appliance_command(self.pnc_id, command)
         _LOGGER.debug("Electrolux set value result %s", result)
