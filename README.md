@@ -90,6 +90,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | ELECTROLUX   | EWF9042R7WB | Ultimatecare Series 700                 |
 | ELECTROLUX   | EW8F8669Q8  | PerfectCare 800                         |
 | ELECTROLUX   | EW9F149SP   | PerfectCare 900                         |
+| ELECTROLUX   | LWI13       | Premium Care                            |
 | ELECTROLUX   | WASL6IE300  | N/A                                     |
 | AEG          | L6FBG841CA  | 6000 Series Autodose                    |
 | AEG          | L7FENQ96    | 7000 Series ProSteam Autodose           |
@@ -115,4 +116,3 @@ This list is non-exhaustive and your appliance may work even if not present here
 | AEG          | BPE558370M | SteamBake 6000                                          |
 | AEG          | BBS6402B.  | SteamBake 7000                                          |
 | AEG          | BPK748380B | 8000 AssistedCooking Pyrolytic Self Clean Built-in Oven |
-

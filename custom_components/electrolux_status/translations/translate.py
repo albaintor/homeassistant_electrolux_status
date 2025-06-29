@@ -36,6 +36,7 @@ languages = {
     "nederlands": "nl",
     "Norsk": "no",
     "Polski": "pl",
+    "Português Brasil": "pt_br",
     "Português": "pt",
     "Română": "ro",
     "rusesc": "ru",

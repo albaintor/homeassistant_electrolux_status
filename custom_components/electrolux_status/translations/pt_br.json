@@ -1,0 +1,41 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "O dispositivo já está configurado",
+            "already_configured_account": "Conta já está configurada",
+            "reconfigure_successful": "A reconfiguração foi bem sucedida",
+            "single_instance_allowed": "Já configurado. Só é possivel uma configuração."
+        },
+        "error": {
+            "invalid_auth": "Autenticação inválida"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Idioma",
+                    "notifications": "Ativar notificações para avisos de nível de alerta",
+                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
+                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
+                    "password": "Senha",
+                    "username": "Nome de Usuário"
+                },
+                "description": "Se precisar de ajuda com a configuração, visite: https://github.com/albaintor/homeasistant_electrolux_status",
+                "title": "Electrolux"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Idioma",
+                    "notifications": "Ativar notificações para avisos de nível de alerta",
+                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
+                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
+                    "password": "Senha",
+                    "renew_interval": "Intervalo de atualização do WebSocket (segundos)"
+                }
+            }
+        }
+    }
+}

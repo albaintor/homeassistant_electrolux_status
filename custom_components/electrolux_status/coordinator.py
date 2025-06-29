@@ -1,4 +1,4 @@
-"""electrolux status integration."""
+"""Electrolux status integration."""
 
 import asyncio
 import aiofiles
@@ -219,17 +219,20 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         #     await self.setup_entities()
         #     appliances = self.data.get('appliances', None)
 
-        for local_appliance_id in appliances.get_appliances():
-            if local_appliance_id != appliance_id:
-                pass
-            try:
-                appliance: Appliance = appliances.get_appliances().get(appliance_id)
+        # O loop abaixo foi comentado por ser desnecessário. A lógica interna já utiliza
+        # o 'appliance_id' correto que a função recebe, tornando o loop redundante.
+        # for local_appliance_id in appliances.get_appliances():
+        #     if local_appliance_id != appliance_id:
+        #         pass
+        try:
+            appliance: Appliance = appliances.get_appliance(appliance_id)
+            if appliance:
                 appliance_status = await self.api.get_appliance_state(appliance_id)
                 appliance.update(appliance_status)
                 self.async_set_updated_data(self.data)
-            except Exception as exception:
-                _LOGGER.exception(exception)  # noqa: TRY401
-                raise UpdateFailed from exception
+        except Exception as exception:
+            _LOGGER.exception(exception)  # noqa: TRY401
+            raise UpdateFailed from exception
 
     def incoming_data(self, data: dict[str, dict[str, Any]]):
         """Process incoming data."""
