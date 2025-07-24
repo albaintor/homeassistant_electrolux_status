@@ -242,6 +242,10 @@ class ElectroluxLibraryEntity:
             and isinstance(values, dict)
             and len(values) > 0
         ):
+            if type_object == "string":
+                upper_values = {str(k).upper() for k in values}
+                if upper_values == {"ON", "OFF"}:
+                    return SWITCH
             if (
                 type_object not in ["number", "temperature"]
                 or capability_def.get("min", None) is None

@@ -52,6 +52,7 @@ Maybe changing the password through the aeg-website into your app-password can h
 
 This list is non-exhaustive and your appliance may work even if not present here
 
+
 **Fridge**
 
 | Manufacturer | Model     | Description            |
@@ -116,3 +117,9 @@ This list is non-exhaustive and your appliance may work even if not present here
 | AEG          | BPE558370M | SteamBake 6000                                          |
 | AEG          | BBS6402B.  | SteamBake 7000                                          |
 | AEG          | BPK748380B | 8000 AssistedCooking Pyrolytic Self Clean Built-in Oven |
+
+**Portable Air Conditioner**
+
+| Manufacturer | Model       | Description   |
+| :----------- | :---------- | :------------ |
+| ELECTROLUX   | EXP38U340HW | Comfort 600   |
