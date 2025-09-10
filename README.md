@@ -117,6 +117,7 @@ This list is non-exhaustive and your appliance may work even if not present here
 | AEG          | BPE558370M | SteamBake 6000                                          |
 | AEG          | BBS6402B.  | SteamBake 7000                                          |
 | AEG          | BPK748380B | 8000 AssistedCooking Pyrolytic Self Clean Built-in Oven |
+| AEG          | TP9SB83FAB | 9000 Pro Assist with SteamPro                           |
 
 **Portable Air Conditioner**
 
