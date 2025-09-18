@@ -12,6 +12,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
@@ -99,6 +100,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     _LOGGER.debug("async_setup_entry OVER")
     return True
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ConfigType, device_entry: dr.DeviceEntry
+) -> bool:
+    """Remove a config entry from a device."""
+    _LOGGER.debug("async_remove_config_entry_device")
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    appliances = coordinator.data.get("appliances", None)
+    all_api_ids = set(appliances.appliances) if appliances else set()
+
+    identifier_tuple = next(iter(device_entry.identifiers))[1]
+    if identifier_tuple not in all_api_ids:
+        return True
+    return False
 
 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
