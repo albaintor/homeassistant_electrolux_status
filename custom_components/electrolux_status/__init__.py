@@ -4,21 +4,21 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
+    CONF_COUNTRY_CODE,
     CONF_LANGUAGE,
     CONF_PASSWORD,
     CONF_USERNAME,
-    CONF_COUNTRY_CODE,
     EVENT_HOMEASSISTANT_STOP,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     CONF_RENEW_INTERVAL,
-    DEFAULT_LANGUAGE,
     DEFAULT_COUNTRY_CODE,
+    DEFAULT_LANGUAGE,
     DEFAULT_WEBSOCKET_RENEWAL_DELAY,
     DOMAIN,
     PLATFORMS,
@@ -28,6 +28,7 @@ from .coordinator import ElectroluxCoordinator
 from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
 
 # noinspection PyUnusedLocal
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:

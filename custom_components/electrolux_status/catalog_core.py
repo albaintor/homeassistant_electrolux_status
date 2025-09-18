@@ -14,8 +14,8 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityCategory
 
-from .catalog_refridgerator import EHE6899SA
 from .catalog_purifier import A9
+from .catalog_refridgerator import EHE6899SA
 from .model import ElectroluxDevice
 
 # definitions of model explicit overrides. These will be used to

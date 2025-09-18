@@ -8,8 +8,8 @@ import re
 from pyelectroluxocp import OneAppApi
 
 from homeassistant.components.persistent_notification import async_create
-from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 from .const import (
     CONF_NOTIFICATION_DEFAULT,
@@ -34,10 +34,9 @@ def should_send_notification(config_entry, alert_severity, alert_status):
         return False
     if alert_severity == "DIAGNOSTIC":
         return config_entry.data.get(CONF_NOTIFICATION_DIAG, False)
-    elif alert_severity == "WARNING":
+    if alert_severity == "WARNING":
         return config_entry.data.get(CONF_NOTIFICATION_WARNING, False)
-    else:
-        return config_entry.data.get(CONF_NOTIFICATION_DEFAULT, True)
+    return config_entry.data.get(CONF_NOTIFICATION_DEFAULT, True)
 
 
 def create_notification(

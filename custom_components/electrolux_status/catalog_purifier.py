@@ -2,18 +2,13 @@
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
-
 from homeassistant.const import (
-    PERCENTAGE,
-    UnitOfPower,
-    UnitOfTemperature,
-    UnitOfTime,
-    UnitOfVolume,
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-    CONCENTRATION_PARTS_PER_MILLION,
     CONCENTRATION_PARTS_PER_BILLION,
+    CONCENTRATION_PARTS_PER_MILLION,
+    PERCENTAGE,
+    UnitOfTemperature,
 )
-
 from homeassistant.helpers.entity import EntityCategory
 
 from .model import ElectroluxDevice
@@ -23,7 +18,7 @@ A9 = {
         device_class=SensorDeviceClass.TEMPERATURE,
         unit=UnitOfTemperature.CELSIUS,
         entity_category=None,
-        friendly_name="Temperature"
+        friendly_name="Temperature",
     ),
     "Humidity": ElectroluxDevice(
         device_class=SensorDeviceClass.HUMIDITY,
@@ -65,7 +60,7 @@ A9 = {
         device_class=BinarySensorDeviceClass.DOOR,
         unit=None,
         entity_category=EntityCategory.DIAGNOSTIC,
-        #entity_icon="mdi:cup-outline",
+        # entity_icon="mdi:cup-outline",
         friendly_name="Door Open",
     ),
     "FilterType": ElectroluxDevice(

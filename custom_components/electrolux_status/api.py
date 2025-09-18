@@ -18,16 +18,17 @@ from .binary_sensor import ElectroluxBinarySensor
 from .button import ElectroluxButton
 from .catalog_core import CATALOG_BASE, CATALOG_MODEL
 from .const import (
+    ATTRIBUTES_BLACKLIST,
+    ATTRIBUTES_WHITELIST,
     BINARY_SENSOR,
     BUTTON,
-    ATTRIBUTES_BLACKLIST,
     NUMBER,
     PLATFORMS,
     RENAME_RULES,
     SELECT,
     SENSOR,
     STATIC_ATTRIBUTES,
-    SWITCH, ATTRIBUTES_WHITELIST,
+    SWITCH,
 )
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
@@ -41,9 +42,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 HEADERS = {"Content-type": "application/json; charset=UTF-8"}
 
 def deep_merge_dicts(dict1, dict2):
-    """
-    Recursively merge two dictionaries.
-    """
+    """Recursively merge two dictionaries."""
     result = dict1.copy()
     for key, value in dict2.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
