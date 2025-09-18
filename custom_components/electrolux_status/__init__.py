@@ -98,8 +98,38 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("async_setup_entry async_forward_entry_setups")
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Fix for https://github.com/albaintor/homeassistant_electrolux_status/issues/160
+    # Issue introduced in upgrade to 2.2.0, can probably be removed at some stage
+    _async_remove_old_device_identifiers(hass, entry)
+
     _LOGGER.debug("async_setup_entry OVER")
     return True
+
+
+@callback
+def _async_remove_old_device_identifiers(
+    hass: HomeAssistant,
+    config_entry: ConfigType,
+) -> None:
+    """Remove the bad device registry entries."""
+    _LOGGER.debug("_async_remove_old_device_identifiers")
+
+    device_registry = dr.async_get(hass)
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    appliances = coordinator.data.get("appliances", None)
+    all_api_ids = set(appliances.appliances) if appliances else set()
+
+    if all_api_ids:  # only complete if we got the device list from the api
+        device_list = list(device_registry.devices.values())  # <-- make a list copy
+        for device in device_list:
+            # Only check devices for this domain
+            for domain, deviceid in device.identifiers:
+                if domain != DOMAIN:
+                    continue
+
+                if deviceid not in all_api_ids:
+                    _LOGGER.debug("Removing old device idendifier: %s", deviceid)
+                    device_registry.async_remove_device(device.id)
 
 
 async def async_remove_config_entry_device(
