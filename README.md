@@ -87,8 +87,9 @@ This list is non-exhaustive and your appliance may work even if not present here
 
 | Manufacturer | Model       | Description                             |
 | :----------- | :---------- | :-------------------------------------- |
-| ELECTROLUX   | EWF1041ZDWA | UltimateCare 900 AutoDose               |
-| ELECTROLUX   | EWF9042R7WB | Ultimatecare Series 700                 |
+| ELECTROLUX   | EWF1041ZDWA | UltimateCare 900 IntelliDose            |
+| ELECTROLUX   | EWF1242R9SC | UltimateCare 900 AutoDose               |
+| ELECTROLUX   | EWF9042R7WB | Ultimatecare 700                        |
 | ELECTROLUX   | EW8F8669Q8  | PerfectCare 800                         |
 | ELECTROLUX   | EW9F149SP   | PerfectCare 900                         |
 | ELECTROLUX   | LWI13       | Premium Care                            |
