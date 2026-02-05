@@ -3,15 +3,15 @@
 import logging
 from typing import Any, cast
 
-from pyelectroluxocp import OneAppApi
-from pyelectroluxocp.apiModels import ApplienceStatusResponse
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
+from pyelectroluxocp import OneAppApi
+from pyelectroluxocp.apiModels import ApplienceStatusResponse
 
 from .const import DOMAIN
 from .model import ElectroluxDevice
@@ -38,6 +38,46 @@ async def async_setup_entry(
                 len(entities),
                 appliance_id,
             )
+            # Register suggested object_ids so new installs get clean, slugified ids
+            # while existing entities tracked by the entity registry (via unique_id)
+            # are preserved.
+            try:
+                registry = er.async_get(hass)
+                for entity in entities:
+                    try:
+                        brand = getattr(appliance, "brand", "") or ""
+                        name = getattr(appliance, "name", "") or ""
+                        source = entity.entity_source or ""
+                        attr = entity.entity_attr or ""
+                        object_id = "_".join(
+                            part for part in [brand, name, source, attr] if part
+                        )
+                        object_id = slugify(object_id)
+                        if not object_id:
+                            fallback_parts = [entity.pnc_id]
+                            if attr:
+                                fallback_parts.append(str(attr))
+                            object_id = (
+                                slugify("_".join(fallback_parts)) or "electrolux_entity"
+                            )
+                        registry.async_get_or_create(
+                            entity.entity_domain,
+                            DOMAIN,
+                            entity.unique_id,
+                            suggested_object_id=object_id,
+                            config_entry=entry,
+                        )
+                    except (
+                        Exception
+                    ):  # defensive: ensure entity creation still proceeds
+                        _LOGGER.debug(
+                            "Could not register suggested id for entity %s", entity
+                        )
+            except Exception:
+                _LOGGER.debug(
+                    "Entity registry unavailable, skipping suggested id registration"
+                )
+
             async_add_entities(entities)
 
 
@@ -85,27 +125,11 @@ class ElectroluxEntity(CoordinatorEntity):
         self.pnc_id = pnc_id
         self.unit = unit
         self.capability = capability
-        # Build a slugified, lowercase, and valid object id for Home Assistant
-        appliance = None
-        try:
-            appliance = self.get_appliance
-        except Exception:  # Defensive: coordinator data may not be ready during __init__
-            appliance = None
-        brand = (getattr(appliance, "brand", "") or "") if appliance is not None else ""
-        name = (getattr(appliance, "name", "") or "") if appliance is not None else ""
-        source = self.entity_source or ""
-        attr = self.entity_attr or ""
-        object_id = "_".join(
-            part for part in [brand, name, source, attr] if part
-        )
-        object_id = slugify(object_id)
-        # Fallback: ensure object_id is not empty after slugification
-        if not object_id:
-            fallback_parts = [self.pnc_id]
-            if attr:
-                fallback_parts.append(str(attr))
-            object_id = slugify("_".join(fallback_parts)) or "electrolux_entity"
-        self.entity_id = f"{self.entity_domain}.{object_id}"
+        # Do not force `entity_id` here. Home Assistant's entity registry
+        # manages stable `entity_id` values based on `unique_id`.
+        # Preserving or migrating existing entity_ids should be done
+        # via the entity registry APIs during setup, not by assigning
+        # `self.entity_id` here which can break users' automations.
         if catalog_entry:
             self.entity_registry_enabled_default = (
                 catalog_entry.entity_registry_enabled_default
@@ -203,6 +227,9 @@ class ElectroluxEntity(CoordinatorEntity):
             "name": self.get_appliance.name,
             "model": self.get_appliance.model,
             "manufacturer": self.get_appliance.brand,
+            # Link this appliance device to the integration "hub" device
+            # so Home Assistant shows the appliance as a child of the hub
+            "via_device": (DOMAIN, getattr(self.config_entry, "entry_id", None)),
         }
 
     @property
