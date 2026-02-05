@@ -94,6 +94,12 @@ class ElectroluxEntity(CoordinatorEntity):
             part for part in [brand, name, source, attr] if part
         )
         object_id = slugify(object_id)
+        # Fallback: ensure object_id is not empty after slugification
+        if not object_id:
+            fallback_parts = [self.pnc_id]
+            if attr:
+                fallback_parts.append(str(attr))
+            object_id = slugify("_".join(fallback_parts)) or "electrolux_entity"
         self.entity_id = f"{self.entity_domain}.{object_id}"
         if catalog_entry:
             self.entity_registry_enabled_default = (
