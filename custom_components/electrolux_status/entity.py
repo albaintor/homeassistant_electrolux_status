@@ -86,8 +86,13 @@ class ElectroluxEntity(CoordinatorEntity):
         self.unit = unit
         self.capability = capability
         # Build a slugified, lowercase, and valid object id for Home Assistant
-        brand = self.get_appliance.brand or ""
-        name = self.get_appliance.name or ""
+        appliance = None
+        try:
+            appliance = self.get_appliance
+        except Exception:  # Defensive: coordinator data may not be ready during __init__
+            appliance = None
+        brand = (getattr(appliance, "brand", "") or "") if appliance is not None else ""
+        name = (getattr(appliance, "name", "") or "") if appliance is not None else ""
         source = self.entity_source or ""
         attr = self.entity_attr or ""
         object_id = "_".join(
