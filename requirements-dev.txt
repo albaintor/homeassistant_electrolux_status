@@ -1,0 +1,4 @@
+# Development requirements to satisfy editor/Pylance
+# Installing these in a venv will allow Pylance to resolve imports used by the integration.
+homeassistant
+pyelectroluxocp

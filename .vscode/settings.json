@@ -1,0 +1,10 @@
+{
+  "python.defaultInterpreterPath": "D:\\Python\\HA\\Scripts\\python.exe",
+  "python.pythonPath": "D:\\Python\\HA\\Scripts\\python.exe",
+  "python.analysis.extraPaths": [
+    "D:\\Python\\HA\\Lib\\site-packages",
+    "D:\\Python\\HA\\Lib\\site-packages\\win32"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.indexing": true
+}

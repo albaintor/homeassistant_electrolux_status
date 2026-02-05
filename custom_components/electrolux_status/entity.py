@@ -11,6 +11,7 @@ from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import slugify
 
 from .const import DOMAIN
 from .model import ElectroluxDevice
@@ -84,7 +85,16 @@ class ElectroluxEntity(CoordinatorEntity):
         self.pnc_id = pnc_id
         self.unit = unit
         self.capability = capability
-        self.entity_id = f"{self.entity_domain}.{self.get_appliance.brand}_{self.get_appliance.name}_{self.entity_source}_{self.entity_attr}"
+        # Build a slugified, lowercase, and valid object id for Home Assistant
+        brand = self.get_appliance.brand or ""
+        name = self.get_appliance.name or ""
+        source = self.entity_source or ""
+        attr = self.entity_attr or ""
+        object_id = "_".join(
+            part for part in [brand, name, source, attr] if part is not None and part != ""
+        )
+        object_id = slugify(object_id)
+        self.entity_id = f"{self.entity_domain}.{object_id}"
         if catalog_entry:
             self.entity_registry_enabled_default = (
                 catalog_entry.entity_registry_enabled_default
@@ -199,7 +209,7 @@ class ElectroluxEntity(CoordinatorEntity):
         root_attribute = self.root_attribute
         attribute = self.entity_attr
         if self.appliance_status:
-            root = cast(any, self.appliance_status)
+            root = cast(Any, self.appliance_status)
             # Format returned by push is slightly different from format returned by API : fields are at root level
             # Let's check if we can find the fields at root first
             if (
