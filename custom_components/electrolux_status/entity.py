@@ -91,7 +91,7 @@ class ElectroluxEntity(CoordinatorEntity):
         source = self.entity_source or ""
         attr = self.entity_attr or ""
         object_id = "_".join(
-            part for part in [brand, name, source, attr] if part is not None and part != ""
+            part for part in [brand, name, source, attr] if part
         )
         object_id = slugify(object_id)
         self.entity_id = f"{self.entity_domain}.{object_id}"
