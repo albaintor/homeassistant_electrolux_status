@@ -259,9 +259,6 @@ class ElectroluxEntity(CoordinatorEntity):
             "name": name or model,
             "model": model,
             "manufacturer": brand,
-            # Link this appliance device to the integration "hub" device
-            # so Home Assistant shows the appliance as a child of the hub
-            "via_device": (DOMAIN, getattr(self.config_entry, "entry_id", None)),
         }
 
         _LOGGER.debug("Final device_info for %s: %s", self.pnc_id, device_info)
