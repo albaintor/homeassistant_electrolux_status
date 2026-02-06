@@ -72,8 +72,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
     await coordinator.launch_websocket_renewal_task()
 
+    async def _close_api(event):
+        await coordinator.api.close()
+
     entry.async_on_unload(
-        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close)
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _close_api)
     )
 
     entry.async_on_unload(entry.add_update_listener(update_listener))

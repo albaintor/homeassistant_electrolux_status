@@ -35,11 +35,11 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
     ) -> None:
         """Initialize."""
         self.api = client
-        self.platforms = []
+        self.platforms: list[str] = []
         self.renew_task = None
         self.renew_interval = renew_interval
         self._sse_task = None  # Track SSE task
-        self._deferred_tasks = set()  # Track deferred update tasks
+        self._deferred_tasks: set = set()  # Track deferred update tasks
 
         super().__init__(
             hass,

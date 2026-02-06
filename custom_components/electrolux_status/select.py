@@ -147,7 +147,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             self._cached_value = label
         else:
             label = self._cached_value
-        return label
+        return str(label or self._cached_value or "")
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""

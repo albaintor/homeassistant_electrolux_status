@@ -15,7 +15,7 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from .const import DOMAIN
 from .coordinator import ElectroluxCoordinator
 
-REDACT_CONFIG = {}
+REDACT_CONFIG: set[str] = set()
 
 
 async def async_get_config_entry_diagnostics(

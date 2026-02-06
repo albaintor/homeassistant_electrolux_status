@@ -109,7 +109,7 @@ class ElectroluxEntity(CoordinatorEntity):
         self.root_attribute = ["properties", "reported"]
         self.data = None
         self.coordinator = coordinator
-        self._cached_value = None
+        self._cached_value: Any = None
         self._name = name
         self._icon = icon
         self._device_class = device_class
@@ -171,6 +171,8 @@ class ElectroluxEntity(CoordinatorEntity):
         if self.coordinator.data is None:
             return
         appliances = self.coordinator.data.get("appliances", None)
+        if appliances is None:
+            return
         self.appliance_status = appliances.get_appliance(self.pnc_id).state
         self.async_write_ha_state()
 

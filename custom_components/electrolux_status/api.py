@@ -3,7 +3,7 @@
 import copy
 import logging
 import re
-from typing import Any
+from typing import Any, Sequence
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.button import ButtonDeviceClass
@@ -437,8 +437,8 @@ class Appliance:
                         "Electrolux discovered new entity from extracted data. Key: %s",
                         key,
                     )
-                    if entity := self.get_entity(key):
-                        self.entities.extend(entity)
+                    if entities := self.get_entity(key):
+                        self.entities.extend(list(entities))
 
     def get_state(self, attr_name: str) -> dict[str, Any] | None:
         """Retrieve the start from self.reported_state using the attribute name.
@@ -456,7 +456,7 @@ class Appliance:
 
         return result
 
-    def get_entity(self, capability: str) -> list[Any]:
+    def get_entity(self, capability: str) -> Sequence[ElectroluxEntity]:
         """Return the entity."""
         entity_type = self.data.get_entity_type(capability)
         entity_name = self.data.get_entity_name(capability)
@@ -653,7 +653,7 @@ class Appliance:
         if capabilities_names:
             for capability in capabilities_names:
                 if entity := self.get_entity(capability):
-                    entities.extend(entity)
+                    entities.extend(list(entity))
                 else:
                     _LOGGER.debug(
                         "Could not create entity for capability %s", capability

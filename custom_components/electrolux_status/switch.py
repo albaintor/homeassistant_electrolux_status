@@ -57,7 +57,7 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
             value = string_to_boolean(value, False)
 
         if value is None:
-            return self._cached_value
+            return self._cached_value if self._cached_value is not None else False
         # Ensure value is boolean
         if isinstance(value, bool):
             self._cached_value = value
