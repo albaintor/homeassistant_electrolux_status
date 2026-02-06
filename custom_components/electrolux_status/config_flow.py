@@ -146,6 +146,7 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id=step_id,
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
+            description_placeholders={"url": "https://developer.electrolux.one/"},
         )
 
     async def _test_credentials(self, api_key, access_token, refresh_token):

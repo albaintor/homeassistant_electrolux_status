@@ -8,6 +8,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
@@ -23,6 +24,8 @@ from .coordinator import ElectroluxCoordinator
 from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 # noinspection PyUnusedLocal
