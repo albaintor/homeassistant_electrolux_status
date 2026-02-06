@@ -6,6 +6,7 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, NUMBER
@@ -108,7 +109,9 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
                 self.pnc_id,
                 remote_control,
             )
-            raise Exception(f"Remote control disabled (status: {remote_control})")
+            raise HomeAssistantError(
+                f"Remote control disabled (status: {remote_control})"
+            )
 
         if self.unit == UnitOfTime.SECONDS:
             converted = time_minutes_to_seconds(value)
@@ -159,7 +162,13 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
             command = {self.entity_attr: value}
 
         _LOGGER.debug("Electrolux set value %s", command)
-        result = await client.execute_appliance_command(self.pnc_id, command)
+        try:
+            result = await client.execute_appliance_command(self.pnc_id, command)
+        except Exception as ex:
+            error_msg = str(ex).lower()
+            if "disconnected" in error_msg or "command_validation_error" in error_msg:
+                raise HomeAssistantError("Appliance is disconnected or not available")
+            raise
         _LOGGER.debug("Electrolux set value result %s", result)
 
     @property

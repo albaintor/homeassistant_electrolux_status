@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from datetime import timedelta
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import (
@@ -14,8 +14,9 @@ from homeassistant.exceptions import (
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import Appliance, Appliances, ElectroluxLibraryEntity
+from .api import ElectroluxLibraryEntity
 from .const import DOMAIN, TIME_ENTITIES_TO_UPDATE
+from .models import Appliance, Appliances, ApplianceState
 from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -277,7 +278,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     name=appliance_name,
                     brand=brand,
                     model=appliance_model,
-                    state=appliance_state,
+                    state=cast(ApplianceState, appliance_state),
                 )
                 appliances.appliances[appliance_id] = appliance
 

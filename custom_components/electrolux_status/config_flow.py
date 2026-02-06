@@ -21,6 +21,7 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
+from .api import UserInput
 from .const import (
     CONF_ACCESS_TOKEN,
     CONF_API_KEY,
@@ -35,7 +36,7 @@ from .util import get_electrolux_session
 _LOGGER = logging.getLogger(__name__)
 
 
-class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
+class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]  # HA metaclass requires domain kwarg
     """Config flow for Electrolux Status."""
 
     VERSION = 1
@@ -45,27 +46,40 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._errors: dict[str, str] = {}
 
-    async def async_step_user(self, user_input=None) -> ConfigFlowResult:
+    async def _validate_user_input_for_config(
+        self, user_input: dict[str, Any]
+    ) -> ConfigFlowResult | None:
+        """Validate user input for config flow."""
+        # check if the specified account is configured already
+        # to prevent them from being added twice
+        api_key = user_input.get("api_key")
+        if api_key and any(
+            api_key == entry.data.get("api_key", None)
+            for entry in self._async_current_entries()
+        ):
+            return self.async_abort(reason="already_configured_account")
+
+        valid = await self._test_credentials(
+            user_input.get("api_key"),
+            user_input.get("access_token"),
+            user_input.get("refresh_token"),
+        )
+        if valid:
+            return self.async_create_entry(title="Electrolux", data=user_input)
+        self._errors["base"] = "invalid_auth"
+        return None
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
         if user_input is not None:
-            # check if the specified account is configured already
-            # to prevent them from being added twice
-            for entry in self._async_current_entries():
-                if user_input[CONF_API_KEY] == entry.data.get("api_key", None):
-                    return self.async_abort(reason="already_configured_account")
-
-            valid = await self._test_credentials(
-                user_input[CONF_API_KEY],
-                user_input[CONF_ACCESS_TOKEN],
-                user_input[CONF_REFRESH_TOKEN],
-            )
-            if valid:
-                return self.async_create_entry(title="Electrolux", data=user_input)
-            self._errors["base"] = "invalid_auth"
-
-            return await self._show_config_form(user_input)
+            result = await self._validate_user_input_for_config(user_input)
+            if result is not None:
+                return result
+            # Invalid, show form with errors
 
         return await self._show_config_form(user_input)
 
@@ -77,23 +91,35 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         self._reauth_entry_data = entry_data
         return await self.async_step_reauth_validate()
 
-    async def async_step_reauth_validate(self, user_input=None) -> ConfigFlowResult:
+    async def _validate_reauth_input(
+        self, user_input: UserInput | dict[str, Any]
+    ) -> ConfigFlowResult | None:
+        """Validate user input for reauth."""
+        valid = await self._test_credentials(
+            user_input.get("api_key"),
+            user_input.get("access_token"),
+            user_input.get("refresh_token"),
+        )
+        if valid:
+            # Update the existing entry with new tokens
+            return self.async_update_reload_and_abort(
+                self._get_reauth_entry(), data=user_input
+            )
+        self._errors["base"] = "invalid_auth"
+        return None
+
+    async def async_step_reauth_validate(
+        self, user_input: UserInput | None = None
+    ) -> ConfigFlowResult:
         """Handle reauth and validation."""
         self._errors = {}
         if user_input is not None:
-            valid = await self._test_credentials(
-                user_input[CONF_API_KEY],
-                user_input[CONF_ACCESS_TOKEN],
-                user_input[CONF_REFRESH_TOKEN],
-            )
-            if valid:
-                # Update the existing entry with new tokens
-                return self.async_update_reload_and_abort(
-                    self._get_reauth_entry(), data=user_input
-                )
-            self._errors["base"] = "invalid_auth"
-            return await self._show_config_form(user_input, "reauth_validate")
-        return await self._show_config_form(self._reauth_entry_data, "reauth_validate")
+            result = await self._validate_reauth_input(user_input)
+            if result is not None:
+                return result
+            # Invalid, show form with errors
+
+        return await self._show_config_form(user_input, "reauth_validate")
 
     @staticmethod
     @callback
@@ -101,11 +127,9 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         """Present the configuration options dialog."""
         return ElectroluxStatusOptionsFlowHandler(config_entry)
 
-    async def _show_config_form(self, user_input, step_id="user"):
-        """Show the configuration form to edit location data."""
-        defaults = user_input or {}
-
-        data_schema = {
+    def _get_config_schema(self, defaults: dict[str, Any]) -> vol.Schema:
+        """Get the config schema with defaults."""
+        data_schema: dict[Any, Any] = {
             vol.Required(
                 CONF_API_KEY, default=defaults.get(CONF_API_KEY, "")
             ): TextSelector(
@@ -127,37 +151,49 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
             ),
         }
         if self.show_advanced_options:
-            data_schema = {
-                **data_schema,
-                vol.Optional(
-                    CONF_NOTIFICATION_DEFAULT,
-                    default=defaults.get(CONF_NOTIFICATION_DEFAULT, True),
-                ): cv.boolean,
-                vol.Optional(
-                    CONF_NOTIFICATION_WARNING,
-                    default=defaults.get(CONF_NOTIFICATION_WARNING, False),
-                ): cv.boolean,
-                vol.Optional(
-                    CONF_NOTIFICATION_DIAG,
-                    default=defaults.get(CONF_NOTIFICATION_DIAG, False),
-                ): cv.boolean,
-            }
+            data_schema.update(
+                {
+                    vol.Optional(
+                        CONF_NOTIFICATION_DEFAULT,
+                        default=defaults.get(CONF_NOTIFICATION_DEFAULT, True),
+                    ): cv.boolean,
+                    vol.Optional(
+                        CONF_NOTIFICATION_WARNING,
+                        default=defaults.get(CONF_NOTIFICATION_WARNING, False),
+                    ): cv.boolean,
+                    vol.Optional(
+                        CONF_NOTIFICATION_DIAG,
+                        default=defaults.get(CONF_NOTIFICATION_DIAG, False),
+                    ): cv.boolean,
+                }
+            )
+        return vol.Schema(data_schema)
+
+    async def _show_config_form(self, user_input, step_id="user"):
+        """Show the configuration form to edit location data."""
+        defaults = user_input or {}
+
         return self.async_show_form(
             step_id=step_id,
-            data_schema=vol.Schema(data_schema),
+            data_schema=self._get_config_schema(defaults),
             errors=self._errors,
             description_placeholders={"url": "https://developer.electrolux.one/"},
         )
 
-    async def _test_credentials(self, api_key, access_token, refresh_token):
+    async def _test_credentials(
+        self, api_key: str | None, access_token: str | None, refresh_token: str | None
+    ) -> bool:
         """Return true if credentials is valid."""
         try:
             client = get_electrolux_session(
                 api_key, access_token, refresh_token, async_get_clientsession(self.hass)
             )
             await client.get_appliances_list()
-        except Exception as inst:  # pylint: disable=broad-except  # noqa: BLE001
-            _LOGGER.error("Authentication to electrolux failed: %s", inst)
+        except (ConnectionError, TimeoutError, ValueError, KeyError) as e:
+            _LOGGER.error("Authentication to Electrolux failed: %s", e)
+            return False
+        except Exception as e:  # Fallback for unexpected errors
+            _LOGGER.error("Unexpected error during Electrolux authentication: %s", e)
             return False
         return True
 
@@ -220,71 +256,82 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
             }
         )
 
-    async def _test_credentials(self, api_key, access_token, refresh_token):
+    async def _test_credentials(
+        self, api_key: str | None, access_token: str | None, refresh_token: str | None
+    ) -> bool:
         """Return true if credentials is valid."""
         try:
             client = get_electrolux_session(
                 api_key, access_token, refresh_token, async_get_clientsession(self.hass)
             )
             await client.get_appliances_list()
-        except Exception as inst:  # pylint: disable=broad-except  # noqa: BLE001
-            _LOGGER.error("Authentication to electrolux failed: %s", inst)
+        except (ConnectionError, TimeoutError, ValueError, KeyError) as e:
+            _LOGGER.error("Authentication to Electrolux failed: %s", e)
+            return False
+        except Exception as e:  # Fallback for unexpected errors
+            _LOGGER.error("Unexpected error during Electrolux authentication: %s", e)
             return False
         return True
 
-    async def async_step_user(self, user_input=None) -> ConfigFlowResult:
+    async def _validate_and_update_options(
+        self, user_input: dict[str, Any]
+    ) -> ConfigFlowResult | None:
+        """Validate credentials and update options if provided."""
+        # Test credentials if any API credentials were provided
+        if any(
+            key in user_input
+            for key in [CONF_API_KEY, CONF_ACCESS_TOKEN, CONF_REFRESH_TOKEN]
+        ):
+            api_key = user_input.get(
+                CONF_API_KEY, self._config_entry.data.get(CONF_API_KEY)
+            )
+            access_token = user_input.get(
+                CONF_ACCESS_TOKEN, self._config_entry.data.get(CONF_ACCESS_TOKEN)
+            )
+            refresh_token = user_input.get(
+                CONF_REFRESH_TOKEN, self._config_entry.data.get(CONF_REFRESH_TOKEN)
+            )
+
+            if not await self._test_credentials(api_key, access_token, refresh_token):
+                return None  # Invalid, caller will show form with errors
+
+        # Update the config entry data with new options
+        new_data = dict(self._config_entry.data)
+        new_options = dict(self._config_entry.options)
+
+        # API credentials and notifications go in data (require restart)
+        if "api_key" in user_input:
+            new_data["api_key"] = user_input.get("api_key")
+        if "access_token" in user_input:
+            new_data["access_token"] = user_input.get("access_token")
+        if "refresh_token" in user_input:
+            new_data["refresh_token"] = user_input.get("refresh_token")
+        if "notification_default" in user_input:
+            new_data["notification_default"] = user_input.get("notification_default")
+        if "notification_warning" in user_input:
+            new_data["notification_warning"] = user_input.get("notification_warning")
+        if "notification_diag" in user_input:
+            new_data["notification_diag"] = user_input.get("notification_diag")
+
+        self.hass.config_entries.async_update_entry(
+            self._config_entry, data=new_data, options=new_options
+        )
+        return self.async_create_entry(title="", data={})
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle the user step."""
         if user_input is not None:
-            # Test credentials if any API credentials were provided
-            if any(
-                key in user_input
-                for key in [CONF_API_KEY, CONF_ACCESS_TOKEN, CONF_REFRESH_TOKEN]
-            ):
-                api_key = user_input.get(
-                    CONF_API_KEY, self._config_entry.data.get(CONF_API_KEY)
-                )
-                access_token = user_input.get(
-                    CONF_ACCESS_TOKEN, self._config_entry.data.get(CONF_ACCESS_TOKEN)
-                )
-                refresh_token = user_input.get(
-                    CONF_REFRESH_TOKEN, self._config_entry.data.get(CONF_REFRESH_TOKEN)
-                )
-
-                if not await self._test_credentials(
-                    api_key, access_token, refresh_token
-                ):
-                    return self.async_show_form(
-                        step_id="user",
-                        data_schema=self._get_options_schema(),
-                        errors={"base": "invalid_auth"},
-                    )
-
-            # Update the config entry data with new options
-            new_data = dict(self._config_entry.data)
-            new_options = dict(self._config_entry.options)
-
-            # API credentials and notifications go in data (require restart)
-            if CONF_API_KEY in user_input:
-                new_data[CONF_API_KEY] = user_input[CONF_API_KEY]
-            if CONF_ACCESS_TOKEN in user_input:
-                new_data[CONF_ACCESS_TOKEN] = user_input[CONF_ACCESS_TOKEN]
-            if CONF_REFRESH_TOKEN in user_input:
-                new_data[CONF_REFRESH_TOKEN] = user_input[CONF_REFRESH_TOKEN]
-            if CONF_NOTIFICATION_DEFAULT in user_input:
-                new_data[CONF_NOTIFICATION_DEFAULT] = user_input[
-                    CONF_NOTIFICATION_DEFAULT
-                ]
-            if CONF_NOTIFICATION_WARNING in user_input:
-                new_data[CONF_NOTIFICATION_WARNING] = user_input[
-                    CONF_NOTIFICATION_WARNING
-                ]
-            if CONF_NOTIFICATION_DIAG in user_input:
-                new_data[CONF_NOTIFICATION_DIAG] = user_input[CONF_NOTIFICATION_DIAG]
-
-            self.hass.config_entries.async_update_entry(
-                self._config_entry, data=new_data, options=new_options
+            result = await self._validate_and_update_options(user_input)
+            if result is not None:
+                return result
+            # Invalid credentials, show form with errors
+            return self.async_show_form(
+                step_id="user",
+                data_schema=self._get_options_schema(),
+                errors={"base": "invalid_auth"},
             )
-            return self.async_create_entry(title="", data={})
 
         return self.async_show_form(
             step_id="user",

@@ -7,6 +7,7 @@ from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import BUTTON, DOMAIN, icon_mapping
@@ -125,7 +126,9 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
                 self.pnc_id,
                 remote_control,
             )
-            raise Exception(f"Remote control disabled (status: {remote_control})")
+            raise HomeAssistantError(
+                f"Remote control disabled (status: {remote_control})"
+            )
 
         client: ElectroluxApiClient = self.api
         value = self.val_to_send
@@ -145,7 +148,13 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
         else:
             command = {self.entity_attr: value}
         _LOGGER.debug("Electrolux send command %s", command)
-        result = await client.execute_appliance_command(self.pnc_id, command)
+        try:
+            result = await client.execute_appliance_command(self.pnc_id, command)
+        except Exception as ex:
+            error_msg = str(ex).lower()
+            if "disconnected" in error_msg or "command_validation_error" in error_msg:
+                raise HomeAssistantError("Appliance is disconnected or not available")
+            raise
         _LOGGER.debug("Electrolux send command result %s", result)
         return True
 

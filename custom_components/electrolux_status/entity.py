@@ -7,12 +7,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
 from .const import DOMAIN
 from .model import ElectroluxDevice
+from .models import Appliance, Appliances, ApplianceState
 from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -99,7 +101,7 @@ class ElectroluxEntity(CoordinatorEntity):
         entity_source,
         capability: dict[str, Any],
         unit: str | None,
-        device_class: str,
+        device_class: Any,
         entity_category: EntityCategory,
         icon: str,
         catalog_entry: ElectroluxDevice | None = None,
@@ -107,7 +109,7 @@ class ElectroluxEntity(CoordinatorEntity):
         """Initaliaze the entity."""
         super().__init__(coordinator)
         self.root_attribute = ["properties", "reported"]
-        self.data = None
+        self.data: Appliances | None = None
         self.coordinator = coordinator
         self._cached_value: Any = None
         self._name = name
@@ -135,7 +137,7 @@ class ElectroluxEntity(CoordinatorEntity):
             )
         _LOGGER.debug("Electrolux new entity %s for appliance %s", name, pnc_id)
 
-    def setup(self, data):
+    def setup(self, data: Appliances) -> None:
         """Initialiaze setup."""
         self.data = data
 
@@ -195,7 +197,7 @@ class ElectroluxEntity(CoordinatorEntity):
         return self.reported_state.get(path, None)
 
     @property
-    def reported_state(self):
+    def reported_state(self) -> dict[str, Any]:
         """Return reported state of the appliance."""
         return self.appliance_status.get("properties", {}).get("reported", {})
 
@@ -216,12 +218,12 @@ class ElectroluxEntity(CoordinatorEntity):
     #     return self.get_appliance.get_entity(self.entity_type, self.entity_attr, self.entity_source, None)
 
     @property
-    def get_appliance(self):
+    def get_appliance(self) -> Appliance:
         """Return the appliance device."""
         return self.coordinator.data["appliances"].get_appliance(self.pnc_id)
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return identifiers of the device."""
         appliance = self.get_appliance
         model = appliance.model
@@ -243,7 +245,7 @@ class ElectroluxEntity(CoordinatorEntity):
             # Try to get appliance type from state
             appliance_type = appliance.appliance_type
             if appliance_type and appliance_type != "Unknown":
-                model = appliance_type
+                model = str(appliance_type)
                 _LOGGER.debug(
                     "Using appliance_type '%s' as model for %s",
                     appliance_type,
@@ -256,7 +258,7 @@ class ElectroluxEntity(CoordinatorEntity):
                     "Using appliance name '%s' as model for %s", model, self.pnc_id
                 )
 
-        device_info = {
+        device_info: DeviceInfo = {
             "identifiers": {(DOMAIN, self.pnc_id)},
             "name": name or model,
             "model": model,
@@ -272,13 +274,13 @@ class ElectroluxEntity(CoordinatorEntity):
         return self._entity_category
 
     @property
-    def device_class(self):
+    def device_class(self) -> Any:
         """Return the device class of the sensor."""
         return self._device_class
 
-    def extract_value(self):
+    def extract_value(self) -> Any:
         """Return the appliance attributes of the entity."""
-        root_attribute = self.root_attribute
+        root_attribute: list[str] | None = self.root_attribute
         attribute = self.entity_attr
         if self.appliance_status:
             root = cast(Any, self.appliance_status)
@@ -301,9 +303,11 @@ class ElectroluxEntity(CoordinatorEntity):
                     return root.get(attribute, None)
         return None
 
-    def update(self, appliance_status: dict[str, Any]):
+    def update(self, appliance_status: ApplianceState | dict[str, Any]):
         """Update the appliance status."""
-        self.appliance_status = appliance_status
+        # Cast needed because ApplianceState TypedDict is not directly assignable to dict[str, Any] in mypy,
+        # despite being a subtype, due to TypedDict's structural typing constraints.
+        self.appliance_status = cast(dict[str, Any], appliance_status)
         # if self.hass:
         #     self.async_write_ha_state()
 

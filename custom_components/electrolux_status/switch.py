@@ -6,6 +6,7 @@ from typing import Any
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SWITCH
@@ -83,7 +84,9 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
                 self.pnc_id,
                 remote_control,
             )
-            raise Exception(f"Remote control disabled (status: {remote_control})")
+            raise HomeAssistantError(
+                f"Remote control disabled (status: {remote_control})"
+            )
 
         client: ElectroluxApiClient = self.api
         # Electrolux bug - needs string not bool
@@ -107,7 +110,13 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
         else:
             command = {self.entity_attr: command_value}
         _LOGGER.debug("Electrolux set value %s", command_value)
-        result = await client.execute_appliance_command(self.pnc_id, command)
+        try:
+            result = await client.execute_appliance_command(self.pnc_id, command)
+        except Exception as ex:
+            error_msg = str(ex).lower()
+            if "disconnected" in error_msg or "command_validation_error" in error_msg:
+                raise HomeAssistantError("Appliance is disconnected or not available")
+            raise
         _LOGGER.debug("Electrolux set value result %s", result)
 
     async def async_turn_on(self, **kwargs: Any) -> None:

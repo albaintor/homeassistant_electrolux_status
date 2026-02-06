@@ -8,6 +8,7 @@ from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SELECT
@@ -164,7 +165,9 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
                 self.pnc_id,
                 remote_control,
             )
-            raise Exception(f"Remote control disabled (status: {remote_control})")
+            raise HomeAssistantError(
+                f"Remote control disabled (status: {remote_control})"
+            )
 
         value: Any = self.options_list.get(option, None)
         if value is None:
@@ -202,7 +205,13 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             command = {self.entity_attr: value}
 
         _LOGGER.debug("Electrolux select option %s", command)
-        result = await client.execute_appliance_command(self.pnc_id, command)
+        try:
+            result = await client.execute_appliance_command(self.pnc_id, command)
+        except Exception as ex:
+            error_msg = str(ex).lower()
+            if "disconnected" in error_msg or "command_validation_error" in error_msg:
+                raise HomeAssistantError("Appliance is disconnected or not available")
+            raise
         _LOGGER.debug("Electrolux select option result %s", result)
 
     @property
