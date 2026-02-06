@@ -75,10 +75,12 @@ def create_notification(
         title,
         message,
     )
-    hass.services.async_call(
-        "persistent_notification",
-        "create",
-        {"message": message, "title": title, "notification_id": base64_string},
+    hass.async_create_task(
+        hass.services.async_call(
+            "persistent_notification",
+            "create",
+            {"message": message, "title": title, "notification_id": base64_string},
+        )
     )
 
 

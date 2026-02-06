@@ -91,6 +91,7 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
         if "values" in self.capability:
             command_value = "ON" if value else "OFF"
 
+        command: dict[str, Any]
         if self.entity_source:
             if self.entity_source == "userSelections":
                 command = {

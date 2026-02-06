@@ -175,18 +175,20 @@ class ElectroluxLibraryEntity:
             return self.capabilities.get(attr_name)
 
         keys = attr_name.split("/")
-        result = self.capabilities
+        result: dict[str, Any] | None = self.capabilities
 
         for key in keys:
+            if not isinstance(result, dict):
+                return None
             result = result.get(key)
             if result is None:
                 return None
 
-        return result
+        return result if isinstance(result, dict) else None
 
     def get_entity_unit(self, attr_name: str):
         """Get entity unit type."""
-        capability_def: dict[str, Any] | None = self.get_capability(attr_name)
+        capability_def = self.get_capability(attr_name)
         if not capability_def:
             return None
         # Type : string, int, number, boolean (other values ignored)
@@ -447,14 +449,16 @@ class Appliance:
         """
 
         keys = attr_name.split("/")
-        result = self.reported_state
+        result: dict[str, Any] | None = self.reported_state
 
         for key in keys:
+            if not isinstance(result, dict):
+                return None
             result = result.get(key)
             if result is None:
                 return None
 
-        return result
+        return result if isinstance(result, dict) else None
 
     def get_entity(self, capability: str) -> Sequence[ElectroluxEntity]:
         """Return the entity."""
@@ -660,9 +664,9 @@ class Appliance:
                     )
 
         # Setup each found entity
-        self.entities = entities
-        for entity in entities:
-            entity.setup(data)
+        self.entities = list(entities)
+        for ent in entities:
+            ent.setup(data)
 
     def update_reported_data(self, reported_data: dict[str, Any]):
         """Update the reported data."""

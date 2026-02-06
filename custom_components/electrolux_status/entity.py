@@ -95,7 +95,7 @@ class ElectroluxEntity(CoordinatorEntity):
         pnc_id: str,
         entity_type: Platform | None,
         entity_name,
-        entity_attr,
+        entity_attr: str,
         entity_source,
         capability: dict[str, Any],
         unit: str | None,

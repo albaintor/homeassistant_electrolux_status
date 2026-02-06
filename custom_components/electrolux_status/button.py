@@ -129,6 +129,7 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
 
         client: ElectroluxApiClient = self.api
         value = self.val_to_send
+        command: dict[str, Any]
         if self.entity_source:
             if self.entity_source == "userSelections":
                 command = {

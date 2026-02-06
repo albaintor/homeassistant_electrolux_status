@@ -166,7 +166,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             )
             raise Exception(f"Remote control disabled (status: {remote_control})")
 
-        value = self.options_list.get(option, None)
+        value: Any = self.options_list.get(option, None)
         if value is None:
             return
 
