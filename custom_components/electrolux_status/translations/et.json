@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electroluxi oleku seadistamine",
-                "description": "Ühendage oma Electroluxi seadmed, kasutades Electroluxi arendajaportaali API mandaate.\n\nKui vajate abi API mandaatide hankimisel, külastage: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electroluxi seadistamine",
+                "description": "Ühendage oma Electroluxi seadmed, kasutades Electroluxi arendajaportaali API mandaate.\n\n**API mandaatide hankimiseks:**\n1. Külastage veebisaiti https://developer.electrolux.one/\n2. Registreeru ja loo taotlus\n3. Hankige oma API võti, juurdepääsuluba ja värskendusluba\n\nKui vajate abi, vaadake integreerimise dokumentatsiooni.",
                 "data": {
                     "api_key": "API võti",
                     "access_token": "Juurdepääsuluba",
                     "refresh_token": "Värskenda märki",
-                    "language": "Keel",
-                    "notifications": "Lubage märguanded ALERT taseme teadete jaoks",
-                    "notifications_warning": "Luba märguanded HOIATUStaseme teadete jaoks",
-                    "notifications_diagnostic": "Lubage DIAGNOSTIKA taseme teatiste märguanded"
+                    "notifications": "Lubage kriitiliste hoiatusteadete märguanded",
+                    "notifications_warning": "Hoiatuste märguannete lubamine",
+                    "notifications_diagnostic": "Lubage diagnostikasõnumite märguanded"
                 }
             },
             "reauth_validate": {
-                "title": "Autentige Electroluxi olek uuesti",
-                "description": "Teie Electroluxi API märgid on aegunud või kehtetud. Värskendage neid värskete žetoonidega Electroluxi arendajaportaalist.",
+                "title": "Autentige Electrolux uuesti",
+                "description": "Teie Electroluxi API märgid on aegunud või kehtetud. Värskendage neid värskete žetoonidega Electroluxi arendajaportaalist.\n\nUute märkide loomiseks külastage aadressi https://developer.electrolux.one/.",
                 "data": {
                     "api_key": "API võti",
                     "access_token": "Juurdepääsuluba",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Kehtetud API mandaadid. Kontrollige oma API võtit, juurdepääsuluba ja värskendusluba."
+            "invalid_auth": "Kehtetud API mandaadid. Kontrollige oma API võtit, juurdepääsuluba ja värskendusluba Electroluxi arendajaportaalist.",
+            "incomplete_credentials": "Kõik API mandaadid (API võti, juurdepääsuluba, värskendusluba) tuleb esitada koos."
         },
         "abort": {
-            "single_instance_allowed": "Lubatud on ainult üks konfiguratsioon.",
+            "single_instance_allowed": "Lubatud on ainult üks Electroluxi konfiguratsioon.",
             "already_configured": "See seade on juba konfigureeritud.",
             "already_configured_account": "See API võti on juba konfigureeritud.",
             "reconfigure_successful": "Ümberseadistamine õnnestus."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electroluxi olekuvalikud",
-                "description": "Konfigureerige Electroluxi oleku integreerimise sätted.",
+                "title": "Electroluxi valikud",
+                "description": "Konfigureerige oma Electroluxi integratsiooniseaded. Siin saate värskendada API mandaate või teavituse eelistusi.\n\n**Märkus.** API mandaatide muutmine nõuab taaskäivitamist.",
                 "data": {
-                    "language": "Kuva keel",
-                    "notifications": "Lubage märguanded ALERT taseme teadete jaoks",
-                    "notifications_warning": "Luba märguanded HOIATUStaseme teadete jaoks",
-                    "notifications_diagnostic": "Lubage DIAGNOSTIKA taseme teatiste märguanded",
-                    "renew_interval": "Veebipesa uuendamise intervall (sekundites)"
+                    "api_key": "API võti (vajalik taaskäivitamine)",
+                    "access_token": "Juurdepääsuluba (vajalik taaskäivitamine)",
+                    "refresh_token": "Refresh Token (vajalik taaskäivitamine)",
+                    "notifications": "Lubage kriitiliste hoiatusteadete märguanded",
+                    "notifications_warning": "Hoiatuste märguannete lubamine",
+                    "notifications_diagnostic": "Lubage diagnostikasõnumite märguanded"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Kõik API mandaadid (API võti, juurdepääsuluba, värskendusluba) tuleb esitada koos.",
+            "invalid_auth": "Kehtetud API mandaadid. Kontrollige oma API võtit, juurdepääsuluba ja värskendusluba."
         }
     }
 }

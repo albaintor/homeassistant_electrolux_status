@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electrolux Status Setup",
-                "description": "Connect your Electrolux appliances using API credentials from the Electrolux Developer Portal.\n\nIf you need help obtaining API credentials, visit: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Setup",
+                "description": "Connect your Electrolux appliances using API credentials from the Electrolux Developer Portal.\n\n**To get API credentials:**\n1. Visit https://developer.electrolux.one/\n2. Register and create an application\n3. Obtain your API Key, Access Token, and Refresh Token\n\nIf you need help, visit the integration documentation.",
                 "data": {
                     "api_key": "API Key",
                     "access_token": "Access Token",
                     "refresh_token": "Refresh Token",
-                    "language": "Language",
-                    "notifications": "Enable notifications for ALERT level notices",
-                    "notifications_warning": "Enable notifications for WARNING level notices",
-                    "notifications_diagnostic": "Enable notifications for DIAGNOSTIC level notices"
+                    "notifications": "Enable notifications for critical alerts",
+                    "notifications_warning": "Enable notifications for warnings",
+                    "notifications_diagnostic": "Enable notifications for diagnostic messages"
                 }
             },
             "reauth_validate": {
-                "title": "Re-authenticate Electrolux Status",
-                "description": "Your Electrolux API tokens have expired or are invalid. Please update them with fresh tokens from the Electrolux Developer Portal.",
+                "title": "Re-authenticate Electrolux",
+                "description": "Your Electrolux API tokens have expired or are invalid. Please update them with fresh tokens from the Electrolux Developer Portal.\n\nVisit https://developer.electrolux.one/ to generate new tokens.",
                 "data": {
                     "api_key": "API Key",
                     "access_token": "Access Token",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Invalid API credentials. Please check your API Key, Access Token, and Refresh Token."
+            "invalid_auth": "Invalid API credentials. Please check your API Key, Access Token, and Refresh Token from the Electrolux Developer Portal.",
+            "incomplete_credentials": "All API credentials (API Key, Access Token, Refresh Token) must be provided together."
         },
         "abort": {
-            "single_instance_allowed": "Only a single configuration is allowed.",
+            "single_instance_allowed": "Only a single Electrolux configuration is allowed.",
             "already_configured": "This device is already configured.",
             "already_configured_account": "This API Key is already configured.",
             "reconfigure_successful": "Re-configuration was successful."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electrolux Status Options",
-                "description": "Configure Electrolux Status integration settings.",
+                "title": "Electrolux Options",
+                "description": "Configure your Electrolux integration settings. You can update API credentials or notification preferences here.\n\n**Note:** Changes to API credentials require a restart.",
                 "data": {
-                    "language": "Display Language",
-                    "notifications": "Enable notifications for ALERT level notices",
-                    "notifications_warning": "Enable notifications for WARNING level notices",
-                    "notifications_diagnostic": "Enable notifications for DIAGNOSTIC level notices",
-                    "renew_interval": "Websocket renewal interval (seconds)"
+                    "api_key": "API Key (restart required)",
+                    "access_token": "Access Token (restart required)",
+                    "refresh_token": "Refresh Token (restart required)",
+                    "notifications": "Enable notifications for critical alerts",
+                    "notifications_warning": "Enable notifications for warnings",
+                    "notifications_diagnostic": "Enable notifications for diagnostic messages"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "All API credentials (API Key, Access Token, Refresh Token) must be provided together.",
+            "invalid_auth": "Invalid API credentials. Please check your API Key, Access Token, and Refresh Token."
         }
     }
 }

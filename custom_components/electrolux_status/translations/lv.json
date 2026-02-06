@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electrolux statusa iestatīšana",
-                "description": "Pievienojiet savas Electrolux ierīces, izmantojot API akreditācijas datus no Electrolux izstrādātāju portāla.\n\nJa jums nepieciešama palīdzība API akreditācijas datu iegūšanā, apmeklējiet vietni https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux iestatīšana",
+                "description": "Pievienojiet savas Electrolux ierīces, izmantojot API akreditācijas datus no Electrolux izstrādātāju portāla.\n\n**Lai iegūtu API akreditācijas datus:**\n1. Apmeklējiet vietni https://developer.electrolux.one/\n2. Reģistrējieties un izveidojiet pieteikumu\n3. Iegūstiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru\n\nJa jums nepieciešama palīdzība, apmeklējiet integrācijas dokumentāciju.",
                 "data": {
                     "api_key": "API atslēga",
                     "access_token": "Piekļuves marķieris",
                     "refresh_token": "Atsvaidzināt marķieri",
-                    "language": "Valoda",
-                    "notifications": "Iespējot paziņojumus par ALERT līmeņa paziņojumiem",
-                    "notifications_warning": "Iespējot paziņojumus BRĪDINĀJUMA līmeņa paziņojumiem",
-                    "notifications_diagnostic": "Iespējot paziņojumus DIAGNOSTIKA līmeņa paziņojumiem"
+                    "notifications": "Iespējot paziņojumus par kritiskiem brīdinājumiem",
+                    "notifications_warning": "Iespējot brīdinājumu paziņojumus",
+                    "notifications_diagnostic": "Iespējot diagnostikas ziņojumu paziņojumus"
                 }
             },
             "reauth_validate": {
-                "title": "Atkārtoti autentificējiet Electrolux statusu",
-                "description": "Jūsu Electrolux API marķieriem ir beidzies derīguma termiņš vai tie ir nederīgi. Lūdzu, atjauniniet tos ar jauniem marķieriem no Electrolux izstrādātāju portāla.",
+                "title": "Atkārtoti autentificējiet Electrolux",
+                "description": "Jūsu Electrolux API marķieriem ir beidzies derīguma termiņš vai tie ir nederīgi. Lūdzu, atjauniniet tos ar jauniem marķieriem no Electrolux izstrādātāju portāla.\n\nApmeklējiet vietni https://developer.electrolux.one/, lai ģenerētu jaunus marķierus.",
                 "data": {
                     "api_key": "API atslēga",
                     "access_token": "Piekļuves marķieris",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Nederīgi API akreditācijas dati. Lūdzu, pārbaudiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru."
+            "invalid_auth": "Nederīgi API akreditācijas dati. Lūdzu, pārbaudiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru Electrolux izstrādātāju portālā.",
+            "incomplete_credentials": "Visi API akreditācijas dati (API atslēga, piekļuves pilnvara, atsvaidzināšanas pilnvara) ir jāiesniedz kopā."
         },
         "abort": {
-            "single_instance_allowed": "Ir atļauta tikai viena konfigurācija.",
+            "single_instance_allowed": "Ir atļauta tikai viena Electrolux konfigurācija.",
             "already_configured": "Šī ierīce jau ir konfigurēta.",
             "already_configured_account": "Šī API atslēga jau ir konfigurēta.",
             "reconfigure_successful": "Atkārtota konfigurācija bija veiksmīga."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electrolux statusa opcijas",
-                "description": "Konfigurējiet Electrolux Status integrācijas iestatījumus.",
+                "title": "Electrolux opcijas",
+                "description": "Konfigurējiet savus Electrolux integrācijas iestatījumus. Šeit varat atjaunināt API akreditācijas datus vai paziņojumu preferences.\n\n**Piezīme:** API akreditācijas datu izmaiņām ir nepieciešama restartēšana.",
                 "data": {
-                    "language": "Displeja valoda",
-                    "notifications": "Iespējot paziņojumus par ALERT līmeņa paziņojumiem",
-                    "notifications_warning": "Iespējot paziņojumus BRĪDINĀJUMA līmeņa paziņojumiem",
-                    "notifications_diagnostic": "Iespējot paziņojumus DIAGNOSTIKA līmeņa paziņojumiem",
-                    "renew_interval": "Tīmekļa kontaktligzdas atjaunošanas intervāls (sekundēs)"
+                    "api_key": "API atslēga (nepieciešams restartēt)",
+                    "access_token": "Piekļuves pilnvara (nepieciešams restartēt)",
+                    "refresh_token": "Refresh Token (nepieciešams restartēt)",
+                    "notifications": "Iespējot paziņojumus par kritiskiem brīdinājumiem",
+                    "notifications_warning": "Iespējot brīdinājumu paziņojumus",
+                    "notifications_diagnostic": "Iespējot diagnostikas ziņojumu paziņojumus"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Visi API akreditācijas dati (API atslēga, piekļuves pilnvara, atsvaidzināšanas pilnvara) ir jāiesniedz kopā.",
+            "invalid_auth": "Nederīgi API akreditācijas dati. Lūdzu, pārbaudiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru."
         }
     }
 }

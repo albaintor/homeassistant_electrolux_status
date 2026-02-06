@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electroluxin tilan asetukset",
-                "description": "Yhdistä Electrolux-laitteesi käyttämällä API-tunnistetietoja Electroluxin kehittäjäportaalista.\n\nJos tarvitset apua API-tunnistetietojen hankkimisessa, käy osoitteessa https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electroluxin asennus",
+                "description": "Yhdistä Electrolux-laitteesi käyttämällä API-tunnistetietoja Electroluxin kehittäjäportaalista.\n\n**API-tunnistetietojen hankkiminen:**\n1. Käy osoitteessa https://developer.electrolux.one/\n2. Rekisteröidy ja luo sovellus\n3. Hanki API-avain, käyttöoikeus ja päivitystunnus\n\nJos tarvitset apua, tutustu integrointidokumentaatioon.",
                 "data": {
                     "api_key": "API-avain",
                     "access_token": "Käyttöoikeustunnus",
                     "refresh_token": "Päivitä Token",
-                    "language": "Kieli",
-                    "notifications": "Ota ilmoitukset käyttöön ALERT-tason ilmoituksista",
-                    "notifications_warning": "Ota ilmoitukset käyttöön VAROITUS-tason ilmoituksista",
-                    "notifications_diagnostic": "Ota ilmoitukset käyttöön DIAGNOSTINEN tason ilmoituksista"
+                    "notifications": "Ota käyttöön kriittisten hälytysten ilmoitukset",
+                    "notifications_warning": "Ota käyttöön varoitusilmoitukset",
+                    "notifications_diagnostic": "Ota diagnostiikkaviestien ilmoitukset käyttöön"
                 }
             },
             "reauth_validate": {
-                "title": "Todenna Electroluxin tila uudelleen",
-                "description": "Electrolux API -tunnuksesi ovat vanhentuneet tai virheelliset. Päivitä ne uusilla Tokeneilla Electroluxin kehittäjäportaalista.",
+                "title": "Todenna Electrolux uudelleen",
+                "description": "Electrolux API -tunnuksesi ovat vanhentuneet tai virheelliset. Päivitä ne uusilla Tokeneilla Electroluxin kehittäjäportaalista.\n\nVieraile osoitteessa https://developer.electrolux.one/ luodaksesi uusia tunnuksia.",
                 "data": {
                     "api_key": "API-avain",
                     "access_token": "Käyttöoikeustunnus",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Virheelliset API-tunnistetiedot. Tarkista API-avain, käyttöoikeus ja päivitystunnus."
+            "invalid_auth": "Virheelliset API-tunnistetiedot. Tarkista API-avain, käyttöoikeus ja päivitystunnus Electroluxin kehittäjäportaalista.",
+            "incomplete_credentials": "Kaikki API-tunnistetiedot (API-avain, käyttöoikeustunnus, päivitystunnus) on annettava yhdessä."
         },
         "abort": {
-            "single_instance_allowed": "Vain yksi kokoonpano on sallittu.",
+            "single_instance_allowed": "Vain yksi Electrolux-kokoonpano on sallittu.",
             "already_configured": "Tämä laite on jo määritetty.",
             "already_configured_account": "Tämä API-avain on jo määritetty.",
             "reconfigure_successful": "Uudelleenmääritys onnistui."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electroluxin tilavaihtoehdot",
-                "description": "Määritä Electrolux Status -integrointiasetukset.",
+                "title": "Electroluxin vaihtoehdot",
+                "description": "Määritä Electroluxin integrointiasetukset. Voit päivittää API-tunnistetiedot tai ilmoitusasetukset täällä.\n\n**Huomaa:** API-tunnistetietojen muutokset vaativat uudelleenkäynnistyksen.",
                 "data": {
-                    "language": "Näytön kieli",
-                    "notifications": "Ota ilmoitukset käyttöön ALERT-tason ilmoituksista",
-                    "notifications_warning": "Ota ilmoitukset käyttöön VAROITUS-tason ilmoituksista",
-                    "notifications_diagnostic": "Ota ilmoitukset käyttöön DIAGNOSTINEN tason ilmoituksista",
-                    "renew_interval": "Websocketin uusimisväli (sekuntia)"
+                    "api_key": "API-avain (uudelleenkäynnistys vaaditaan)",
+                    "access_token": "Käyttöoikeustunnus (uudelleenkäynnistys vaaditaan)",
+                    "refresh_token": "Refresh Token (uudelleenkäynnistys vaaditaan)",
+                    "notifications": "Ota käyttöön kriittisten hälytysten ilmoitukset",
+                    "notifications_warning": "Ota käyttöön varoitusilmoitukset",
+                    "notifications_diagnostic": "Ota diagnostiikkaviestien ilmoitukset käyttöön"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Kaikki API-tunnistetiedot (API-avain, käyttöoikeustunnus, päivitystunnus) on annettava yhdessä.",
+            "invalid_auth": "Virheelliset API-tunnistetiedot. Tarkista API-avain, käyttöoikeus ja päivitystunnus."
         }
     }
 }

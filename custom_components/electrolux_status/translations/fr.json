@@ -1,52 +1,57 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Configuration du statut Electrolux",
-        "description": "Connectez vos appareils Electrolux en utilisant les informations d'identification API du portail développeur Electrolux.\n\nSi vous avez besoin d'aide pour obtenir les informations d'identification API, visitez : https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "api_key": "Clé API",
-          "access_token": "Jeton d'accès",
-          "refresh_token": "Jeton de rafraîchissement",
-          "language": "Langue",
-          "notifications": "Activer les notifications pour les avis de niveau ALERTE",
-          "notifications_warning": "Activer les notifications pour les avis de niveau AVERTISSEMENT",
-          "notifications_diagnostic": "Activer les notifications pour les avis de niveau DIAGNOSTIC"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Configuration Electrolux",
+                "description": "Connectez vos appareils Electrolux à l'aide des informations d'identification API du portail des développeurs Electrolux.\n\n**Pour obtenir les informations d'identification de l'API :**\n1. Visitez https://developer.electrolux.one/\n2. Inscrivez-vous et créez une application\n3. Obtenez votre clé API, votre jeton d'accès et votre jeton d'actualisation\n\nSi vous avez besoin d'aide, visitez la documentation d'intégration.",
+                "data": {
+                    "api_key": "Clé API",
+                    "access_token": "Jeton d'accès",
+                    "refresh_token": "Actualiser le jeton",
+                    "notifications": "Activer les notifications pour les alertes critiques",
+                    "notifications_warning": "Activer les notifications pour les avertissements",
+                    "notifications_diagnostic": "Activer les notifications pour les messages de diagnostic"
+                }
+            },
+            "reauth_validate": {
+                "title": "Réauthentifier Electrolux",
+                "description": "Vos jetons API Electrolux ont expiré ou ne sont pas valides. Veuillez les mettre à jour avec de nouveaux jetons du portail des développeurs Electrolux.\n\nVisitez https://developer.electrolux.one/ pour générer de nouveaux jetons.",
+                "data": {
+                    "api_key": "Clé API",
+                    "access_token": "Jeton d'accès",
+                    "refresh_token": "Actualiser le jeton"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Informations d'identification API non valides. Veuillez vérifier votre clé API, votre jeton d'accès et votre jeton d'actualisation sur le portail des développeurs Electrolux.",
+            "incomplete_credentials": "Toutes les informations d'identification API (clé API, jeton d'accès, jeton d'actualisation) doivent être fournies ensemble."
+        },
+        "abort": {
+            "single_instance_allowed": "Une seule configuration Electrolux est autorisée.",
+            "already_configured": "Cet appareil est déjà configuré.",
+            "already_configured_account": "Cette clé API est déjà configurée.",
+            "reconfigure_successful": "La reconfiguration a réussi."
         }
-      },
-      "reauth_validate": {
-        "title": "Ré-authentifier le statut Electrolux",
-        "description": "Vos jetons API Electrolux ont expiré ou sont invalides. Veuillez les mettre à jour avec de nouveaux jetons du portail développeur Electrolux.",
-        "data": {
-          "api_key": "Clé API",
-          "access_token": "Jeton d'accès",
-          "refresh_token": "Jeton de rafraîchissement"
-        }
-      }
     },
-    "error": {
-      "invalid_auth": "Informations d'identification API invalides. Veuillez vérifier votre clé API, jeton d'accès et jeton de rafraîchissement."
-    },
-    "abort": {
-      "single_instance_allowed": "Une seule configuration est autorisée.",
-      "already_configured": "Cet appareil est déjà configuré.",
-      "already_configured_account": "Cette clé API est déjà configurée.",
-      "reconfigure_successful": "La reconfiguration a réussi."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "title": "Options du statut Electrolux",
-        "description": "Configurer les paramètres d'intégration du statut Electrolux.",
-        "data": {
-          "language": "Langue d'affichage",
-          "notifications": "Activer les notifications pour les avis de niveau ALERTE",
-          "notifications_warning": "Activer les notifications pour les avis de niveau AVERTISSEMENT",
-          "notifications_diagnostic": "Activer les notifications pour les avis de niveau DIAGNOSTIC",
-          "renew_interval": "Intervalle de renouvellement Websocket (secondes)"
+    "options": {
+        "step": {
+            "user": {
+                "title": "Options Electrolux",
+                "description": "Configurez vos paramètres d'intégration Electrolux. Vous pouvez mettre à jour les informations d'identification de l'API ou les préférences de notification ici.\n\n**Remarque :** Les modifications apportées aux informations d'identification de l'API nécessitent un redémarrage.",
+                "data": {
+                    "api_key": "Clé API (redémarrage requis)",
+                    "access_token": "Jeton d'accès (redémarrage requis)",
+                    "refresh_token": "Actualiser le jeton (redémarrage requis)",
+                    "notifications": "Activer les notifications pour les alertes critiques",
+                    "notifications_warning": "Activer les notifications pour les avertissements",
+                    "notifications_diagnostic": "Activer les notifications pour les messages de diagnostic"
+                }
+            }
+        },
+        "error": {
+            "incomplete_credentials": "Toutes les informations d'identification API (clé API, jeton d'accès, jeton d'actualisation) doivent être fournies ensemble.",
+            "invalid_auth": "Informations d'identification API non valides. Veuillez vérifier votre clé API, votre jeton d'accès et votre jeton d'actualisation."
         }
-      }
     }
-  }
 }

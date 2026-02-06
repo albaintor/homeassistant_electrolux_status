@@ -29,7 +29,7 @@ languages = {
     "norsk": "no",
     "polski": "pl",
     "Português": "pt",
-    "Português Brasil": "pt_br",
+    "Português Brasil": "pt",
     "Română": "ro",
     "русский": "ru",
     "slovenský": "sk",
@@ -72,17 +72,17 @@ def main():
     """Main translation function."""
     # Skip languages that are already manually translated
     manually_translated = [
-        "de",
-        "fr",
-        "es",
-        "it",
-        "nl",
-        "pl",
-        "sv",
-        "da",
-        "no",
-        "pt",
-        "ru",
+        # "de",
+        # "fr",
+        # "es",
+        # "it",
+        # "nl",
+        # "pl",
+        # "sv",
+        # "da",
+        # "no",
+        # "pt",
+        # "ru",
     ]
 
     for language_name, language_code in languages.items():

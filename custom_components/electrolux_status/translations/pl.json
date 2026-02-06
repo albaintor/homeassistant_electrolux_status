@@ -1,52 +1,57 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Konfiguracja statusu Electrolux",
-        "description": "Podłącz swoje urządzenia Electrolux używając poświadczeń API z portalu deweloperskiego Electrolux.\n\nJeśli potrzebujesz pomocy w uzyskaniu poświadczeń API, odwiedź: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "api_key": "Klucz API",
-          "access_token": "Token dostępu",
-          "refresh_token": "Token odświeżania",
-          "language": "Język",
-          "notifications": "Włącz powiadomienia dla powiadomień poziomu ALERT",
-          "notifications_warning": "Włącz powiadomienia dla powiadomień poziomu WARNING",
-          "notifications_diagnostic": "Włącz powiadomienia dla powiadomień poziomu DIAGNOSTIC"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Konfiguracja Electroluxa",
+                "description": "Połącz swoje urządzenia Electrolux, korzystając z danych uwierzytelniających API z portalu dla programistów Electrolux.\n\n**Aby uzyskać dane uwierzytelniające API:**\n1. Odwiedź https://developer.electrolux.one/\n2. Zarejestruj się i utwórz aplikację\n3. Uzyskaj klucz API, token dostępu i token odświeżenia\n\nJeśli potrzebujesz pomocy, odwiedź dokumentację integracji.",
+                "data": {
+                    "api_key": "Klucz API",
+                    "access_token": "Token dostępu",
+                    "refresh_token": "Odśwież token",
+                    "notifications": "Włącz powiadomienia o alertach krytycznych",
+                    "notifications_warning": "Włącz powiadomienia o ostrzeżeniach",
+                    "notifications_diagnostic": "Włącz powiadomienia o komunikatach diagnostycznych"
+                }
+            },
+            "reauth_validate": {
+                "title": "Ponownie uwierzytelnij firmę Electrolux",
+                "description": "Twoje tokeny API Electrolux utraciły ważność lub są nieprawidłowe. Zaktualizuj je, używając nowych tokenów z portalu dla programistów Electrolux.\n\nOdwiedź https://developer.electrolux.one/, aby wygenerować nowe tokeny.",
+                "data": {
+                    "api_key": "Klucz API",
+                    "access_token": "Token dostępu",
+                    "refresh_token": "Odśwież token"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Nieprawidłowe dane uwierzytelniające interfejsu API. Sprawdź swój klucz API, token dostępu i token odświeżenia w portalu programistów Electrolux.",
+            "incomplete_credentials": "Wszystkie dane uwierzytelniające API (klucz API, token dostępu, token odświeżania) należy podać razem."
+        },
+        "abort": {
+            "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja firmy Electrolux.",
+            "already_configured": "To urządzenie jest już skonfigurowane.",
+            "already_configured_account": "Ten klucz API jest już skonfigurowany.",
+            "reconfigure_successful": "Ponowna konfiguracja przebiegła pomyślnie."
         }
-      },
-      "reauth_validate": {
-        "title": "Ponownie uwierzytelnij status Electrolux",
-        "description": "Twoje tokeny API Electrolux wygasły lub są nieprawidłowe. Zaktualizuj je nowymi tokenami z portalu deweloperskiego Electrolux.",
-        "data": {
-          "api_key": "Klucz API",
-          "access_token": "Token dostępu",
-          "refresh_token": "Token odświeżania"
-        }
-      }
     },
-    "error": {
-      "invalid_auth": "Nieprawidłowe poświadczenia API. Sprawdź swój klucz API, token dostępu i token odświeżania."
-    },
-    "abort": {
-      "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja.",
-      "already_configured": "To urządzenie jest już skonfigurowane.",
-      "already_configured_account": "Ten klucz API jest już skonfigurowany.",
-      "reconfigure_successful": "Rekonfiguracja powiodła się."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "title": "Opcje statusu Electrolux",
-        "description": "Skonfiguruj ustawienia integracji statusu Electrolux.",
-        "data": {
-          "language": "Język wyświetlania",
-          "notifications": "Włącz powiadomienia dla powiadomień poziomu ALERT",
-          "notifications_warning": "Włącz powiadomienia dla powiadomień poziomu WARNING",
-          "notifications_diagnostic": "Włącz powiadomienia dla powiadomień poziomu DIAGNOSTIC",
-          "renew_interval": "Interwał odnawiania WebSocket (sekundy)"
+    "options": {
+        "step": {
+            "user": {
+                "title": "Opcje Electroluxa",
+                "description": "Skonfiguruj ustawienia integracji Electrolux. Tutaj możesz zaktualizować dane uwierzytelniające API lub preferencje powiadomień.\n\n**Uwaga:** Zmiany w poświadczeniach API wymagają ponownego uruchomienia.",
+                "data": {
+                    "api_key": "Klucz API (wymagane ponowne uruchomienie)",
+                    "access_token": "Token dostępu (wymagane ponowne uruchomienie)",
+                    "refresh_token": "Odśwież token (wymagane ponowne uruchomienie)",
+                    "notifications": "Włącz powiadomienia o alertach krytycznych",
+                    "notifications_warning": "Włącz powiadomienia o ostrzeżeniach",
+                    "notifications_diagnostic": "Włącz powiadomienia o komunikatach diagnostycznych"
+                }
+            }
+        },
+        "error": {
+            "incomplete_credentials": "Wszystkie dane uwierzytelniające API (klucz API, token dostępu, token odświeżania) należy podać razem.",
+            "invalid_auth": "Nieprawidłowe dane uwierzytelniające interfejsu API. Sprawdź swój klucz API, token dostępu i token odświeżenia."
         }
-      }
     }
-  }
 }

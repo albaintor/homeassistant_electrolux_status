@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Nastavitev statusa Electrolux",
-                "description": "Povežite svoje naprave Electrolux s poverilnicami API s portala za razvijalce Electrolux.\n\nČe potrebujete pomoč pri pridobivanju poverilnic za API, obiščite: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Nastavitev Electrolux",
+                "description": "Povežite svoje naprave Electrolux s poverilnicami API s portala za razvijalce Electrolux.\n\n**Če želite pridobiti poverilnice za API:**\n1. Obiščite https://developer.electrolux.one/\n2. Registrirajte se in ustvarite aplikacijo\n3. Pridobite svoj ključ API, žeton za dostop in žeton za osvežitev\n\nČe potrebujete pomoč, obiščite integracijsko dokumentacijo.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Žeton za dostop",
                     "refresh_token": "Osveži žeton",
-                    "language": "Jezik",
-                    "notifications": "Omogoči obvestila za obvestila na ravni ALERT",
-                    "notifications_warning": "Omogoči obvestila za obvestila stopnje OPOZORILO",
-                    "notifications_diagnostic": "Omogoči obvestila za obvestila DIAGNOSTIČNE ravni"
+                    "notifications": "Omogoči obvestila za kritična opozorila",
+                    "notifications_warning": "Omogoči obvestila za opozorila",
+                    "notifications_diagnostic": "Omogoči obvestila za diagnostična sporočila"
                 }
             },
             "reauth_validate": {
-                "title": "Ponovno potrdite status Electrolux",
-                "description": "Vaši Electrolux API žetoni so potekli ali so neveljavni. Posodobite jih s svežimi žetoni s portala za razvijalce Electrolux.",
+                "title": "Ponovno preverite Electrolux",
+                "description": "Vaši Electrolux API žetoni so potekli ali so neveljavni. Posodobite jih s svežimi žetoni s portala za razvijalce Electrolux.\n\nObiščite https://developer.electrolux.one/, da ustvarite nove žetone.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Žeton za dostop",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Neveljavne poverilnice za API. Preverite svoj ključ API, žeton za dostop in žeton za osvežitev."
+            "invalid_auth": "Neveljavne poverilnice za API. Preverite svoj ključ API, žeton za dostop in žeton za osvežitev na portalu za razvijalce Electrolux.",
+            "incomplete_credentials": "Vse poverilnice za API (ključ API, žeton za dostop, žeton za osvežitev) je treba zagotoviti skupaj."
         },
         "abort": {
-            "single_instance_allowed": "Dovoljena je samo ena konfiguracija.",
+            "single_instance_allowed": "Dovoljena je samo ena konfiguracija Electrolux.",
             "already_configured": "Ta naprava je že konfigurirana.",
             "already_configured_account": "Ta ključ API je že konfiguriran.",
             "reconfigure_successful": "Ponovna konfiguracija je bila uspešna."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Možnosti stanja Electrolux",
-                "description": "Konfigurirajte nastavitve integracije Electrolux Status.",
+                "title": "Možnosti Electrolux",
+                "description": "Konfigurirajte svoje nastavitve integracije Electrolux. Tu lahko posodobite poverilnice API ali nastavitve obvestil.\n\n**Opomba:** Spremembe poverilnic API-ja zahtevajo ponovni zagon.",
                 "data": {
-                    "language": "Prikazni jezik",
-                    "notifications": "Omogoči obvestila za obvestila na ravni ALERT",
-                    "notifications_warning": "Omogoči obvestila za obvestila stopnje OPOZORILO",
-                    "notifications_diagnostic": "Omogoči obvestila za obvestila DIAGNOSTIČNE ravni",
-                    "renew_interval": "Interval obnavljanja spletne vtičnice (sekunde)"
+                    "api_key": "Ključ API (potreben je ponovni zagon)",
+                    "access_token": "Žeton za dostop (potreben je ponovni zagon)",
+                    "refresh_token": "Osveži žeton (potreben je ponovni zagon)",
+                    "notifications": "Omogoči obvestila za kritična opozorila",
+                    "notifications_warning": "Omogoči obvestila za opozorila",
+                    "notifications_diagnostic": "Omogoči obvestila za diagnostična sporočila"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Vse poverilnice za API (ključ API, žeton za dostop, žeton za osvežitev) je treba zagotoviti skupaj.",
+            "invalid_auth": "Neveljavne poverilnice za API. Preverite svoj ključ API, žeton za dostop in žeton za osvežitev."
         }
     }
 }

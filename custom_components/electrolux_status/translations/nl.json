@@ -1,52 +1,57 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status Instellen",
-        "description": "Verbind uw Electrolux apparaten met API-inloggegevens van het Electrolux Developer Portal.\n\nAls u hulp nodig heeft bij het verkrijgen van API-inloggegevens, bezoek: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "api_key": "API-sleutel",
-          "access_token": "Toegangstoken",
-          "refresh_token": "Vernieuwingstoken",
-          "language": "Taal",
-          "notifications": "Meldingen inschakelen voor ALERT-niveau berichten",
-          "notifications_warning": "Meldingen inschakelen voor WARNING-niveau berichten",
-          "notifications_diagnostic": "Meldingen inschakelen voor DIAGNOSTIC-niveau berichten"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Electrolux-installatie",
+                "description": "Verbind uw Electrolux-apparaten met behulp van API-gegevens van de Electrolux Developer Portal.\n\n**Om API-inloggegevens te verkrijgen:**\n1. Bezoek https://developer.electrolux.one/\n2. Registreer en maak een applicatie aan\n3. Verkrijg uw API-sleutel, toegangstoken en vernieuwingstoken\n\nAls je hulp nodig hebt, ga dan naar de integratiedocumentatie.",
+                "data": {
+                    "api_key": "API-sleutel",
+                    "access_token": "Toegangstoken",
+                    "refresh_token": "Token vernieuwen",
+                    "notifications": "Schakel meldingen in voor kritieke waarschuwingen",
+                    "notifications_warning": "Schakel meldingen voor waarschuwingen in",
+                    "notifications_diagnostic": "Schakel meldingen voor diagnostische berichten in"
+                }
+            },
+            "reauth_validate": {
+                "title": "Authenticeer Electrolux opnieuw",
+                "description": "Uw Electrolux API-tokens zijn verlopen of ongeldig. Update ze met nieuwe tokens van de Electrolux Developer Portal.\n\nBezoek https://developer.electrolux.one/ om nieuwe tokens te genereren.",
+                "data": {
+                    "api_key": "API-sleutel",
+                    "access_token": "Toegangstoken",
+                    "refresh_token": "Token vernieuwen"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Ongeldige API-inloggegevens. Controleer uw API-sleutel, toegangstoken en vernieuwingstoken op de Electrolux Developer Portal.",
+            "incomplete_credentials": "Alle API-referenties (API-sleutel, toegangstoken, vernieuwingstoken) moeten samen worden opgegeven."
+        },
+        "abort": {
+            "single_instance_allowed": "Er is slechts één Electrolux-configuratie toegestaan.",
+            "already_configured": "Dit apparaat is al geconfigureerd.",
+            "already_configured_account": "Deze API-sleutel is al geconfigureerd.",
+            "reconfigure_successful": "De herconfiguratie was succesvol."
         }
-      },
-      "reauth_validate": {
-        "title": "Electrolux Status opnieuw authenticeren",
-        "description": "Uw Electrolux API-tokens zijn verlopen of ongeldig. Werk ze bij met nieuwe tokens van het Electrolux Developer Portal.",
-        "data": {
-          "api_key": "API-sleutel",
-          "access_token": "Toegangstoken",
-          "refresh_token": "Vernieuwingstoken"
-        }
-      }
     },
-    "error": {
-      "invalid_auth": "Ongeldige API-inloggegevens. Controleer uw API-sleutel, toegangstoken en vernieuwingstoken."
-    },
-    "abort": {
-      "single_instance_allowed": "Slechts één configuratie is toegestaan.",
-      "already_configured": "Dit apparaat is al geconfigureerd.",
-      "already_configured_account": "Deze API-sleutel is al geconfigureerd.",
-      "reconfigure_successful": "Herconfiguratie is gelukt."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status Opties",
-        "description": "Configureer Electrolux Status integratie instellingen.",
-        "data": {
-          "language": "Weergavetaal",
-          "notifications": "Meldingen inschakelen voor ALERT-niveau berichten",
-          "notifications_warning": "Meldingen inschakelen voor WARNING-niveau berichten",
-          "notifications_diagnostic": "Meldingen inschakelen voor DIAGNOSTIC-niveau berichten",
-          "renew_interval": "WebSocket vernieuwingsinterval (seconden)"
+    "options": {
+        "step": {
+            "user": {
+                "title": "Electrolux-opties",
+                "description": "Configureer uw Electrolux-integratie-instellingen. U kunt hier de API-inloggegevens of meldingsvoorkeuren bijwerken.\n\n**Opmerking:** Wijzigingen in API-inloggegevens vereisen een herstart.",
+                "data": {
+                    "api_key": "API-sleutel (opnieuw opstarten vereist)",
+                    "access_token": "Toegangstoken (opnieuw opstarten vereist)",
+                    "refresh_token": "Vernieuwingstoken (opnieuw opstarten vereist)",
+                    "notifications": "Schakel meldingen in voor kritieke waarschuwingen",
+                    "notifications_warning": "Schakel meldingen voor waarschuwingen in",
+                    "notifications_diagnostic": "Schakel meldingen voor diagnostische berichten in"
+                }
+            }
+        },
+        "error": {
+            "incomplete_credentials": "Alle API-referenties (API-sleutel, toegangstoken, vernieuwingstoken) moeten samen worden opgegeven.",
+            "invalid_auth": "Ongeldige API-inloggegevens. Controleer uw API-sleutel, toegangstoken en vernieuwingstoken."
         }
-      }
     }
-  }
 }

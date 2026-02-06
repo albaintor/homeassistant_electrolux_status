@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electrolux Durum Kurulumu",
-                "description": "Electrolux cihazlarınızı, Electrolux Geliştirici Portalındaki API kimlik bilgilerini kullanarak bağlayın.\n\nAPI kimlik bilgilerini edinme konusunda yardıma ihtiyacınız varsa şu adresi ziyaret edin: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Kurulumu",
+                "description": "Electrolux cihazlarınızı, Electrolux Geliştirici Portalındaki API kimlik bilgilerini kullanarak bağlayın.\n\n**API kimlik bilgilerini almak için:**\n1. https://developer.electrolux.one/ adresini ziyaret edin\n2. Kaydolun ve bir başvuru oluşturun\n3. API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi alın\n\nYardıma ihtiyacınız varsa entegrasyon belgelerini ziyaret edin.",
                 "data": {
                     "api_key": "API Anahtarı",
                     "access_token": "Erişim Jetonu",
                     "refresh_token": "Jetonu Yenile",
-                    "language": "Dil",
-                    "notifications": "ALERT düzeyindeki bildirimler için bildirimleri etkinleştirin",
-                    "notifications_warning": "UYARI düzeyindeki bildirimler için bildirimleri etkinleştirin",
-                    "notifications_diagnostic": "TEŞHİS düzeyi bildirimleri için bildirimleri etkinleştir"
+                    "notifications": "Kritik uyarılar için bildirimleri etkinleştirin",
+                    "notifications_warning": "Uyarılar için bildirimleri etkinleştir",
+                    "notifications_diagnostic": "Teşhis mesajları için bildirimleri etkinleştir"
                 }
             },
             "reauth_validate": {
-                "title": "Electrolux Durumunu Yeniden Doğrulayın",
-                "description": "Electrolux API belirteçlerinizin süresi dolmuş veya geçersiz. Lütfen bunları Electrolux Geliştirici Portalından yeni tokenlarla güncelleyin.",
+                "title": "Electrolux'ün kimliğini yeniden doğrulayın",
+                "description": "Electrolux API belirteçlerinizin süresi dolmuş veya geçersiz. Lütfen bunları Electrolux Geliştirici Portalından yeni tokenlarla güncelleyin.\n\nYeni tokenler oluşturmak için https://developer.electrolux.one/ adresini ziyaret edin.",
                 "data": {
                     "api_key": "API Anahtarı",
                     "access_token": "Erişim Jetonu",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Geçersiz API kimlik bilgileri. Lütfen API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi kontrol edin."
+            "invalid_auth": "Geçersiz API kimlik bilgileri. Lütfen Electrolux Geliştirici Portalından API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi kontrol edin.",
+            "incomplete_credentials": "Tüm API kimlik bilgileri (API Anahtarı, Erişim Belirteci, Yenileme Belirteci) birlikte sağlanmalıdır."
         },
         "abort": {
-            "single_instance_allowed": "Yalnızca tek bir yapılandırmaya izin verilir.",
+            "single_instance_allowed": "Yalnızca tek bir Electrolux konfigürasyonuna izin verilir.",
             "already_configured": "Bu cihaz zaten yapılandırılmış.",
             "already_configured_account": "Bu API Anahtarı zaten yapılandırılmış.",
             "reconfigure_successful": "Yeniden yapılandırma başarılı oldu."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electrolux Durum Seçenekleri",
-                "description": "Electrolux Durumu entegrasyon ayarlarını yapılandırın.",
+                "title": "Electrolux Seçenekleri",
+                "description": "Electrolux entegrasyon ayarlarınızı yapılandırın. API kimlik bilgilerini veya bildirim tercihlerini buradan güncelleyebilirsiniz.\n\n**Not:** API kimlik bilgilerinde yapılan değişiklikler yeniden başlatma gerektirir.",
                 "data": {
-                    "language": "Ekran Dili",
-                    "notifications": "ALERT düzeyindeki bildirimler için bildirimleri etkinleştirin",
-                    "notifications_warning": "UYARI düzeyindeki bildirimler için bildirimleri etkinleştirin",
-                    "notifications_diagnostic": "TEŞHİS düzeyi bildirimleri için bildirimleri etkinleştir",
-                    "renew_interval": "Websocket yenileme aralığı (saniye)"
+                    "api_key": "API Anahtarı (yeniden başlatma gerekli)",
+                    "access_token": "Erişim Belirteci (yeniden başlatma gerekli)",
+                    "refresh_token": "Jetonu Yenile (yeniden başlatma gerekli)",
+                    "notifications": "Kritik uyarılar için bildirimleri etkinleştirin",
+                    "notifications_warning": "Uyarılar için bildirimleri etkinleştir",
+                    "notifications_diagnostic": "Teşhis mesajları için bildirimleri etkinleştir"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Tüm API kimlik bilgileri (API Anahtarı, Erişim Belirteci, Yenileme Belirteci) birlikte sağlanmalıdır.",
+            "invalid_auth": "Geçersiz API kimlik bilgileri. Lütfen API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi kontrol edin."
         }
     }
 }

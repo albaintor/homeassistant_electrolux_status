@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electrolux Status Setup",
-                "description": "Connect Är Electrolux Apparater mat API Umeldungsinformatiounen aus dem Electrolux Entwéckler Portal.\n\nWann Dir Hëllef braucht fir API Umeldungsinformatiounen ze kréien, besicht: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Setup",
+                "description": "Connect Är Electrolux Apparater mat API Umeldungsinformatiounen aus dem Electrolux Entwéckler Portal.\n\n** Fir API Umeldungsinformatiounen ze kréien:**\n1. Besicht https://developer.electrolux.one/\n2. Aschreiwen an eng Applikatioun schafen\n3. Kritt Ären API Key, Access Token, an Refresh Token\n\nWann Dir Hëllef braucht, besicht d'Integratiounsdokumentatioun.",
                 "data": {
                     "api_key": "API Schlëssel",
                     "access_token": "Zougang Token",
                     "refresh_token": "Refresh Token",
-                    "language": "Sprooch",
-                    "notifications": "Aktivéiert Notifikatiounen fir ALERT Niveau Notifikatiounen",
-                    "notifications_warning": "Aktivéiert Notifikatiounen fir WARNUNG Niveau Notifikatiounen",
-                    "notifications_diagnostic": "Aktivéiert Notifikatiounen fir DIAGNOSTIC Niveau Notifikatiounen"
+                    "notifications": "Aktivéiert Notifikatiounen fir kritesch Alarmer",
+                    "notifications_warning": "Aktivéiert Notifikatiounen fir Warnungen",
+                    "notifications_diagnostic": "Aktivéiert Notifikatiounen fir diagnostesch Messagen"
                 }
             },
             "reauth_validate": {
-                "title": "Re-authentifizéieren Electrolux Status",
-                "description": "Är Electrolux API Tokens sinn ofgelaf oder sinn ongëlteg. Update se w.e.g. mat frëschen Tokens vum Electrolux Developer Portal.",
+                "title": "Electrolux nei authentifizéieren",
+                "description": "Är Electrolux API Tokens sinn ofgelaf oder sinn ongëlteg. Update se w.e.g. mat frëschen Tokens vum Electrolux Developer Portal.\n\nBesicht https://developer.electrolux.one/ fir nei Tokens ze generéieren.",
                 "data": {
                     "api_key": "API Schlëssel",
                     "access_token": "Zougang Token",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Ongülteg API Umeldungsinformatiounen. Kuckt w.e.g. Ären API Key, Access Token, an Refresh Token."
+            "invalid_auth": "Ongülteg API Umeldungsinformatiounen. Kuckt w.e.g. Ären API Key, Access Token, an Refresh Token vum Electrolux Developer Portal.",
+            "incomplete_credentials": "All API Umeldungsinformatioune (API Key, Access Token, Refresh Token) mussen zesumme geliwwert ginn."
         },
         "abort": {
-            "single_instance_allowed": "Nëmmen eng eenzeg Konfiguratioun ass erlaabt.",
+            "single_instance_allowed": "Nëmmen eng eenzeg Electrolux Konfiguratioun ass erlaabt.",
             "already_configured": "Dësen Apparat ass scho konfiguréiert.",
             "already_configured_account": "Dësen API Schlëssel ass scho konfiguréiert.",
             "reconfigure_successful": "Nei Konfiguratioun war erfollegräich."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electrolux Status Optiounen",
-                "description": "Electrolux Status Integratioun Astellunge konfiguréieren.",
+                "title": "Electrolux Optiounen",
+                "description": "Konfiguréiert Är Electrolux Integratiounsastellungen. Dir kënnt API Umeldungsinformatiounen oder Notifikatiounsvirléiften hei aktualiséieren.\n\n** Notiz: ** Ännerungen un API Umeldungsinformatiounen erfuerderen e Restart.",
                 "data": {
-                    "language": "Display Sprooch",
-                    "notifications": "Aktivéiert Notifikatiounen fir ALERT Niveau Notifikatiounen",
-                    "notifications_warning": "Aktivéiert Notifikatiounen fir WARNUNG Niveau Notifikatiounen",
-                    "notifications_diagnostic": "Aktivéiert Notifikatiounen fir DIAGNOSTIC Niveau Notifikatiounen",
-                    "renew_interval": "Websocket Erneierung Intervall (Sekonnen)"
+                    "api_key": "API Schlëssel (Restart néideg)",
+                    "access_token": "Zougang Token (Restart erfuerderlech)",
+                    "refresh_token": "Refresh Token (Restart néideg)",
+                    "notifications": "Aktivéiert Notifikatiounen fir kritesch Alarmer",
+                    "notifications_warning": "Aktivéiert Notifikatiounen fir Warnungen",
+                    "notifications_diagnostic": "Aktivéiert Notifikatiounen fir diagnostesch Messagen"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "All API Umeldungsinformatioune (API Key, Access Token, Refresh Token) mussen zesumme geliwwert ginn.",
+            "invalid_auth": "Ongülteg API Umeldungsinformatiounen. Kuckt w.e.g. Ären API Key, Access Token, an Refresh Token."
         }
     }
 }

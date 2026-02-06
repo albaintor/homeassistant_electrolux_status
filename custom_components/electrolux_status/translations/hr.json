@@ -2,21 +2,20 @@
     "config": {
         "step": {
             "user": {
-                "title": "Electrolux Postavljanje statusa",
-                "description": "Povežite svoje Electrolux uređaje pomoću API vjerodajnica s Electrolux Developer Portala.\n\nAko trebate pomoć za dobivanje vjerodajnica za API, posjetite: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Electrolux Postavljanje",
+                "description": "Povežite svoje Electrolux uređaje pomoću API vjerodajnica s Electrolux Developer Portala.\n\n**Da biste dobili API vjerodajnice:**\n1. Posjetite https://developer.electrolux.one/\n2. Registrirajte se i kreirajte aplikaciju\n3. Nabavite svoj API ključ, pristupni token i token za osvježavanje\n\nAko trebate pomoć, posjetite integracijsku dokumentaciju.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Pristupni token",
                     "refresh_token": "Osvježi token",
-                    "language": "Jezik",
-                    "notifications": "Omogući obavijesti za obavijesti razine UPOZORENJA",
-                    "notifications_warning": "Omogući obavijesti za obavijesti razine UPOZORENJE",
-                    "notifications_diagnostic": "Omogući obavijesti za obavijesti DIJAGNOSTIČKE razine"
+                    "notifications": "Omogući obavijesti za kritična upozorenja",
+                    "notifications_warning": "Omogući obavijesti za upozorenja",
+                    "notifications_diagnostic": "Omogući obavijesti za dijagnostičke poruke"
                 }
             },
             "reauth_validate": {
-                "title": "Ponovno provjerite Electrolux status",
-                "description": "Vaši Electrolux API tokeni su istekli ili su nevažeći. Ažurirajte ih novim tokenima s Electroluxovog portala za razvojne programere.",
+                "title": "Ponovno provjerite autentičnost Electroluxa",
+                "description": "Vaši Electrolux API tokeni su istekli ili su nevažeći. Ažurirajte ih novim tokenima s Electroluxovog portala za razvojne programere.\n\nPosjetite https://developer.electrolux.one/ za generiranje novih tokena.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Pristupni token",
@@ -25,10 +24,11 @@
             }
         },
         "error": {
-            "invalid_auth": "Nevažeće API vjerodajnice. Provjerite svoj API ključ, pristupni token i token za osvježavanje."
+            "invalid_auth": "Nevažeće API vjerodajnice. Provjerite svoj API ključ, pristupni token i token za osvježavanje na Electroluxovom portalu za razvojne programere.",
+            "incomplete_credentials": "Sve API vjerodajnice (API Key, Access Token, Refresh Token) moraju biti dostavljene zajedno."
         },
         "abort": {
-            "single_instance_allowed": "Dopuštena je samo jedna konfiguracija.",
+            "single_instance_allowed": "Dopuštena je samo jedna Electrolux konfiguracija.",
             "already_configured": "Ovaj uređaj je već konfiguriran.",
             "already_configured_account": "Ovaj API ključ je već konfiguriran.",
             "reconfigure_successful": "Ponovna konfiguracija je bila uspješna."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Electrolux opcije statusa",
-                "description": "Konfigurirajte postavke integracije statusa Electrolux.",
+                "title": "Electrolux opcije",
+                "description": "Konfigurirajte svoje Electrolux postavke integracije. Ovdje možete ažurirati API vjerodajnice ili postavke obavijesti.\n\n**Napomena:** Promjene API vjerodajnica zahtijevaju ponovno pokretanje.",
                 "data": {
-                    "language": "Jezik prikaza",
-                    "notifications": "Omogući obavijesti za obavijesti razine UPOZORENJA",
-                    "notifications_warning": "Omogući obavijesti za obavijesti razine UPOZORENJE",
-                    "notifications_diagnostic": "Omogući obavijesti za obavijesti DIJAGNOSTIČKE razine",
-                    "renew_interval": "Interval obnove websocketa (sekunde)"
+                    "api_key": "API ključ (potrebno ponovno pokretanje)",
+                    "access_token": "Pristupni token (potrebno ponovno pokretanje)",
+                    "refresh_token": "Osvježi token (potrebno ponovno pokretanje)",
+                    "notifications": "Omogući obavijesti za kritična upozorenja",
+                    "notifications_warning": "Omogući obavijesti za upozorenja",
+                    "notifications_diagnostic": "Omogući obavijesti za dijagnostičke poruke"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Sve API vjerodajnice (API Key, Access Token, Refresh Token) moraju biti dostavljene zajedno.",
+            "invalid_auth": "Nevažeće API vjerodajnice. Provjerite svoj API ključ, pristupni token i token za osvježavanje."
         }
     }
 }

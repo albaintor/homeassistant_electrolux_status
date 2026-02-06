@@ -2,33 +2,33 @@
     "config": {
         "step": {
             "user": {
-                "title": "Configurare stare Electrolux",
-                "description": "Conectați-vă aparatele Electrolux utilizând acreditările API din Portalul pentru dezvoltatori Electrolux.\n\nDacă aveți nevoie de ajutor pentru obținerea acreditărilor API, vizitați: https://github.com/albaintor/homeassistant_electrolux_status",
+                "title": "Configurare Electrolux",
+                "description": "Conectați-vă aparatele Electrolux utilizând acreditările API din Portalul pentru dezvoltatori Electrolux.\n\n**Pentru a obține acreditările API:**\n1. Vizitați https://developer.electrolux.one/\n2. Înregistrați-vă și creați o aplicație\n3. Obțineți cheia API, Tokenul de acces și Tokenul de reîmprospătare\n\nDacă aveți nevoie de ajutor, vizitați documentația de integrare.",
                 "data": {
                     "api_key": "Cheia API",
                     "access_token": "Token de acces",
-                    "refresh_token": "Jeton de reîmprospătare",
-                    "language": "Limbă",
-                    "notifications": "Activați notificările pentru notificările de nivel ALERT",
-                    "notifications_warning": "Activați notificările pentru notificările de nivel WARNING",
-                    "notifications_diagnostic": "Activați notificările pentru notificările de nivel DIAGNOSTIC"
+                    "refresh_token": "Token de reîmprospătare",
+                    "notifications": "Activați notificările pentru alertele critice",
+                    "notifications_warning": "Activați notificările pentru avertismente",
+                    "notifications_diagnostic": "Activați notificările pentru mesajele de diagnosticare"
                 }
             },
             "reauth_validate": {
-                "title": "Re-autentificați starea Electrolux",
-                "description": "Tokenurile tale Electrolux API au expirat sau sunt nevalide. Vă rugăm să le actualizați cu jetoane noi de pe Portalul pentru dezvoltatori Electrolux.",
+                "title": "Re-autentificați Electrolux",
+                "description": "Tokenurile tale Electrolux API au expirat sau sunt nevalide. Vă rugăm să le actualizați cu token-uri noi de pe Portalul pentru dezvoltatori Electrolux.\n\nVizitați https://developer.electrolux.one/ pentru a genera noi token-uri.",
                 "data": {
                     "api_key": "Cheia API",
                     "access_token": "Token de acces",
-                    "refresh_token": "Jeton de reîmprospătare"
+                    "refresh_token": "Token de reîmprospătare"
                 }
             }
         },
         "error": {
-            "invalid_auth": "Acreditări API nevalide. Vă rugăm să verificați cheia API, Jetonul de acces și Jetonul de reîmprospătare."
+            "invalid_auth": "Acreditări API nevalide. Vă rugăm să verificați cheia API, Token-ul de acces și Token-ul de reîmprospătare de pe portalul pentru dezvoltatori Electrolux.",
+            "incomplete_credentials": "Toate acreditările API (Cheia API, Tokenul de acces, Tokenul de actualizare) trebuie furnizate împreună."
         },
         "abort": {
-            "single_instance_allowed": "Este permisă doar o singură configurație.",
+            "single_instance_allowed": "Este permisă doar o singură configurație Electrolux.",
             "already_configured": "Acest dispozitiv este deja configurat.",
             "already_configured_account": "Această cheie API este deja configurată.",
             "reconfigure_successful": "Reconfigurarea a avut succes."
@@ -37,16 +37,21 @@
     "options": {
         "step": {
             "user": {
-                "title": "Opțiuni de stare Electrolux",
-                "description": "Configurați setările de integrare Electrolux Status.",
+                "title": "Opțiuni Electrolux",
+                "description": "Configurați setările de integrare Electrolux. Puteți actualiza acreditările API sau preferințele de notificare aici.\n\n**Notă:** Modificările aduse acreditărilor API necesită o repornire.",
                 "data": {
-                    "language": "Limba de afișare",
-                    "notifications": "Activați notificările pentru notificările de nivel ALERT",
-                    "notifications_warning": "Activați notificările pentru notificările de nivel WARNING",
-                    "notifications_diagnostic": "Activați notificările pentru notificările de nivel DIAGNOSTIC",
-                    "renew_interval": "Interval de reînnoire a socket-ului web (secunde)"
+                    "api_key": "Cheie API (repornire necesară)",
+                    "access_token": "Token de acces (repornire necesară)",
+                    "refresh_token": "Token de reîmprospătare (repornire necesară)",
+                    "notifications": "Activați notificările pentru alertele critice",
+                    "notifications_warning": "Activați notificările pentru avertismente",
+                    "notifications_diagnostic": "Activați notificările pentru mesajele de diagnosticare"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Toate acreditările API (Cheia API, Tokenul de acces, Tokenul de actualizare) trebuie furnizate împreună.",
+            "invalid_auth": "Acreditări API nevalide. Vă rugăm să verificați cheia API, Token-ul de acces și Token-ul de reîmprospătare."
         }
     }
 }

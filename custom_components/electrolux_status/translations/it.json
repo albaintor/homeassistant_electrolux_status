@@ -1,52 +1,57 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Configurazione stato Electrolux",
-        "description": "Collega i tuoi elettrodomestici Electrolux utilizzando le credenziali API dal portale sviluppatori Electrolux.\n\nSe hai bisogno di aiuto per ottenere le credenziali API, visita: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "api_key": "Chiave API",
-          "access_token": "Token di accesso",
-          "refresh_token": "Token di aggiornamento",
-          "language": "Lingua",
-          "notifications": "Abilita notifiche per avvisi di livello ALLARME",
-          "notifications_warning": "Abilita notifiche per avvisi di livello AVVERTIMENTO",
-          "notifications_diagnostic": "Abilita notifiche per avvisi di livello DIAGNOSTICO"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Configurazione Electrolux",
+                "description": "Connetti i tuoi elettrodomestici Electrolux utilizzando le credenziali API del Portale Sviluppatori Electrolux.\n\n**Per ottenere le credenziali API:**\n1. Visita https://developer.electrolux.one/\n2. Registrati e crea un'applicazione\n3. Ottieni la chiave API, il token di accesso e il token di aggiornamento\n\nSe hai bisogno di aiuto, visita la documentazione sull'integrazione.",
+                "data": {
+                    "api_key": "Chiave API",
+                    "access_token": "Gettone di accesso",
+                    "refresh_token": "Aggiorna gettone",
+                    "notifications": "Abilita le notifiche per gli avvisi critici",
+                    "notifications_warning": "Abilita le notifiche per gli avvisi",
+                    "notifications_diagnostic": "Abilita le notifiche per i messaggi diagnostici"
+                }
+            },
+            "reauth_validate": {
+                "title": "Riautenticare Electrolux",
+                "description": "I tuoi token API Electrolux sono scaduti o non sono validi. Aggiornali con nuovi token dal Portale per sviluppatori Electrolux.\n\nVisita https://developer.electrolux.one/ per generare nuovi token.",
+                "data": {
+                    "api_key": "Chiave API",
+                    "access_token": "Gettone di accesso",
+                    "refresh_token": "Aggiorna gettone"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Credenziali API non valide. Controlla la chiave API, il token di accesso e il token di aggiornamento dal portale per sviluppatori Electrolux.",
+            "incomplete_credentials": "Tutte le credenziali API (chiave API, token di accesso, token di aggiornamento) devono essere fornite insieme."
+        },
+        "abort": {
+            "single_instance_allowed": "È consentita una sola configurazione Electrolux.",
+            "already_configured": "Questo dispositivo è già configurato.",
+            "already_configured_account": "Questa chiave API è già configurata.",
+            "reconfigure_successful": "La riconfigurazione ha avuto successo."
         }
-      },
-      "reauth_validate": {
-        "title": "Ri-autentica stato Electrolux",
-        "description": "I tuoi token API Electrolux sono scaduti o non validi. Aggiornali con nuovi token dal portale sviluppatori Electrolux.",
-        "data": {
-          "api_key": "Chiave API",
-          "access_token": "Token di accesso",
-          "refresh_token": "Token di aggiornamento"
-        }
-      }
     },
-    "error": {
-      "invalid_auth": "Credenziali API non valide. Controlla la tua chiave API, token di accesso e token di aggiornamento."
-    },
-    "abort": {
-      "single_instance_allowed": "È consentita una sola configurazione.",
-      "already_configured": "Questo dispositivo è già configurato.",
-      "already_configured_account": "Questa chiave API è già configurata.",
-      "reconfigure_successful": "La riconfigurazione è riuscita."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "title": "Opzioni stato Electrolux",
-        "description": "Configura le impostazioni di integrazione dello stato Electrolux.",
-        "data": {
-          "language": "Lingua di visualizzazione",
-          "notifications": "Abilita notifiche per avvisi di livello ALLARME",
-          "notifications_warning": "Abilita notifiche per avvisi di livello AVVERTIMENTO",
-          "notifications_diagnostic": "Abilita notifiche per avvisi di livello DIAGNOSTICO",
-          "renew_interval": "Intervallo di rinnovo WebSocket (secondi)"
+    "options": {
+        "step": {
+            "user": {
+                "title": "Opzioni Electrolux",
+                "description": "Configura le tue impostazioni di integrazione Electrolux. Puoi aggiornare le credenziali API o le preferenze di notifica qui.\n\n**Nota:** le modifiche alle credenziali API richiedono un riavvio.",
+                "data": {
+                    "api_key": "Chiave API (riavvio richiesto)",
+                    "access_token": "Token di accesso (riavvio richiesto)",
+                    "refresh_token": "Aggiorna token (riavvio richiesto)",
+                    "notifications": "Abilita le notifiche per gli avvisi critici",
+                    "notifications_warning": "Abilita le notifiche per gli avvisi",
+                    "notifications_diagnostic": "Abilita le notifiche per i messaggi diagnostici"
+                }
+            }
+        },
+        "error": {
+            "incomplete_credentials": "Tutte le credenziali API (chiave API, token di accesso, token di aggiornamento) devono essere fornite insieme.",
+            "invalid_auth": "Credenziali API non valide. Controlla la chiave API, il token di accesso e il token di aggiornamento."
         }
-      }
     }
-  }
 }

@@ -1,52 +1,57 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status Einrichtung",
-        "description": "Verbinden Sie Ihre Electrolux-Geräte mit API-Anmeldedaten vom Electrolux Developer Portal.\n\nWenn Sie Hilfe bei der Beschaffung von API-Anmeldedaten benötigen, besuchen Sie: https://github.com/albaintor/homeassistant_electrolux_status",
-        "data": {
-          "api_key": "API-Schlüssel",
-          "access_token": "Zugriffstoken",
-          "refresh_token": "Aktualisierungstoken",
-          "language": "Sprache",
-          "notifications": "Benachrichtigungen für ALERT-Stufe aktivieren",
-          "notifications_warning": "Benachrichtigungen für WARNING-Stufe aktivieren",
-          "notifications_diagnostic": "Benachrichtigungen für DIAGNOSTIC-Stufe aktivieren"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Electrolux-Setup",
+                "description": "Verbinden Sie Ihre Electrolux-Geräte mit API-Anmeldeinformationen aus dem Electrolux Developer Portal.\n\n**So erhalten Sie API-Anmeldeinformationen:**\n1. Besuchen Sie https://developer.electrolux.one/\n2. Registrieren Sie sich und erstellen Sie eine Bewerbung\n3. Besorgen Sie sich Ihren API-Schlüssel, Zugriffstoken und Aktualisierungstoken\n\nWenn Sie Hilfe benötigen, lesen Sie die Integrationsdokumentation.",
+                "data": {
+                    "api_key": "API-Schlüssel",
+                    "access_token": "Zugriffstoken",
+                    "refresh_token": "Aktualisierungstoken",
+                    "notifications": "Aktivieren Sie Benachrichtigungen für kritische Warnungen",
+                    "notifications_warning": "Aktivieren Sie Benachrichtigungen für Warnungen",
+                    "notifications_diagnostic": "Aktivieren Sie Benachrichtigungen für Diagnosemeldungen"
+                }
+            },
+            "reauth_validate": {
+                "title": "Authentifizieren Sie Electrolux erneut",
+                "description": "Ihre Electrolux API-Tokens sind abgelaufen oder ungültig. Bitte aktualisieren Sie sie mit neuen Token aus dem Electrolux Developer Portal.\n\nBesuchen Sie https://developer.electrolux.one/, um neue Token zu generieren.",
+                "data": {
+                    "api_key": "API-Schlüssel",
+                    "access_token": "Zugriffstoken",
+                    "refresh_token": "Aktualisierungstoken"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Ungültige API-Anmeldeinformationen. Bitte überprüfen Sie Ihren API-Schlüssel, Zugriffstoken und Aktualisierungstoken im Electrolux-Entwicklerportal.",
+            "incomplete_credentials": "Alle API-Anmeldeinformationen (API-Schlüssel, Zugriffstoken, Aktualisierungstoken) müssen zusammen bereitgestellt werden."
+        },
+        "abort": {
+            "single_instance_allowed": "Es ist nur eine einzelne Electrolux-Konfiguration zulässig.",
+            "already_configured": "Dieses Gerät ist bereits konfiguriert.",
+            "already_configured_account": "Dieser API-Schlüssel ist bereits konfiguriert.",
+            "reconfigure_successful": "Die Neukonfiguration war erfolgreich."
         }
-      },
-      "reauth_validate": {
-        "title": "Electrolux Status erneut authentifizieren",
-        "description": "Ihre Electrolux-API-Tokens sind abgelaufen oder ungültig. Bitte aktualisieren Sie sie mit neuen Tokens vom Electrolux Developer Portal.",
-        "data": {
-          "api_key": "API-Schlüssel",
-          "access_token": "Zugriffstoken",
-          "refresh_token": "Aktualisierungstoken"
-        }
-      }
     },
-    "error": {
-      "invalid_auth": "Ungültige API-Anmeldedaten. Bitte überprüfen Sie Ihren API-Schlüssel, Zugriffstoken und Aktualisierungstoken."
-    },
-    "abort": {
-      "single_instance_allowed": "Nur eine einzige Konfiguration ist erlaubt.",
-      "already_configured": "Dieses Gerät ist bereits konfiguriert.",
-      "already_configured_account": "Dieser API-Schlüssel ist bereits konfiguriert.",
-      "reconfigure_successful": "Neukonfiguration war erfolgreich."
-    }
-  },
-  "options": {
-    "step": {
-      "user": {
-        "title": "Electrolux Status Optionen",
-        "description": "Konfigurieren Sie die Electrolux Status Integration Einstellungen.",
-        "data": {
-          "language": "Anzeigesprache",
-          "notifications": "Benachrichtigungen für ALERT-Stufe aktivieren",
-          "notifications_warning": "Benachrichtigungen für WARNING-Stufe aktivieren",
-          "notifications_diagnostic": "Benachrichtigungen für DIAGNOSTIC-Stufe aktivieren",
-          "renew_interval": "Websocket-Erneuerungsintervall (Sekunden)"
+    "options": {
+        "step": {
+            "user": {
+                "title": "Electrolux-Optionen",
+                "description": "Konfigurieren Sie Ihre Electrolux-Integrationseinstellungen. Hier können Sie API-Anmeldeinformationen oder Benachrichtigungseinstellungen aktualisieren.\n\n**Hinweis:** Änderungen an API-Anmeldeinformationen erfordern einen Neustart.",
+                "data": {
+                    "api_key": "API-Schlüssel (Neustart erforderlich)",
+                    "access_token": "Zugriffstoken (Neustart erforderlich)",
+                    "refresh_token": "Aktualisierungstoken (Neustart erforderlich)",
+                    "notifications": "Aktivieren Sie Benachrichtigungen für kritische Warnungen",
+                    "notifications_warning": "Aktivieren Sie Benachrichtigungen für Warnungen",
+                    "notifications_diagnostic": "Aktivieren Sie Benachrichtigungen für Diagnosemeldungen"
+                }
+            }
+        },
+        "error": {
+            "incomplete_credentials": "Alle API-Anmeldeinformationen (API-Schlüssel, Zugriffstoken, Aktualisierungstoken) müssen zusammen bereitgestellt werden.",
+            "invalid_auth": "Ungültige API-Anmeldeinformationen. Bitte überprüfen Sie Ihren API-Schlüssel, Zugriffstoken und Aktualisierungstoken."
         }
-      }
     }
-  }
 }
