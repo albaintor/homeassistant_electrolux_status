@@ -29,7 +29,7 @@ languages = {
     "norsk": "no",
     "polski": "pl",
     "Português": "pt",
-    "Português Brasil": "pt",
+    "Português Brasil": "pt_br",
     "Română": "ro",
     "русский": "ru",
     "slovenský": "sk",
