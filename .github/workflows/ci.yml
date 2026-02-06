@@ -28,9 +28,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install aiohttp>=3.12.2
           pip install -r requirements-dev.txt
-          pip install pytest-homeassistant pytest-asyncio mypy ruff black
+          pip install pytest mypy ruff black
 
       # 4️⃣ Lint & auto-fix with Ruff
       - name: Lint with Ruff
