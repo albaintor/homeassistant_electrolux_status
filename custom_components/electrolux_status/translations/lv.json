@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Ierīce jau ir konfigurēta",
-            "already_configured_account": "Konts jau ir konfigurēts",
-            "reconfigure_successful": "Atkārtota konfigurācija bija veiksmīga",
-            "single_instance_allowed": "Jau konfigurēts.Iespējama tikai viena konfigurācija."
-        },
-        "error": {
-            "invalid_auth": "Nederīga autentifikācija"
-        },
         "step": {
             "user": {
+                "title": "Electrolux statusa iestatīšana",
+                "description": "Pievienojiet savas Electrolux ierīces, izmantojot API akreditācijas datus no Electrolux izstrādātāju portāla.\n\nJa jums nepieciešama palīdzība API akreditācijas datu iegūšanā, apmeklējiet vietni https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API atslēga",
+                    "access_token": "Piekļuves marķieris",
+                    "refresh_token": "Atsvaidzināt marķieri",
                     "language": "Valoda",
-                    "notifications": "Paaugstiniet paziņojumus par brīdinājuma līmeņa paziņojumiem",
-                    "notifications_diagnostic": "Paaugstiniet paziņojumus par diagnostikas līmeņa paziņojumiem",
-                    "notifications_warning": "Paaugstiniet paziņojumus par brīdinājuma līmeņa paziņojumiem",
-                    "password": "Parole",
-                    "username": "Lietotājvārds"
-                },
-                "description": "Ja jums ir nepieciešama palīdzība konfigurācijas apmeklējumā: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Elektrolux statuss"
+                    "notifications": "Iespējot paziņojumus par ALERT līmeņa paziņojumiem",
+                    "notifications_warning": "Iespējot paziņojumus BRĪDINĀJUMA līmeņa paziņojumiem",
+                    "notifications_diagnostic": "Iespējot paziņojumus DIAGNOSTIKA līmeņa paziņojumiem"
+                }
+            },
+            "reauth_validate": {
+                "title": "Atkārtoti autentificējiet Electrolux statusu",
+                "description": "Jūsu Electrolux API marķieriem ir beidzies derīguma termiņš vai tie ir nederīgi. Lūdzu, atjauniniet tos ar jauniem marķieriem no Electrolux izstrādātāju portāla.",
+                "data": {
+                    "api_key": "API atslēga",
+                    "access_token": "Piekļuves marķieris",
+                    "refresh_token": "Atsvaidzināt marķieri"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Nederīgi API akreditācijas dati. Lūdzu, pārbaudiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru."
+        },
+        "abort": {
+            "single_instance_allowed": "Ir atļauta tikai viena konfigurācija.",
+            "already_configured": "Šī ierīce jau ir konfigurēta.",
+            "already_configured_account": "Šī API atslēga jau ir konfigurēta.",
+            "reconfigure_successful": "Atkārtota konfigurācija bija veiksmīga."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Electrolux statusa opcijas",
+                "description": "Konfigurējiet Electrolux Status integrācijas iestatījumus.",
                 "data": {
-                    "language": "Valoda",
-                    "notifications": "Paaugstiniet paziņojumus par brīdinājuma līmeņa paziņojumiem",
-                    "notifications_diagnostic": "Paaugstiniet paziņojumus par diagnostikas līmeņa paziņojumiem",
-                    "notifications_warning": "Paaugstiniet paziņojumus par brīdinājuma līmeņa paziņojumiem",
-                    "password": "Parole",
-                    "renew_interval": "WebSocket atjaunošanas intervāls (sekundes)"
+                    "language": "Displeja valoda",
+                    "notifications": "Iespējot paziņojumus par ALERT līmeņa paziņojumiem",
+                    "notifications_warning": "Iespējot paziņojumus BRĪDINĀJUMA līmeņa paziņojumiem",
+                    "notifications_diagnostic": "Iespējot paziņojumus DIAGNOSTIKA līmeņa paziņojumiem",
+                    "renew_interval": "Tīmekļa kontaktligzdas atjaunošanas intervāls (sekundēs)"
                 }
             }
         }

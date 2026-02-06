@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Naprava je že konfigurirana",
-            "already_configured_account": "Račun je že konfiguriran",
-            "reconfigure_successful": "Ponovna konfiguracija je bila uspešna",
-            "single_instance_allowed": "Že konfiguriran.Možna je le ena konfiguracija."
-        },
-        "error": {
-            "invalid_auth": "Neveljavna overjanje"
-        },
         "step": {
             "user": {
+                "title": "Nastavitev statusa Electrolux",
+                "description": "Povežite svoje naprave Electrolux s poverilnicami API s portala za razvijalce Electrolux.\n\nČe potrebujete pomoč pri pridobivanju poverilnic za API, obiščite: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API ključ",
+                    "access_token": "Žeton za dostop",
+                    "refresh_token": "Osveži žeton",
                     "language": "Jezik",
-                    "notifications": "Zvišajte obvestila za obvestila o ravni opozoril",
-                    "notifications_diagnostic": "Zvišajte obvestila za obvestila o diagnostični ravni",
-                    "notifications_warning": "Zvišajte obvestila za obvestila o opozorilni ravni",
-                    "password": "Geslo",
-                    "username": "Uporabniško ime"
-                },
-                "description": "Če potrebujete pomoč pri konfiguraciji, obiščite: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Status elektroluksa"
+                    "notifications": "Omogoči obvestila za obvestila na ravni ALERT",
+                    "notifications_warning": "Omogoči obvestila za obvestila stopnje OPOZORILO",
+                    "notifications_diagnostic": "Omogoči obvestila za obvestila DIAGNOSTIČNE ravni"
+                }
+            },
+            "reauth_validate": {
+                "title": "Ponovno potrdite status Electrolux",
+                "description": "Vaši Electrolux API žetoni so potekli ali so neveljavni. Posodobite jih s svežimi žetoni s portala za razvijalce Electrolux.",
+                "data": {
+                    "api_key": "API ključ",
+                    "access_token": "Žeton za dostop",
+                    "refresh_token": "Osveži žeton"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Neveljavne poverilnice za API. Preverite svoj ključ API, žeton za dostop in žeton za osvežitev."
+        },
+        "abort": {
+            "single_instance_allowed": "Dovoljena je samo ena konfiguracija.",
+            "already_configured": "Ta naprava je že konfigurirana.",
+            "already_configured_account": "Ta ključ API je že konfiguriran.",
+            "reconfigure_successful": "Ponovna konfiguracija je bila uspešna."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Možnosti stanja Electrolux",
+                "description": "Konfigurirajte nastavitve integracije Electrolux Status.",
                 "data": {
-                    "language": "Jezik",
-                    "notifications": "Zvišajte obvestila za obvestila o ravni opozoril",
-                    "notifications_diagnostic": "Zvišajte obvestila za obvestila o diagnostični ravni",
-                    "notifications_warning": "Zvišajte obvestila za obvestila o opozorilni ravni",
-                    "password": "Geslo",
-                    "renew_interval": "Interval obnove WebSocket (sekunde)"
+                    "language": "Prikazni jezik",
+                    "notifications": "Omogoči obvestila za obvestila na ravni ALERT",
+                    "notifications_warning": "Omogoči obvestila za obvestila stopnje OPOZORILO",
+                    "notifications_diagnostic": "Omogoči obvestila za obvestila DIAGNOSTIČNE ravni",
+                    "renew_interval": "Interval obnavljanja spletne vtičnice (sekunde)"
                 }
             }
         }

@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Laite on jo määritetty",
-            "already_configured_account": "Tili on jo määritetty",
-            "reconfigure_successful": "Uudelleenmääritys oli onnistunut",
-            "single_instance_allowed": "Jo määritetty.Vain yksi mahdollinen kokoonpano."
-        },
-        "error": {
-            "invalid_auth": "Virheellinen todennus"
-        },
         "step": {
             "user": {
+                "title": "Electroluxin tilan asetukset",
+                "description": "Yhdistä Electrolux-laitteesi käyttämällä API-tunnistetietoja Electroluxin kehittäjäportaalista.\n\nJos tarvitset apua API-tunnistetietojen hankkimisessa, käy osoitteessa https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API-avain",
+                    "access_token": "Käyttöoikeustunnus",
+                    "refresh_token": "Päivitä Token",
                     "language": "Kieli",
-                    "notifications": "Nosta ilmoituksia hälytystason ilmoituksista",
-                    "notifications_diagnostic": "Nosta ilmoituksia diagnostiikkatason ilmoituksista",
-                    "notifications_warning": "Nosta ilmoituksia varoitustason ilmoituksista",
-                    "password": "Salasana",
-                    "username": "Käyttäjänimi"
-                },
-                "description": "Jos tarvitset apua kokoonpano -vierailussa",
-                "title": "Elektrolux -tila"
+                    "notifications": "Ota ilmoitukset käyttöön ALERT-tason ilmoituksista",
+                    "notifications_warning": "Ota ilmoitukset käyttöön VAROITUS-tason ilmoituksista",
+                    "notifications_diagnostic": "Ota ilmoitukset käyttöön DIAGNOSTINEN tason ilmoituksista"
+                }
+            },
+            "reauth_validate": {
+                "title": "Todenna Electroluxin tila uudelleen",
+                "description": "Electrolux API -tunnuksesi ovat vanhentuneet tai virheelliset. Päivitä ne uusilla Tokeneilla Electroluxin kehittäjäportaalista.",
+                "data": {
+                    "api_key": "API-avain",
+                    "access_token": "Käyttöoikeustunnus",
+                    "refresh_token": "Päivitä Token"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Virheelliset API-tunnistetiedot. Tarkista API-avain, käyttöoikeus ja päivitystunnus."
+        },
+        "abort": {
+            "single_instance_allowed": "Vain yksi kokoonpano on sallittu.",
+            "already_configured": "Tämä laite on jo määritetty.",
+            "already_configured_account": "Tämä API-avain on jo määritetty.",
+            "reconfigure_successful": "Uudelleenmääritys onnistui."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Electroluxin tilavaihtoehdot",
+                "description": "Määritä Electrolux Status -integrointiasetukset.",
                 "data": {
-                    "language": "Kieli",
-                    "notifications": "Nosta ilmoituksia hälytystason ilmoituksista",
-                    "notifications_diagnostic": "Nosta ilmoituksia diagnostiikkatason ilmoituksista",
-                    "notifications_warning": "Nosta ilmoituksia varoitustason ilmoituksista",
-                    "password": "Salasana",
-                    "renew_interval": "WebSockin (sekuntien) uusintaväli (sekuntia)"
+                    "language": "Näytön kieli",
+                    "notifications": "Ota ilmoitukset käyttöön ALERT-tason ilmoituksista",
+                    "notifications_warning": "Ota ilmoitukset käyttöön VAROITUS-tason ilmoituksista",
+                    "notifications_diagnostic": "Ota ilmoitukset käyttöön DIAGNOSTINEN tason ilmoituksista",
+                    "renew_interval": "Websocketin uusimisväli (sekuntia)"
                 }
             }
         }

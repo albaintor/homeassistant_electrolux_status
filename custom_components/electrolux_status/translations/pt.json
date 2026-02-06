@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "O dispositivo já está configurado",
-            "already_configured_account": "Conta já está configurada",
-            "reconfigure_successful": "A reconfiguração foi bem sucedida",
-            "single_instance_allowed": "Já configurado. Só é possivel uma configuração."
-        },
-        "error": {
-            "invalid_auth": "Autenticação inválida"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Lingua",
-                    "notifications": "Activar notificações para avisos de nível de alerta",
-                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
-                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
-                    "password": "Senha",
-                    "username": "Nome de Utilizador"
-                },
-                "description": "Se precisar de ajuda com a configuração, visite: https://github.com/albaintor/homeasistant_electrolux_status",
-                "title": "Electrolux"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuração do Estado Electrolux",
+        "description": "Conecte seus aparelhos Electrolux usando credenciais API do Portal de Desenvolvedor Electrolux.\n\nSe precisar de ajuda para obter credenciais API, visite: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Chave API",
+          "access_token": "Token de Acesso",
+          "refresh_token": "Token de Atualização",
+          "language": "Idioma",
+          "notifications": "Ativar notificações para avisos de nível ALERTA",
+          "notifications_warning": "Ativar notificações para avisos de nível AVISO",
+          "notifications_diagnostic": "Ativar notificações para avisos de nível DIAGNÓSTICO"
         }
+      },
+      "reauth_validate": {
+        "title": "Re-autenticar Estado Electrolux",
+        "description": "Seus tokens API Electrolux expiraram ou são inválidos. Atualize-os com novos tokens do Portal de Desenvolvedor Electrolux.",
+        "data": {
+          "api_key": "Chave API",
+          "access_token": "Token de Acesso",
+          "refresh_token": "Token de Atualização"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Lingua",
-                    "notifications": "Activar notificações para avisos de nível de alerta",
-                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
-                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
-                    "password": "Senha",
-                    "renew_interval": "Intervalo de atualização do WebSocket (segundos)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Credenciais API inválidas. Verifique sua chave API, token de acesso e token de atualização."
+    },
+    "abort": {
+      "single_instance_allowed": "Apenas uma configuração única é permitida.",
+      "already_configured": "Este dispositivo já está configurado.",
+      "already_configured_account": "Esta chave API já está configurada.",
+      "reconfigure_successful": "Reconfiguração foi bem-sucedida."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opções do Estado Electrolux",
+        "description": "Configurar definições de integração do Estado Electrolux.",
+        "data": {
+          "language": "Idioma de Exibição",
+          "notifications": "Ativar notificações para avisos de nível ALERTA",
+          "notifications_warning": "Ativar notificações para avisos de nível AVISO",
+          "notifications_diagnostic": "Ativar notificações para avisos de nível DIAGNÓSTICO",
+          "renew_interval": "Intervalo de renovação WebSocket (segundos)"
+        }
+      }
+    }
+  }
 }

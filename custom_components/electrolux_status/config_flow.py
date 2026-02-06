@@ -12,7 +12,6 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
     OptionsFlow,
 )
-from homeassistant.const import CONF_COUNTRY_CODE, CONF_PASSWORD
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -20,20 +19,16 @@ from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
-    selector,
 )
 
 from .const import (
     CONF_ACCESS_TOKEN,
     CONF_API_KEY,
-    CONF_LANGUAGE,
     CONF_NOTIFICATION_DEFAULT,
     CONF_NOTIFICATION_DIAG,
     CONF_NOTIFICATION_WARNING,
     CONF_REFRESH_TOKEN,
-    DEFAULT_LANGUAGE,
     DOMAIN,
-    languages,
 )
 from .util import get_electrolux_session
 
@@ -78,7 +73,9 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         self, entry_data: Mapping[str, Any]
     ) -> ConfigFlowResult:
         """Handle configuration by re-auth."""
-        return await self.async_step_reauth_validate(entry_data)
+        # Store the entry data for later use
+        self._reauth_entry_data = entry_data
+        return await self.async_step_reauth_validate()
 
     async def async_step_reauth_validate(self, user_input=None) -> ConfigFlowResult:
         """Handle reauth and validation."""
@@ -90,10 +87,13 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
                 user_input[CONF_REFRESH_TOKEN],
             )
             if valid:
-                return self.async_create_entry(title="Electrolux", data=user_input)
+                # Update the existing entry with new tokens
+                return self.async_update_reload_and_abort(
+                    self._get_reauth_entry(), data=user_input
+                )
             self._errors["base"] = "invalid_auth"
-            return await self._show_config_form(user_input)
-        return await self._show_config_form(user_input)
+            return await self._show_config_form(user_input, "reauth_validate")
+        return await self._show_config_form(self._reauth_entry_data, "reauth_validate")
 
     @staticmethod
     @callback
@@ -101,18 +101,26 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         """Present the configuration options dialog."""
         return ElectroluxStatusOptionsFlowHandler(config_entry)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, user_input, step_id="user"):
         """Show the configuration form to edit location data."""
+        defaults = user_input or {}
+
         data_schema = {
-            vol.Required(CONF_API_KEY): TextSelector(
+            vol.Required(
+                CONF_API_KEY, default=defaults.get(CONF_API_KEY, "")
+            ): TextSelector(
                 TextSelectorConfig(type=TextSelectorType.TEXT, autocomplete="api-key")
             ),
-            vol.Required(CONF_ACCESS_TOKEN): TextSelector(
+            vol.Required(
+                CONF_ACCESS_TOKEN, default=defaults.get(CONF_ACCESS_TOKEN, "")
+            ): TextSelector(
                 TextSelectorConfig(
                     type=TextSelectorType.PASSWORD, autocomplete="access-token"
                 )
             ),
-            vol.Required(CONF_REFRESH_TOKEN): TextSelector(
+            vol.Required(
+                CONF_REFRESH_TOKEN, default=defaults.get(CONF_REFRESH_TOKEN, "")
+            ): TextSelector(
                 TextSelectorConfig(
                     type=TextSelectorType.PASSWORD, autocomplete="refresh-token"
                 )
@@ -121,20 +129,21 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         if self.show_advanced_options:
             data_schema = {
                 **data_schema,
-                vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
-                    {
-                        "select": {
-                            "options": list(languages.keys()),
-                            "mode": "dropdown",
-                        }
-                    }
-                ),
-                vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
-                vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
-                vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+                vol.Optional(
+                    CONF_NOTIFICATION_DEFAULT,
+                    default=defaults.get(CONF_NOTIFICATION_DEFAULT, True),
+                ): cv.boolean,
+                vol.Optional(
+                    CONF_NOTIFICATION_WARNING,
+                    default=defaults.get(CONF_NOTIFICATION_WARNING, False),
+                ): cv.boolean,
+                vol.Optional(
+                    CONF_NOTIFICATION_DIAG,
+                    default=defaults.get(CONF_NOTIFICATION_DIAG, False),
+                ): cv.boolean,
             }
         return self.async_show_form(
-            step_id="user",
+            step_id=step_id,
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
         )
@@ -156,84 +165,127 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for Electrolux Status."""
 
     def __init__(self, config_entry) -> None:
-        """Initialize HACS options flow."""
+        """Initialize options flow."""
         self._config_entry = config_entry
-        self.options = dict(config_entry.options)
 
     async def async_step_init(self, user_input=None) -> ConfigFlowResult:
         """Manage the options."""
         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None) -> ConfigFlowResult:
-        """Handle a flow initialized by the user."""
-        if user_input is not None:
-            self.options.update(user_input)
-            return await self._update_options()
+    def _get_options_schema(self):
+        """Get the options schema with current values."""
+        # Get current values from config entry data and options
+        current_api_key = self._config_entry.data.get(CONF_API_KEY, "")
+        current_access_token = self._config_entry.data.get(CONF_ACCESS_TOKEN, "")
+        current_refresh_token = self._config_entry.data.get(CONF_REFRESH_TOKEN, "")
+        current_notify_default = self._config_entry.data.get(
+            CONF_NOTIFICATION_DEFAULT, True
+        )
+        current_notify_warning = self._config_entry.data.get(
+            CONF_NOTIFICATION_WARNING, False
+        )
+        current_notify_diag = self._config_entry.data.get(CONF_NOTIFICATION_DIAG, False)
 
-        selected_language = self.config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-        current_password = self.config_entry.data.get(CONF_PASSWORD, None)
-        current_country_code = self.config_entry.data.get(CONF_COUNTRY_CODE, None)
-        notify_alert = self.config_entry.data.get(CONF_NOTIFICATION_DEFAULT, True)
-        notify_warning = self.config_entry.data.get(CONF_NOTIFICATION_WARNING, False)
-        notify_diagnostic = self.config_entry.data.get(CONF_NOTIFICATION_DIAG, False)
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_PASSWORD, default=current_password): TextSelector(
-                        TextSelectorConfig(
-                            type=TextSelectorType.PASSWORD,
-                            autocomplete="current-password",
-                        )
-                    ),
-                    vol.Required(
-                        CONF_COUNTRY_CODE, default=current_country_code
-                    ): TextSelector(
-                        TextSelectorConfig(
-                            type=TextSelectorType.TEXT, autocomplete="country-code"
-                        )
-                    ),
-                    vol.Required(CONF_LANGUAGE, default=selected_language): selector(
-                        {
-                            "select": {
-                                "options": list(languages.keys()),
-                                "mode": "dropdown",
-                            }
-                        }
-                    ),
-                    vol.Optional(
-                        CONF_NOTIFICATION_DEFAULT, default=notify_alert
-                    ): cv.boolean,
-                    vol.Optional(
-                        CONF_NOTIFICATION_WARNING, default=notify_warning
-                    ): cv.boolean,
-                    vol.Optional(
-                        CONF_NOTIFICATION_DIAG, default=notify_diagnostic
-                    ): cv.boolean,
-                    # vol.Optional(
-                    #     CONF_RENEW_INTERVAL,
-                    #     default=self.config_entry.options.get(
-                    #         CONF_RENEW_INTERVAL, DEFAULT_WEBSOCKET_RENEWAL_DELAY
-                    #     ),
-                    # ): cv.positive_int,
-                }
-            ),
+        return vol.Schema(
+            {
+                vol.Optional(CONF_API_KEY, default=current_api_key): TextSelector(
+                    TextSelectorConfig(
+                        type=TextSelectorType.TEXT, autocomplete="api-key"
+                    )
+                ),
+                vol.Optional(
+                    CONF_ACCESS_TOKEN, default=current_access_token
+                ): TextSelector(
+                    TextSelectorConfig(
+                        type=TextSelectorType.PASSWORD, autocomplete="access-token"
+                    )
+                ),
+                vol.Optional(
+                    CONF_REFRESH_TOKEN, default=current_refresh_token
+                ): TextSelector(
+                    TextSelectorConfig(
+                        type=TextSelectorType.PASSWORD, autocomplete="refresh-token"
+                    )
+                ),
+                vol.Optional(
+                    CONF_NOTIFICATION_DEFAULT, default=current_notify_default
+                ): cv.boolean,
+                vol.Optional(
+                    CONF_NOTIFICATION_WARNING, default=current_notify_warning
+                ): cv.boolean,
+                vol.Optional(
+                    CONF_NOTIFICATION_DIAG, default=current_notify_diag
+                ): cv.boolean,
+            }
         )
 
-    async def _update_options(self):
-        """Update config entry options."""
-        _LOGGER.debug("Electrolux updating configuration")
-        data = {
-            **self.config_entry.data,
-            CONF_PASSWORD: self.options[CONF_PASSWORD],
-            CONF_COUNTRY_CODE: self.options[CONF_COUNTRY_CODE],
-            CONF_LANGUAGE: self.options[CONF_LANGUAGE],
-            CONF_NOTIFICATION_DEFAULT: self.options[CONF_NOTIFICATION_DEFAULT],
-            CONF_NOTIFICATION_WARNING: self.options[CONF_NOTIFICATION_WARNING],
-            CONF_NOTIFICATION_DIAG: self.options[CONF_NOTIFICATION_DIAG],
-        }
-        self.hass.config_entries.async_update_entry(self.config_entry, data=data)
-        return self.async_create_entry(
-            title="Electrolux",
-            data=data,
+    async def _test_credentials(self, api_key, access_token, refresh_token):
+        """Return true if credentials is valid."""
+        try:
+            client = get_electrolux_session(
+                api_key, access_token, refresh_token, async_get_clientsession(self.hass)
+            )
+            await client.get_appliances_list()
+        except Exception as inst:  # pylint: disable=broad-except  # noqa: BLE001
+            _LOGGER.error("Authentication to electrolux failed: %s", inst)
+            return False
+        return True
+
+    async def async_step_user(self, user_input=None) -> ConfigFlowResult:
+        """Handle the user step."""
+        if user_input is not None:
+            # Test credentials if any API credentials were provided
+            if any(
+                key in user_input
+                for key in [CONF_API_KEY, CONF_ACCESS_TOKEN, CONF_REFRESH_TOKEN]
+            ):
+                api_key = user_input.get(
+                    CONF_API_KEY, self._config_entry.data.get(CONF_API_KEY)
+                )
+                access_token = user_input.get(
+                    CONF_ACCESS_TOKEN, self._config_entry.data.get(CONF_ACCESS_TOKEN)
+                )
+                refresh_token = user_input.get(
+                    CONF_REFRESH_TOKEN, self._config_entry.data.get(CONF_REFRESH_TOKEN)
+                )
+
+                if not await self._test_credentials(
+                    api_key, access_token, refresh_token
+                ):
+                    return self.async_show_form(
+                        step_id="user",
+                        data_schema=self._get_options_schema(),
+                        errors={"base": "invalid_auth"},
+                    )
+
+            # Update the config entry data with new options
+            new_data = dict(self._config_entry.data)
+            new_options = dict(self._config_entry.options)
+
+            # API credentials and notifications go in data (require restart)
+            if CONF_API_KEY in user_input:
+                new_data[CONF_API_KEY] = user_input[CONF_API_KEY]
+            if CONF_ACCESS_TOKEN in user_input:
+                new_data[CONF_ACCESS_TOKEN] = user_input[CONF_ACCESS_TOKEN]
+            if CONF_REFRESH_TOKEN in user_input:
+                new_data[CONF_REFRESH_TOKEN] = user_input[CONF_REFRESH_TOKEN]
+            if CONF_NOTIFICATION_DEFAULT in user_input:
+                new_data[CONF_NOTIFICATION_DEFAULT] = user_input[
+                    CONF_NOTIFICATION_DEFAULT
+                ]
+            if CONF_NOTIFICATION_WARNING in user_input:
+                new_data[CONF_NOTIFICATION_WARNING] = user_input[
+                    CONF_NOTIFICATION_WARNING
+                ]
+            if CONF_NOTIFICATION_DIAG in user_input:
+                new_data[CONF_NOTIFICATION_DIAG] = user_input[CONF_NOTIFICATION_DIAG]
+
+            self.hass.config_entries.async_update_entry(
+                self._config_entry, data=new_data, options=new_options
+            )
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=self._get_options_schema(),
         )

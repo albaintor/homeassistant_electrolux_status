@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Apparaat is al geconfigureerd",
-            "already_configured_account": "Account is al geconfigureerd",
-            "reconfigure_successful": "De herconfiguratie was succesvol",
-            "single_instance_allowed": "Al geconfigureerd.Slechts een enkele configuratie mogelijk."
-        },
-        "error": {
-            "invalid_auth": "Ongeldige authenticatie"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Taal",
-                    "notifications": "Ken meldingen op voor kennisgevingen op alert niveau",
-                    "notifications_diagnostic": "Ken meldingen op voor kennisgevingen op diagnostische niveau",
-                    "notifications_warning": "Ken meldingen op voor waarschuwingsniveau -kennisgevingen",
-                    "password": "Wachtwoord",
-                    "username": "Gebruikersnaam"
-                },
-                "description": "Als u hulp nodig hebt bij het configuratiebezoek: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Electrolux -status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Instellen",
+        "description": "Verbind uw Electrolux apparaten met API-inloggegevens van het Electrolux Developer Portal.\n\nAls u hulp nodig heeft bij het verkrijgen van API-inloggegevens, bezoek: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "API-sleutel",
+          "access_token": "Toegangstoken",
+          "refresh_token": "Vernieuwingstoken",
+          "language": "Taal",
+          "notifications": "Meldingen inschakelen voor ALERT-niveau berichten",
+          "notifications_warning": "Meldingen inschakelen voor WARNING-niveau berichten",
+          "notifications_diagnostic": "Meldingen inschakelen voor DIAGNOSTIC-niveau berichten"
         }
+      },
+      "reauth_validate": {
+        "title": "Electrolux Status opnieuw authenticeren",
+        "description": "Uw Electrolux API-tokens zijn verlopen of ongeldig. Werk ze bij met nieuwe tokens van het Electrolux Developer Portal.",
+        "data": {
+          "api_key": "API-sleutel",
+          "access_token": "Toegangstoken",
+          "refresh_token": "Vernieuwingstoken"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Taal",
-                    "notifications": "Ken meldingen op voor kennisgevingen op alert niveau",
-                    "notifications_diagnostic": "Ken meldingen op voor kennisgevingen op diagnostische niveau",
-                    "notifications_warning": "Ken meldingen op voor waarschuwingsniveau -kennisgevingen",
-                    "password": "Wachtwoord",
-                    "renew_interval": "Vernieuwingsinterval van Websocket (seconden)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Ongeldige API-inloggegevens. Controleer uw API-sleutel, toegangstoken en vernieuwingstoken."
+    },
+    "abort": {
+      "single_instance_allowed": "Slechts één configuratie is toegestaan.",
+      "already_configured": "Dit apparaat is al geconfigureerd.",
+      "already_configured_account": "Deze API-sleutel is al geconfigureerd.",
+      "reconfigure_successful": "Herconfiguratie is gelukt."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Opties",
+        "description": "Configureer Electrolux Status integratie instellingen.",
+        "data": {
+          "language": "Weergavetaal",
+          "notifications": "Meldingen inschakelen voor ALERT-niveau berichten",
+          "notifications_warning": "Meldingen inschakelen voor WARNING-niveau berichten",
+          "notifications_diagnostic": "Meldingen inschakelen voor DIAGNOSTIC-niveau berichten",
+          "renew_interval": "WebSocket vernieuwingsinterval (seconden)"
+        }
+      }
+    }
+  }
 }

@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Enheden er allerede konfigureret",
-            "already_configured_account": "Konto er allerede konfigureret",
-            "reconfigure_successful": "Re-konfiguration var vellykket",
-            "single_instance_allowed": "Allerede konfigureret.Kun en enkelt konfiguration mulig."
-        },
-        "error": {
-            "invalid_auth": "Ugyldig godkendelse"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Sprog",
-                    "notifications": "Hæv meddelelser om meddelelser om alarmniveau",
-                    "notifications_diagnostic": "Hæv underretninger om meddelelser om diagnostisk niveau",
-                    "notifications_warning": "Hæv underretninger om meddelelser om advarselsniveau",
-                    "password": "Adgangskode",
-                    "username": "Brugernavn"
-                },
-                "description": "Hvis du har brug for hjælp til konfigurationsbesøget: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Elektrolux -status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Opsætning",
+        "description": "Tilslut dine Electrolux apparater ved hjælp af API legitimationsoplysninger fra Electrolux Developer Portal.\n\nHvis du har brug for hjælp til at få API legitimationsoplysninger, besøg: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "API-nøgle",
+          "access_token": "Adgangstoken",
+          "refresh_token": "Opdateringstoken",
+          "language": "Sprog",
+          "notifications": "Aktivér notifikationer for ALERT niveau meddelelser",
+          "notifications_warning": "Aktivér notifikationer for WARNING niveau meddelelser",
+          "notifications_diagnostic": "Aktivér notifikationer for DIAGNOSTIC niveau meddelelser"
         }
+      },
+      "reauth_validate": {
+        "title": "Gen-autentificer Electrolux Status",
+        "description": "Dine Electrolux API-tokens er udløbet eller ugyldige. Opdater dem med nye tokens fra Electrolux Developer Portal.",
+        "data": {
+          "api_key": "API-nøgle",
+          "access_token": "Adgangstoken",
+          "refresh_token": "Opdateringstoken"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Sprog",
-                    "notifications": "Hæv meddelelser om meddelelser om alarmniveau",
-                    "notifications_diagnostic": "Hæv underretninger om meddelelser om diagnostisk niveau",
-                    "notifications_warning": "Hæv underretninger om meddelelser om advarselsniveau",
-                    "password": "Adgangskode",
-                    "renew_interval": "Fornyelsesinterval på WebSocket (sekunder)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Ugyldige API legitimationsoplysninger. Tjek din API-nøgle, adgangstoken og opdateringstoken."
+    },
+    "abort": {
+      "single_instance_allowed": "Kun en enkelt konfiguration er tilladt.",
+      "already_configured": "Denne enhed er allerede konfigureret.",
+      "already_configured_account": "Denne API-nøgle er allerede konfigureret.",
+      "reconfigure_successful": "Genkonfiguration lykkedes."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Indstillinger",
+        "description": "Konfigurer Electrolux Status integrationsindstillinger.",
+        "data": {
+          "language": "Visningssprog",
+          "notifications": "Aktivér notifikationer for ALERT niveau meddelelser",
+          "notifications_warning": "Aktivér notifikationer for WARNING niveau meddelelser",
+          "notifications_diagnostic": "Aktivér notifikationer for DIAGNOSTIC niveau meddelelser",
+          "renew_interval": "WebSocket fornyelsesinterval (sekunder)"
+        }
+      }
+    }
+  }
 }

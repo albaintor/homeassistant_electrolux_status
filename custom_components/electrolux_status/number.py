@@ -95,6 +95,21 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
+        # Check if remote control is enabled
+        remote_control = (
+            self.appliance_status.get("properties", {})
+            .get("reported", {})
+            .get("remoteControl")
+        )
+        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+            _LOGGER.warning(
+                "Cannot set %s for appliance %s: remote control is %s",
+                self.entity_attr,
+                self.pnc_id,
+                remote_control,
+            )
+            raise Exception(f"Remote control disabled (status: {remote_control})")
+
         if self.unit == UnitOfTime.SECONDS:
             converted = time_minutes_to_seconds(value)
             value = float(converted) if converted is not None else value

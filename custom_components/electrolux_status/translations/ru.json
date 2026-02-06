@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Устройство уже настроено",
-            "already_configured_account": "Учетная запись уже настроена",
-            "reconfigure_successful": "Повторная конфигурация была успешной",
-            "single_instance_allowed": "Уже настроен.Возможно только одна конфигурация."
-        },
-        "error": {
-            "invalid_auth": "Неверная аутентификация"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Язык",
-                    "notifications": "Повысить уведомления о уведомлениях о уровне оповещения",
-                    "notifications_diagnostic": "Повышение уведомлений для уведомлений о диагностике",
-                    "notifications_warning": "Повысить уведомления о уведомлениях о уровне предупреждения",
-                    "password": "Пароль",
-                    "username": "Имя пользователя"
-                },
-                "description": "Если вам нужна помощь с посещением конфигурации: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Статус электролюса"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Настройка статуса Electrolux",
+        "description": "Подключите свои устройства Electrolux, используя учетные данные API из портала разработчика Electrolux.\n\nЕсли вам нужна помощь в получении учетных данных API, посетите: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Ключ API",
+          "access_token": "Токен доступа",
+          "refresh_token": "Токен обновления",
+          "language": "Язык",
+          "notifications": "Включить уведомления для сообщений уровня ALERT",
+          "notifications_warning": "Включить уведомления для сообщений уровня WARNING",
+          "notifications_diagnostic": "Включить уведомления для сообщений уровня DIAGNOSTIC"
         }
+      },
+      "reauth_validate": {
+        "title": "Повторно аутентифицировать статус Electrolux",
+        "description": "Ваши токены API Electrolux истекли или недействительны. Обновите их новыми токенами с портала разработчика Electrolux.",
+        "data": {
+          "api_key": "Ключ API",
+          "access_token": "Токен доступа",
+          "refresh_token": "Токен обновления"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Язык",
-                    "notifications": "Повысить уведомления о уведомлениях о уровне оповещения",
-                    "notifications_diagnostic": "Повышение уведомлений для уведомлений о диагностике",
-                    "notifications_warning": "Повысить уведомления о уведомлениях о уровне предупреждения",
-                    "password": "Пароль",
-                    "renew_interval": "Интервал обновления WebSocket (секунды)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Недействительные учетные данные API. Проверьте свой ключ API, токен доступа и токен обновления."
+    },
+    "abort": {
+      "single_instance_allowed": "Разрешена только одна конфигурация.",
+      "already_configured": "Это устройство уже настроено.",
+      "already_configured_account": "Этот ключ API уже настроен.",
+      "reconfigure_successful": "Переконфигурация прошла успешно."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Параметры статуса Electrolux",
+        "description": "Настроить параметры интеграции статуса Electrolux.",
+        "data": {
+          "language": "Язык отображения",
+          "notifications": "Включить уведомления для сообщений уровня ALERT",
+          "notifications_warning": "Включить уведомления для сообщений уровня WARNING",
+          "notifications_diagnostic": "Включить уведомления для сообщений уровня DIAGNOSTIC",
+          "renew_interval": "Интервал обновления WebSocket (секунды)"
+        }
+      }
+    }
+  }
 }

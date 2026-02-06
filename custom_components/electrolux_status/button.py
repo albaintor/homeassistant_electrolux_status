@@ -112,6 +112,21 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
 
     async def send_command(self) -> bool:
         """Send a command to the device."""
+        # Check if remote control is enabled
+        remote_control = (
+            self.appliance_status.get("properties", {})
+            .get("reported", {})
+            .get("remoteControl")
+        )
+        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+            _LOGGER.warning(
+                "Cannot send command %s for appliance %s: remote control is %s",
+                self.val_to_send,
+                self.pnc_id,
+                remote_control,
+            )
+            raise Exception(f"Remote control disabled (status: {remote_control})")
+
         client: ElectroluxApiClient = self.api
         value = self.val_to_send
         if self.entity_source:

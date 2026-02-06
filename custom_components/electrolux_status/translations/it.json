@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Il dispositivo è già configurato",
-            "already_configured_account": "L'account è già configurato",
-            "reconfigure_successful": "La riconfigurazione ha avuto successo",
-            "single_instance_allowed": "Già configurato.Solo una singola configurazione possibile."
-        },
-        "error": {
-            "invalid_auth": "Autenticazione non valida"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Lingua",
-                    "notifications": "Aumenta le notifiche per gli avvisi di livello di allerta",
-                    "notifications_diagnostic": "Aumenta le notifiche per gli avvisi a livello diagnostico",
-                    "notifications_warning": "Aumenta le notifiche per gli avvisi di livello di avvertimento",
-                    "password": "Password",
-                    "username": "Nome utente"
-                },
-                "description": "Se hai bisogno di aiuto con la visita di configurazione: https://github.com/albaintor/homeeasistant_electrolux_status",
-                "title": "Stato Electrolux"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurazione stato Electrolux",
+        "description": "Collega i tuoi elettrodomestici Electrolux utilizzando le credenziali API dal portale sviluppatori Electrolux.\n\nSe hai bisogno di aiuto per ottenere le credenziali API, visita: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Chiave API",
+          "access_token": "Token di accesso",
+          "refresh_token": "Token di aggiornamento",
+          "language": "Lingua",
+          "notifications": "Abilita notifiche per avvisi di livello ALLARME",
+          "notifications_warning": "Abilita notifiche per avvisi di livello AVVERTIMENTO",
+          "notifications_diagnostic": "Abilita notifiche per avvisi di livello DIAGNOSTICO"
         }
+      },
+      "reauth_validate": {
+        "title": "Ri-autentica stato Electrolux",
+        "description": "I tuoi token API Electrolux sono scaduti o non validi. Aggiornali con nuovi token dal portale sviluppatori Electrolux.",
+        "data": {
+          "api_key": "Chiave API",
+          "access_token": "Token di accesso",
+          "refresh_token": "Token di aggiornamento"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Lingua",
-                    "notifications": "Aumenta le notifiche per gli avvisi di livello di allerta",
-                    "notifications_diagnostic": "Aumenta le notifiche per gli avvisi a livello diagnostico",
-                    "notifications_warning": "Aumenta le notifiche per gli avvisi di livello di avvertimento",
-                    "password": "Password",
-                    "renew_interval": "Intervallo di rinnovo di WebSocket (secondi)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Credenziali API non valide. Controlla la tua chiave API, token di accesso e token di aggiornamento."
+    },
+    "abort": {
+      "single_instance_allowed": "È consentita una sola configurazione.",
+      "already_configured": "Questo dispositivo è già configurato.",
+      "already_configured_account": "Questa chiave API è già configurata.",
+      "reconfigure_successful": "La riconfigurazione è riuscita."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opzioni stato Electrolux",
+        "description": "Configura le impostazioni di integrazione dello stato Electrolux.",
+        "data": {
+          "language": "Lingua di visualizzazione",
+          "notifications": "Abilita notifiche per avvisi di livello ALLARME",
+          "notifications_warning": "Abilita notifiche per avvisi di livello AVVERTIMENTO",
+          "notifications_diagnostic": "Abilita notifiche per avvisi di livello DIAGNOSTICO",
+          "renew_interval": "Intervallo di rinnovo WebSocket (secondi)"
+        }
+      }
+    }
+  }
 }

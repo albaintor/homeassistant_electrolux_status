@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Enheten er allerede konfigurert",
-            "already_configured_account": "Konto er allerede konfigurert",
-            "reconfigure_successful": "Re-konfigurasjon var vellykket",
-            "single_instance_allowed": "Allerede konfigurert.Bare en enkelt konfigurasjon mulig."
-        },
-        "error": {
-            "invalid_auth": "Ugyldig autentisering"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Språk",
-                    "notifications": "Hev varsler for varslingsnivåvarsler",
-                    "notifications_diagnostic": "Hev varsler for varsler om diagnostisk nivå",
-                    "notifications_warning": "Hev varsler for varsler om advarselsnivå",
-                    "password": "Passord",
-                    "username": "Brukernavn"
-                },
-                "description": "Hvis du trenger hjelp med konfigurasjonsbesøket: https://github.com/albainTor/homeassistant_electrolux_status",
-                "title": "Electrolux -status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Oppsett",
+        "description": "Koble til dine Electrolux apparater ved hjelp av API legitimasjon fra Electrolux Developer Portal.\n\nHvis du trenger hjelp med å få API legitimasjon, besøk: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "API-nøkkel",
+          "access_token": "Tilgangstoken",
+          "refresh_token": "Oppdateringstoken",
+          "language": "Språk",
+          "notifications": "Aktiver varsler for ALERT nivå meldinger",
+          "notifications_warning": "Aktiver varsler for WARNING nivå meldinger",
+          "notifications_diagnostic": "Aktiver varsler for DIAGNOSTIC nivå meldinger"
         }
+      },
+      "reauth_validate": {
+        "title": "Re-autentiser Electrolux Status",
+        "description": "Dine Electrolux API-tokens har utløpt eller er ugyldige. Oppdater dem med nye tokens fra Electrolux Developer Portal.",
+        "data": {
+          "api_key": "API-nøkkel",
+          "access_token": "Tilgangstoken",
+          "refresh_token": "Oppdateringstoken"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Språk",
-                    "notifications": "Hev varsler for varslingsnivåvarsler",
-                    "notifications_diagnostic": "Hev varsler for varsler om diagnostisk nivå",
-                    "notifications_warning": "Hev varsler for varsler om advarselsnivå",
-                    "password": "Passord",
-                    "renew_interval": "Fornyelsesintervall av WebSocket (sekunder)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Ugyldig API legitimasjon. Sjekk din API-nøkkel, tilgangstoken og oppdateringstoken."
+    },
+    "abort": {
+      "single_instance_allowed": "Kun en enkelt konfigurasjon er tillatt.",
+      "already_configured": "Denne enheten er allerede konfigurert.",
+      "already_configured_account": "Denne API-nøkkelen er allerede konfigurert.",
+      "reconfigure_successful": "Rekonfigurering var vellykket."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Alternativer",
+        "description": "Konfigurer Electrolux Status integrasjonsinnstillinger.",
+        "data": {
+          "language": "Visningsspråk",
+          "notifications": "Aktiver varsler for ALERT nivå meldinger",
+          "notifications_warning": "Aktiver varsler for WARNING nivå meldinger",
+          "notifications_diagnostic": "Aktiver varsler for DIAGNOSTIC nivå meldinger",
+          "renew_interval": "WebSocket fornyelsesintervall (sekunder)"
+        }
+      }
+    }
+  }
 }

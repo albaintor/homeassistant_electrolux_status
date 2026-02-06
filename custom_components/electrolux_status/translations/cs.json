@@ -1,41 +1,60 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Zařízení je již nakonfigurováno",
-            "already_configured_account": "Účet je již nakonfigurován",
-            "reconfigure_successful": "Rekonfigurace byla úspěšná",
-            "single_instance_allowed": "Již nakonfigurováno.Je možné pouze jedinou konfiguraci."
-        },
-        "error": {
-            "invalid_auth": "Neplatná ověřování"
-        },
         "step": {
             "user": {
+                "title": "Nastavení stavu Electrolux",
+                "description": "Připojte své spotřebiče Electrolux pomocí přihlašovacích údajů API z portálu Electrolux Developer Portal.\n\nPokud potřebujete pomoc se získáním přihlašovacích údajů API, navštivte: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "Klíč API",
+                    "access_token": "Přístupový token",
+                    "refresh_token": "Obnovit token",
                     "language": "Jazyk",
-                    "notifications": "Zvyšte oznámení o upozornění na výstrahu",
-                    "notifications_diagnostic": "Zvyšte oznámení o oznámení o diagnostické úrovni",
-                    "notifications_warning": "Zvyšte oznámení o oznámení o varování",
-                    "password": "Heslo",
-                    "username": "Uživatelské jméno"
-                },
-                "description": "Pokud potřebujete pomoc s konfigurací návštěva: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Stav elektroluxu"
+                    "notifications": "Povolit upozornění pro upozornění na úrovni ALERT",
+                    "notifications_warning": "Povolit upozornění pro upozornění na úrovni VAROVÁNÍ",
+                    "notifications_diagnostic": "Povolit upozornění na upozornění na úrovni DIAGNOSTIKY"
+                }
+            },
+            "reauth_validate": {
+                "title": "Znovu ověřte stav Electrolux",
+                "description": "Platnost vašich tokenů Electrolux API vypršela nebo jsou neplatné. Aktualizujte je pomocí nových tokenů z portálu Electrolux Developer Portal.",
+                "data": {
+                    "api_key": "Klíč API",
+                    "access_token": "Přístupový token",
+                    "refresh_token": "Obnovit token"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Neplatné přihlašovací údaje rozhraní API. Zkontrolujte svůj API klíč, přístupový token a obnovovací token.",
+            "incomplete_credentials": "Všechny přihlašovací údaje API (API klíč, přístupový token, obnovovací token) musí být poskytnuty společně."
+        },
+        "abort": {
+            "single_instance_allowed": "Je povolena pouze jedna konfigurace.",
+            "already_configured": "Toto zařízení je již nakonfigurováno.",
+            "already_configured_account": "Tento klíč API je již nakonfigurován.",
+            "reconfigure_successful": "Opětovná konfigurace byla úspěšná."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Možnosti stavu Electrolux",
+                "description": "Nakonfigurujte nastavení integrace stavu Electrolux. Zde můžete v případě potřeby aktualizovat své přihlašovací údaje API.",
                 "data": {
-                    "language": "Jazyk",
-                    "notifications": "Zvyšte oznámení o upozornění na výstrahu",
-                    "notifications_diagnostic": "Zvyšte oznámení o oznámení o diagnostické úrovni",
-                    "notifications_warning": "Zvyšte oznámení o oznámení o varování",
-                    "password": "Heslo",
-                    "renew_interval": "Interval obnovy WebSocket (sekundy)"
+                    "api_key": "Klíč API",
+                    "access_token": "Přístupový token",
+                    "refresh_token": "Obnovit token",
+                    "language": "Jazyk zobrazení",
+                    "notifications": "Povolit upozornění pro upozornění na úrovni ALERT",
+                    "notifications_warning": "Povolit upozornění pro upozornění na úrovni VAROVÁNÍ",
+                    "notifications_diagnostic": "Povolit upozornění na upozornění na úrovni DIAGNOSTIKY",
+                    "renew_interval": "Interval obnovy SSE (v sekundách)"
                 }
             }
+        },
+        "error": {
+            "incomplete_credentials": "Všechny přihlašovací údaje API (API klíč, přístupový token, obnovovací token) musí být poskytnuty společně.",
+            "invalid_auth": "Neplatné přihlašovací údaje rozhraní API. Zkontrolujte svůj API klíč, přístupový token a obnovovací token."
         }
     }
 }

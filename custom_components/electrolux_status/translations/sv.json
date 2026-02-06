@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Enheten är redan konfigurerad",
-            "already_configured_account": "Kontot är redan konfigurerat",
-            "reconfigure_successful": "Re-konfiguration var framgångsrik",
-            "single_instance_allowed": "Redan konfigurerat.Endast en enda konfiguration som möjligt."
-        },
-        "error": {
-            "invalid_auth": "Ogiltig autentisering"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Språk",
-                    "notifications": "Höj meddelanden för meddelanden om varningsnivå",
-                    "notifications_diagnostic": "Höj meddelanden för meddelanden om diagnostisk nivå",
-                    "notifications_warning": "Höj meddelanden för varningsnivåmeddelanden",
-                    "password": "Lösenord",
-                    "username": "Användarnamn"
-                },
-                "description": "Om du behöver hjälp med konfigurationsbesöket: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Elektroluxstatus"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Konfiguration",
+        "description": "Anslut dina Electrolux apparater med API-uppgifter från Electrolux Developer Portal.\n\nOm du behöver hjälp med att få API-uppgifter, besök: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "API-nyckel",
+          "access_token": "Åtkomsttoken",
+          "refresh_token": "Uppdateringstoken",
+          "language": "Språk",
+          "notifications": "Aktivera aviseringar för ALERT-nivå meddelanden",
+          "notifications_warning": "Aktivera aviseringar för WARNING-nivå meddelanden",
+          "notifications_diagnostic": "Aktivera aviseringar för DIAGNOSTIC-nivå meddelanden"
         }
+      },
+      "reauth_validate": {
+        "title": "Återautentisera Electrolux Status",
+        "description": "Dina Electrolux API-tokens har gått ut eller är ogiltiga. Uppdatera dem med nya tokens från Electrolux Developer Portal.",
+        "data": {
+          "api_key": "API-nyckel",
+          "access_token": "Åtkomsttoken",
+          "refresh_token": "Uppdateringstoken"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Språk",
-                    "notifications": "Höj meddelanden för meddelanden om varningsnivå",
-                    "notifications_diagnostic": "Höj meddelanden för meddelanden om diagnostisk nivå",
-                    "notifications_warning": "Höj meddelanden för varningsnivåmeddelanden",
-                    "password": "Lösenord",
-                    "renew_interval": "Förnyelseintervall för WebSocket (sekunder)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Ogiltiga API-uppgifter. Kontrollera din API-nyckel, åtkomsttoken och uppdateringstoken."
+    },
+    "abort": {
+      "single_instance_allowed": "Endast en konfiguration är tillåten.",
+      "already_configured": "Denna enhet är redan konfigurerad.",
+      "already_configured_account": "Denna API-nyckel är redan konfigurerad.",
+      "reconfigure_successful": "Omkonfigurationen lyckades."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Alternativ",
+        "description": "Konfigurera Electrolux Status integrationsinställningar.",
+        "data": {
+          "language": "Visningsspråk",
+          "notifications": "Aktivera aviseringar för ALERT-nivå meddelanden",
+          "notifications_warning": "Aktivera aviseringar för WARNING-nivå meddelanden",
+          "notifications_diagnostic": "Aktivera aviseringar för DIAGNOSTIC-nivå meddelanden",
+          "renew_interval": "WebSocket förnyelseintervall (sekunder)"
+        }
+      }
+    }
+  }
 }

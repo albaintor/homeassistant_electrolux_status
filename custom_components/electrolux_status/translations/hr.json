@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Uređaj je već konfiguriran",
-            "already_configured_account": "Račun je već konfiguriran",
-            "reconfigure_successful": "Ponovna konfiguracija bila je uspješna",
-            "single_instance_allowed": "Već konfigurirano.Moguća je samo jedna konfiguracija."
-        },
-        "error": {
-            "invalid_auth": "Nevažeća autentifikacija"
-        },
         "step": {
             "user": {
+                "title": "Electrolux Postavljanje statusa",
+                "description": "Povežite svoje Electrolux uređaje pomoću API vjerodajnica s Electrolux Developer Portala.\n\nAko trebate pomoć za dobivanje vjerodajnica za API, posjetite: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API ključ",
+                    "access_token": "Pristupni token",
+                    "refresh_token": "Osvježi token",
                     "language": "Jezik",
-                    "notifications": "Povećajte obavijesti o obavijesti o razini upozorenja",
-                    "notifications_diagnostic": "Povećajte obavijesti za obavijesti o dijagnostičkoj razini",
-                    "notifications_warning": "Povećajte obavijesti o obavijesti o razini upozorenja",
-                    "password": "Lozinka",
-                    "username": "Korisničko ime"
-                },
-                "description": "Ako vam je potrebna pomoć u konfiguraciji posjetite: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Elektrolux status"
+                    "notifications": "Omogući obavijesti za obavijesti razine UPOZORENJA",
+                    "notifications_warning": "Omogući obavijesti za obavijesti razine UPOZORENJE",
+                    "notifications_diagnostic": "Omogući obavijesti za obavijesti DIJAGNOSTIČKE razine"
+                }
+            },
+            "reauth_validate": {
+                "title": "Ponovno provjerite Electrolux status",
+                "description": "Vaši Electrolux API tokeni su istekli ili su nevažeći. Ažurirajte ih novim tokenima s Electroluxovog portala za razvojne programere.",
+                "data": {
+                    "api_key": "API ključ",
+                    "access_token": "Pristupni token",
+                    "refresh_token": "Osvježi token"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Nevažeće API vjerodajnice. Provjerite svoj API ključ, pristupni token i token za osvježavanje."
+        },
+        "abort": {
+            "single_instance_allowed": "Dopuštena je samo jedna konfiguracija.",
+            "already_configured": "Ovaj uređaj je već konfiguriran.",
+            "already_configured_account": "Ovaj API ključ je već konfiguriran.",
+            "reconfigure_successful": "Ponovna konfiguracija je bila uspješna."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Electrolux opcije statusa",
+                "description": "Konfigurirajte postavke integracije statusa Electrolux.",
                 "data": {
-                    "language": "Jezik",
-                    "notifications": "Povećajte obavijesti o obavijesti o razini upozorenja",
-                    "notifications_diagnostic": "Povećajte obavijesti za obavijesti o dijagnostičkoj razini",
-                    "notifications_warning": "Povećajte obavijesti o obavijesti o razini upozorenja",
-                    "password": "Lozinka",
-                    "renew_interval": "Interval obnavljanja web mjesta (sekunde)"
+                    "language": "Jezik prikaza",
+                    "notifications": "Omogući obavijesti za obavijesti razine UPOZORENJA",
+                    "notifications_warning": "Omogući obavijesti za obavijesti razine UPOZORENJE",
+                    "notifications_diagnostic": "Omogući obavijesti za obavijesti DIJAGNOSTIČKE razine",
+                    "renew_interval": "Interval obnove websocketa (sekunde)"
                 }
             }
         }

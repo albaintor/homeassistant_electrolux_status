@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Urządzenie jest już skonfigurowane",
-            "already_configured_account": "Konto jest już skonfigurowane",
-            "reconfigure_successful": "Ponowna konfiguracja zakończyła się powodzeniem",
-            "single_instance_allowed": "Już skonfigurowano. Możliwa tylko jedna konfiguracja."
-        },
-        "error": {
-            "invalid_auth": "Nieprawidłowe uwierzytelnienie"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Język",
-                    "notifications": "Pokazuj alerty",
-                    "notifications_diagnostic": "Pokazuj powoadomienia diagnostyczne",
-                    "notifications_warning": "Pokazuj powiadomienia ostrzegawcze",
-                    "password": "Hasło",
-                    "username": "Nazwa użytkownika"
-                },
-                "description": "Jeśli potrzebujesz pomocy w konfiguracji, odwiedź: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Electrolux Status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguracja statusu Electrolux",
+        "description": "Podłącz swoje urządzenia Electrolux używając poświadczeń API z portalu deweloperskiego Electrolux.\n\nJeśli potrzebujesz pomocy w uzyskaniu poświadczeń API, odwiedź: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Klucz API",
+          "access_token": "Token dostępu",
+          "refresh_token": "Token odświeżania",
+          "language": "Język",
+          "notifications": "Włącz powiadomienia dla powiadomień poziomu ALERT",
+          "notifications_warning": "Włącz powiadomienia dla powiadomień poziomu WARNING",
+          "notifications_diagnostic": "Włącz powiadomienia dla powiadomień poziomu DIAGNOSTIC"
         }
+      },
+      "reauth_validate": {
+        "title": "Ponownie uwierzytelnij status Electrolux",
+        "description": "Twoje tokeny API Electrolux wygasły lub są nieprawidłowe. Zaktualizuj je nowymi tokenami z portalu deweloperskiego Electrolux.",
+        "data": {
+          "api_key": "Klucz API",
+          "access_token": "Token dostępu",
+          "refresh_token": "Token odświeżania"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Język",
-                    "notifications": "Pokazuj alerty",
-                    "notifications_diagnostic": "Pokazuj powoadomienia diagnostyczne",
-                    "notifications_warning": "Pokazuj powiadomienia ostrzegawcze",
-                    "password": "Hasło",
-                    "renew_interval": "Okres odnawiania połączenia WebSocket (sekundy)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Nieprawidłowe poświadczenia API. Sprawdź swój klucz API, token dostępu i token odświeżania."
+    },
+    "abort": {
+      "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja.",
+      "already_configured": "To urządzenie jest już skonfigurowane.",
+      "already_configured_account": "Ten klucz API jest już skonfigurowany.",
+      "reconfigure_successful": "Rekonfiguracja powiodła się."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opcje statusu Electrolux",
+        "description": "Skonfiguruj ustawienia integracji statusu Electrolux.",
+        "data": {
+          "language": "Język wyświetlania",
+          "notifications": "Włącz powiadomienia dla powiadomień poziomu ALERT",
+          "notifications_warning": "Włącz powiadomienia dla powiadomień poziomu WARNING",
+          "notifications_diagnostic": "Włącz powiadomienia dla powiadomień poziomu DIAGNOSTIC",
+          "renew_interval": "Interwał odnawiania WebSocket (sekundy)"
+        }
+      }
+    }
+  }
 }

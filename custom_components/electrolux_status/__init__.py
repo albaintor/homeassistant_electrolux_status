@@ -4,7 +4,6 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONF_LANGUAGE,
     EVENT_HOMEASSISTANT_STOP,
 )
 from homeassistant.core import HomeAssistant
@@ -16,13 +15,9 @@ from .const import (
     CONF_ACCESS_TOKEN,
     CONF_API_KEY,
     CONF_REFRESH_TOKEN,
-    CONF_RENEW_INTERVAL,
-    DEFAULT_COUNTRY_CODE,
-    DEFAULT_LANGUAGE,
     DEFAULT_WEBSOCKET_RENEWAL_DELAY,
     DOMAIN,
     PLATFORMS,
-    languages,
 )
 from .coordinator import ElectroluxCoordinator
 from .util import get_electrolux_session
@@ -42,18 +37,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})
 
     renew_interval = DEFAULT_WEBSOCKET_RENEWAL_DELAY
-    if entry.options.get(CONF_RENEW_INTERVAL):
-        renew_interval = entry.options[CONF_RENEW_INTERVAL]
 
     api_key = entry.data.get(CONF_API_KEY) or ""
     access_token = entry.data.get(CONF_ACCESS_TOKEN) or ""
     refresh_token = entry.data.get(CONF_REFRESH_TOKEN) or ""
-    language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
     session = async_get_clientsession(hass)
 
-    client = get_electrolux_session(
-        api_key, access_token, refresh_token, session, language
-    )
+    client = get_electrolux_session(api_key, access_token, refresh_token, session)
     coordinator = ElectroluxCoordinator(
         hass,
         client=client,
@@ -76,8 +66,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.setup_entities()
     _LOGGER.debug("async_setup_entry listen_websocket")
     coordinator.listen_websocket()
-    # _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
-    # await coordinator.launch_websocket_renewal_task()
+    _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
+    await coordinator.launch_websocket_renewal_task()
 
     entry.async_on_unload(
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close)

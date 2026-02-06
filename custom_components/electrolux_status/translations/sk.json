@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Zariadenie je už nakonfigurované",
-            "already_configured_account": "Účet je už nakonfigurovaný",
-            "reconfigure_successful": "Opätovná konfigurácia bola úspešná",
-            "single_instance_allowed": "Už nakonfigurované.Iba jedna možná konfigurácia."
-        },
-        "error": {
-            "invalid_auth": "Neplatné overovanie"
-        },
         "step": {
             "user": {
+                "title": "Nastavenie stavu Electrolux",
+                "description": "Pripojte svoje spotrebiče Electrolux pomocou poverení API z portálu Electrolux Developer Portal.\n\nAk potrebujete pomoc so získaním poverení API, navštívte: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API kľúč",
+                    "access_token": "Prístupový token",
+                    "refresh_token": "Obnoviť token",
                     "language": "Jazyk",
-                    "notifications": "Zvýšiť oznámenia o upozorneniach na úrovni výstrahy",
-                    "notifications_diagnostic": "Zvýšte upozornenia pre oznámenia o diagnostickej úrovni",
-                    "notifications_warning": "Zvýšte oznámenia o upozorneniach na úrovni varovania",
-                    "password": "Heslo",
-                    "username": "Užívateľské meno"
-                },
-                "description": "Ak potrebujete pomoc s konfiguráciou, navštívte: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Status"
+                    "notifications": "Povoliť upozornenia pre upozornenia na úrovni ALERT",
+                    "notifications_warning": "Povoliť upozornenia na upozornenia úrovne WARNING",
+                    "notifications_diagnostic": "Povoliť upozornenia na upozornenia na úrovni DIAGNOSTIKY"
+                }
+            },
+            "reauth_validate": {
+                "title": "Znova overte stav Electrolux",
+                "description": "Platnosť vašich tokenov Electrolux API vypršala alebo sú neplatné. Aktualizujte ich pomocou nových tokenov z portálu Electrolux Developer Portal.",
+                "data": {
+                    "api_key": "API kľúč",
+                    "access_token": "Prístupový token",
+                    "refresh_token": "Obnoviť token"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Neplatné poverenia rozhrania API. Skontrolujte svoj kľúč API, prístupový token a obnovovací token."
+        },
+        "abort": {
+            "single_instance_allowed": "Je povolená iba jedna konfigurácia.",
+            "already_configured": "Toto zariadenie je už nakonfigurované.",
+            "already_configured_account": "Tento kľúč API je už nakonfigurovaný.",
+            "reconfigure_successful": "Opätovná konfigurácia bola úspešná."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Možnosti stavu Electrolux",
+                "description": "Nakonfigurujte nastavenia integrácie stavu Electrolux.",
                 "data": {
-                    "language": "Jazyk",
-                    "notifications": "Zvýšiť oznámenia o upozorneniach na úrovni výstrahy",
-                    "notifications_diagnostic": "Zvýšte upozornenia pre oznámenia o diagnostickej úrovni",
-                    "notifications_warning": "Zvýšte oznámenia o upozorneniach na úrovni varovania",
-                    "password": "Heslo",
-                    "renew_interval": "Interval obnovy WebSocket (sekundy)"
+                    "language": "Jazyk zobrazenia",
+                    "notifications": "Povoliť upozornenia pre upozornenia na úrovni ALERT",
+                    "notifications_warning": "Povoliť upozornenia na upozornenia úrovne WARNING",
+                    "notifications_diagnostic": "Povoliť upozornenia na upozornenia na úrovni DIAGNOSTIKY",
+                    "renew_interval": "Interval obnovy Websocket (sekundy)"
                 }
             }
         }

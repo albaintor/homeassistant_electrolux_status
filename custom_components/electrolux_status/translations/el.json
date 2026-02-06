@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Η συσκευή έχει ήδη ρυθμιστεί",
-            "already_configured_account": "Ο λογαριασμός έχει ήδη ρυθμιστεί",
-            "reconfigure_successful": "Η εκ νέου διαμόρφωση ήταν επιτυχής",
-            "single_instance_allowed": "Έχει ήδη ρυθμιστεί. Μόνο μία δυνατή διαμόρφωση."
-        },
-        "error": {
-            "invalid_auth": "Μη έγκυρος έλεγχος ταυτότητας"
-        },
         "step": {
             "user": {
+                "title": "Ρύθμιση κατάστασης Electrolux",
+                "description": "Συνδέστε τις συσκευές Electrolux χρησιμοποιώντας διαπιστευτήρια API από την πύλη προγραμματιστών της Electrolux.\n\nΕάν χρειάζεστε βοήθεια για την απόκτηση διαπιστευτηρίων API, επισκεφθείτε τη διεύθυνση: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "Κλειδί API",
+                    "access_token": "Token πρόσβασης",
+                    "refresh_token": "Ανανέωση διακριτικού",
                     "language": "Γλώσσα",
-                    "notifications": "Ειδοποιήσεις",
-                    "notifications_diagnostic": "Διαγνωστικά",
-                    "notifications_warning": "Προειδοποιήσεις",
-                    "password": "Κωδικός",
-                    "username": "Όνομα χρήστη"
-                },
-                "description": "Εάν χρειάζεστε βοήθεια επισκεφτείτε τον σύνδεσμο: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Κατάσταση ηλεκτρικής ενέργειας"
+                    "notifications": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου ALERT",
+                    "notifications_warning": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου ΠΡΟΕΙΔΟΠΟΙΗΣΗΣ",
+                    "notifications_diagnostic": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου DIAGNOSTIC"
+                }
+            },
+            "reauth_validate": {
+                "title": "Εκ νέου έλεγχος ταυτότητας της κατάστασης Electrolux",
+                "description": "Τα διακριτικά του Electrolux API έχουν λήξει ή δεν είναι έγκυρα. Ενημερώστε τα με νέα διακριτικά από την πύλη προγραμματιστών της Electrolux.",
+                "data": {
+                    "api_key": "Κλειδί API",
+                    "access_token": "Token πρόσβασης",
+                    "refresh_token": "Ανανέωση διακριτικού"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Μη έγκυρα διαπιστευτήρια API. Ελέγξτε το κλειδί API, το διακριτικό πρόσβασης και το διακριτικό ανανέωσης."
+        },
+        "abort": {
+            "single_instance_allowed": "Επιτρέπεται μόνο μία διαμόρφωση.",
+            "already_configured": "Αυτή η συσκευή έχει ήδη διαμορφωθεί.",
+            "already_configured_account": "Αυτό το κλειδί API έχει ήδη διαμορφωθεί.",
+            "reconfigure_successful": "Η επαναδιαμόρφωση ήταν επιτυχής."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Επιλογές κατάστασης Electrolux",
+                "description": "Διαμορφώστε τις ρυθμίσεις ενσωμάτωσης της κατάστασης Electrolux.",
                 "data": {
-                    "language": "Γλώσσα",
-                    "notifications": "Ειδοποιήσεις",
-                    "notifications_diagnostic": "Διαγνωστικά",
-                    "notifications_warning": "Προειδοποιήσεις",
-                    "password": "Κωδικός",
-                    "renew_interval": "Διάστημα ανανέωσης του websocket (δευτερόλεπτα)"
+                    "language": "Γλώσσα εμφάνισης",
+                    "notifications": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου ALERT",
+                    "notifications_warning": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου ΠΡΟΕΙΔΟΠΟΙΗΣΗΣ",
+                    "notifications_diagnostic": "Ενεργοποίηση ειδοποιήσεων για ειδοποιήσεις επιπέδου DIAGNOSTIC",
+                    "renew_interval": "Μεσοδιάστημα ανανέωσης διαδικτυακής πρίζας (δευτερόλεπτα)"
                 }
             }
         }

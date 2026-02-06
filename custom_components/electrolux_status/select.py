@@ -151,6 +151,21 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
+        # Check if remote control is enabled
+        remote_control = (
+            self.appliance_status.get("properties", {})
+            .get("reported", {})
+            .get("remoteControl")
+        )
+        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+            _LOGGER.warning(
+                "Cannot select option %s for appliance %s: remote control is %s",
+                option,
+                self.pnc_id,
+                remote_control,
+            )
+            raise Exception(f"Remote control disabled (status: {remote_control})")
+
         value = self.options_list.get(option, None)
         if value is None:
             return

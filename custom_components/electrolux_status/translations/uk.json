@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Пристрій вже налаштований",
-            "already_configured_account": "Обліковий запис вже налаштований",
-            "reconfigure_successful": "Реконфігурація була успішною",
-            "single_instance_allowed": "Вже налаштований.Можлива лише одна конфігурація."
-        },
-        "error": {
-            "invalid_auth": "Недійсна автентифікація"
-        },
         "step": {
             "user": {
+                "title": "Налаштування стану Electrolux",
+                "description": "Підключіть свої прилади Electrolux за допомогою облікових даних API з порталу розробників Electrolux.\n\nЯкщо вам потрібна допомога в отриманні облікових даних API, відвідайте: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "Ключ API",
+                    "access_token": "Маркер доступу",
+                    "refresh_token": "Оновити маркер",
                     "language": "Мова",
-                    "notifications": "Підніміть сповіщення про повідомлення про рівень оповіщення",
-                    "notifications_diagnostic": "Підніміть сповіщення про повідомлення про діагностичний рівень",
-                    "notifications_warning": "Підніміть сповіщення про повідомлення про рівень попередження",
-                    "password": "Пароль",
-                    "username": "Ім'я користувача"
-                },
-                "description": "Якщо вам потрібна допомога з конфігураційною відвідуванням: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Статус електролукс"
+                    "notifications": "Увімкнути сповіщення для сповіщень рівня ALERT",
+                    "notifications_warning": "Увімкнути сповіщення для сповіщень рівня ПОПЕРЕДЖЕННЯ",
+                    "notifications_diagnostic": "Увімкнути сповіщення для повідомлень рівня ДІАГНОСТИКИ"
+                }
+            },
+            "reauth_validate": {
+                "title": "Перевірте статус Electrolux",
+                "description": "Термін дії ваших токенів Electrolux API закінчився або вони недійсні. Оновіть їх новими маркерами з порталу розробників Electrolux.",
+                "data": {
+                    "api_key": "Ключ API",
+                    "access_token": "Маркер доступу",
+                    "refresh_token": "Оновити маркер"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Недійсні облікові дані API. Перевірте ключ API, маркер доступу та маркер оновлення."
+        },
+        "abort": {
+            "single_instance_allowed": "Допускається лише одна конфігурація.",
+            "already_configured": "Цей пристрій уже налаштовано.",
+            "already_configured_account": "Цей ключ API вже налаштовано.",
+            "reconfigure_successful": "Повторна конфігурація пройшла успішно."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Параметри стану Electrolux",
+                "description": "Налаштуйте параметри інтеграції Electrolux Status.",
                 "data": {
-                    "language": "Мова",
-                    "notifications": "Підніміть сповіщення про повідомлення про рівень оповіщення",
-                    "notifications_diagnostic": "Підніміть сповіщення про повідомлення про діагностичний рівень",
-                    "notifications_warning": "Підніміть сповіщення про повідомлення про рівень попередження",
-                    "password": "Пароль",
-                    "renew_interval": "Інтервал відновлення WebSocket (секунди)"
+                    "language": "Мова дисплея",
+                    "notifications": "Увімкнути сповіщення для сповіщень рівня ALERT",
+                    "notifications_warning": "Увімкнути сповіщення для сповіщень рівня ПОПЕРЕДЖЕННЯ",
+                    "notifications_diagnostic": "Увімкнути сповіщення для повідомлень рівня ДІАГНОСТИКИ",
+                    "renew_interval": "Інтервал оновлення Websocket (секунди)"
                 }
             }
         }

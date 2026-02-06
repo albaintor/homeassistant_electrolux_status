@@ -70,6 +70,21 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
 
     async def switch(self, value: bool) -> None:
         """Control switch state."""
+        # Check if remote control is enabled
+        remote_control = (
+            self.appliance_status.get("properties", {})
+            .get("reported", {})
+            .get("remoteControl")
+        )
+        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+            _LOGGER.warning(
+                "Cannot control %s for appliance %s: remote control is %s",
+                self.entity_attr,
+                self.pnc_id,
+                remote_control,
+            )
+            raise Exception(f"Remote control disabled (status: {remote_control})")
+
         client: ElectroluxApiClient = self.api
         # Electrolux bug - needs string not bool
         command_value = "ON" if value else "OFF"

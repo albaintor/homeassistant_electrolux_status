@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Le périphérique est déjà configuré",
-            "already_configured_account": "Le compte est déjà configuré",
-            "reconfigure_successful": "La reconfiguration a réussi",
-            "single_instance_allowed": "Déjà configuré. Une seule configuration possible."
-        },
-        "error": {
-            "invalid_auth": "Authentification non valide"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Langue",
-                    "notifications": "Emettre des notifications pour pour le niveau d'alerte",
-                    "notifications_diagnostic": "Emettre Des notifications pour le niveau diagnostic",
-                    "notifications_warning": "Emettre des notifications pour le niveau d'avertissement",
-                    "password": "Mot de passe",
-                    "username": "Nom d'utilisateur"
-                },
-                "description": "Si vous avez besoin d'aide pour la configuration, visitez: https://github.com/albaintor/HomeasSistant_electrolux_status",
-                "title": "Electrolux Status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration du statut Electrolux",
+        "description": "Connectez vos appareils Electrolux en utilisant les informations d'identification API du portail développeur Electrolux.\n\nSi vous avez besoin d'aide pour obtenir les informations d'identification API, visitez : https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Clé API",
+          "access_token": "Jeton d'accès",
+          "refresh_token": "Jeton de rafraîchissement",
+          "language": "Langue",
+          "notifications": "Activer les notifications pour les avis de niveau ALERTE",
+          "notifications_warning": "Activer les notifications pour les avis de niveau AVERTISSEMENT",
+          "notifications_diagnostic": "Activer les notifications pour les avis de niveau DIAGNOSTIC"
         }
+      },
+      "reauth_validate": {
+        "title": "Ré-authentifier le statut Electrolux",
+        "description": "Vos jetons API Electrolux ont expiré ou sont invalides. Veuillez les mettre à jour avec de nouveaux jetons du portail développeur Electrolux.",
+        "data": {
+          "api_key": "Clé API",
+          "access_token": "Jeton d'accès",
+          "refresh_token": "Jeton de rafraîchissement"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Langue",
-                    "notifications": "Emettre des notifications pour le niveau d'alerte",
-                    "notifications_diagnostic": "Emettre des notifications pour le niveau diagnostic",
-                    "notifications_warning": "Emettre des notifications pour le niveau d'avertissement",
-                    "password": "Mot de passe",
-                    "renew_interval": "Intervalle de renouvellement de WebSocket (secondes)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Informations d'identification API invalides. Veuillez vérifier votre clé API, jeton d'accès et jeton de rafraîchissement."
+    },
+    "abort": {
+      "single_instance_allowed": "Une seule configuration est autorisée.",
+      "already_configured": "Cet appareil est déjà configuré.",
+      "already_configured_account": "Cette clé API est déjà configurée.",
+      "reconfigure_successful": "La reconfiguration a réussi."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Options du statut Electrolux",
+        "description": "Configurer les paramètres d'intégration du statut Electrolux.",
+        "data": {
+          "language": "Langue d'affichage",
+          "notifications": "Activer les notifications pour les avis de niveau ALERTE",
+          "notifications_warning": "Activer les notifications pour les avis de niveau AVERTISSEMENT",
+          "notifications_diagnostic": "Activer les notifications pour les avis de niveau DIAGNOSTIC",
+          "renew_interval": "Intervalle de renouvellement Websocket (secondes)"
+        }
+      }
+    }
+  }
 }

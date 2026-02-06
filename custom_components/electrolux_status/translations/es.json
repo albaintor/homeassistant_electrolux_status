@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "El dispositivo ya está configurado",
-            "already_configured_account": "La cuenta ya está configurada",
-            "reconfigure_successful": "La volver a configuración fue exitosa",
-            "single_instance_allowed": "Ya configurado.Solo una configuración única posible."
-        },
-        "error": {
-            "invalid_auth": "Autenticación no válida"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Idioma",
-                    "notifications": "Elevar notificaciones para avisos de nivel de alerta",
-                    "notifications_diagnostic": "Aumentar las notificaciones para los avisos de nivel de diagnóstico",
-                    "notifications_warning": "Aumentar las notificaciones para los avisos de nivel de advertencia",
-                    "password": "Contraseña",
-                    "username": "Nombre de usuario"
-                },
-                "description": "Si necesita ayuda con la configuración, visite: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Estado de electrolux"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuración del estado de Electrolux",
+        "description": "Conecte sus electrodomésticos Electrolux usando credenciales API del portal de desarrolladores de Electrolux.\n\nSi necesita ayuda para obtener credenciales API, visite: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "Clave API",
+          "access_token": "Token de acceso",
+          "refresh_token": "Token de actualización",
+          "language": "Idioma",
+          "notifications": "Habilitar notificaciones para avisos de nivel ALERTA",
+          "notifications_warning": "Habilitar notificaciones para avisos de nivel ADVERTENCIA",
+          "notifications_diagnostic": "Habilitar notificaciones para avisos de nivel DIAGNÓSTICO"
         }
+      },
+      "reauth_validate": {
+        "title": "Re-autenticar estado de Electrolux",
+        "description": "Sus tokens API de Electrolux han expirado o son inválidos. Actualícelos con tokens nuevos del portal de desarrolladores de Electrolux.",
+        "data": {
+          "api_key": "Clave API",
+          "access_token": "Token de acceso",
+          "refresh_token": "Token de actualización"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Idioma",
-                    "notifications": "Elevar notificaciones para avisos de nivel de alerta",
-                    "notifications_diagnostic": "Aumentar las notificaciones para los avisos de nivel de diagnóstico",
-                    "notifications_warning": "Aumentar las notificaciones para los avisos de nivel de advertencia",
-                    "password": "Contraseña",
-                    "renew_interval": "Intervalo de renovación de WebSocket (segundos)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Credenciales API inválidas. Verifique su clave API, token de acceso y token de actualización."
+    },
+    "abort": {
+      "single_instance_allowed": "Solo se permite una configuración única.",
+      "already_configured": "Este dispositivo ya está configurado.",
+      "already_configured_account": "Esta clave API ya está configurada.",
+      "reconfigure_successful": "La reconfiguración fue exitosa."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opciones del estado de Electrolux",
+        "description": "Configurar los ajustes de integración del estado de Electrolux.",
+        "data": {
+          "language": "Idioma de visualización",
+          "notifications": "Habilitar notificaciones para avisos de nivel ALERTA",
+          "notifications_warning": "Habilitar notificaciones para avisos de nivel ADVERTENCIA",
+          "notifications_diagnostic": "Habilitar notificaciones para avisos de nivel DIAGNÓSTICO",
+          "renew_interval": "Intervalo de renovación de WebSocket (segundos)"
+        }
+      }
+    }
+  }
 }

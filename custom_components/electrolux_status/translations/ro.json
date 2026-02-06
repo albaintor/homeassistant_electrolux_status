@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Dispozitivul este deja configurat",
-            "already_configured_account": "Contul este deja configurat",
-            "reconfigure_successful": "Re-configurarea a avut succes",
-            "single_instance_allowed": "Deja configurat.Doar o singură configurație posibilă."
-        },
-        "error": {
-            "invalid_auth": "Autentificare nevalide"
-        },
         "step": {
             "user": {
+                "title": "Configurare stare Electrolux",
+                "description": "Conectați-vă aparatele Electrolux utilizând acreditările API din Portalul pentru dezvoltatori Electrolux.\n\nDacă aveți nevoie de ajutor pentru obținerea acreditărilor API, vizitați: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "Cheia API",
+                    "access_token": "Token de acces",
+                    "refresh_token": "Jeton de reîmprospătare",
                     "language": "Limbă",
-                    "notifications": "Ridicați notificările pentru avizele la nivel de alertă",
-                    "notifications_diagnostic": "Ridicați notificările pentru notificări la nivel de diagnosticare",
-                    "notifications_warning": "Ridicați notificările pentru avizele la nivel de avertizare",
-                    "password": "Parolă",
-                    "username": "Nume de utilizator"
-                },
-                "description": "Dacă aveți nevoie de ajutor cu configurația, vizitați: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Stare electrolux"
+                    "notifications": "Activați notificările pentru notificările de nivel ALERT",
+                    "notifications_warning": "Activați notificările pentru notificările de nivel WARNING",
+                    "notifications_diagnostic": "Activați notificările pentru notificările de nivel DIAGNOSTIC"
+                }
+            },
+            "reauth_validate": {
+                "title": "Re-autentificați starea Electrolux",
+                "description": "Tokenurile tale Electrolux API au expirat sau sunt nevalide. Vă rugăm să le actualizați cu jetoane noi de pe Portalul pentru dezvoltatori Electrolux.",
+                "data": {
+                    "api_key": "Cheia API",
+                    "access_token": "Token de acces",
+                    "refresh_token": "Jeton de reîmprospătare"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Acreditări API nevalide. Vă rugăm să verificați cheia API, Jetonul de acces și Jetonul de reîmprospătare."
+        },
+        "abort": {
+            "single_instance_allowed": "Este permisă doar o singură configurație.",
+            "already_configured": "Acest dispozitiv este deja configurat.",
+            "already_configured_account": "Această cheie API este deja configurată.",
+            "reconfigure_successful": "Reconfigurarea a avut succes."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Opțiuni de stare Electrolux",
+                "description": "Configurați setările de integrare Electrolux Status.",
                 "data": {
-                    "language": "Limbă",
-                    "notifications": "Ridicați notificările pentru avizele la nivel de alertă",
-                    "notifications_diagnostic": "Ridicați notificările pentru notificări la nivel de diagnosticare",
-                    "notifications_warning": "Ridicați notificările pentru avizele la nivel de avertizare",
-                    "password": "Parolă",
-                    "renew_interval": "Intervalul de reînnoire a WebSocket (secunde)"
+                    "language": "Limba de afișare",
+                    "notifications": "Activați notificările pentru notificările de nivel ALERT",
+                    "notifications_warning": "Activați notificările pentru notificările de nivel WARNING",
+                    "notifications_diagnostic": "Activați notificările pentru notificările de nivel DIAGNOSTIC",
+                    "renew_interval": "Interval de reînnoire a socket-ului web (secunde)"
                 }
             }
         }

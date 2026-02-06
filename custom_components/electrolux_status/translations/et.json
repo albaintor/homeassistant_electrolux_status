@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Seade on juba konfigureeritud",
-            "already_configured_account": "Konto on juba konfigureeritud",
-            "reconfigure_successful": "Uuesti konfigureerimine oli edukas",
-            "single_instance_allowed": "Juba konfigureeritud.Võimalik ainult üks konfiguratsioon."
-        },
-        "error": {
-            "invalid_auth": "Kehtetu autentimine"
-        },
         "step": {
             "user": {
+                "title": "Electroluxi oleku seadistamine",
+                "description": "Ühendage oma Electroluxi seadmed, kasutades Electroluxi arendajaportaali API mandaate.\n\nKui vajate abi API mandaatide hankimisel, külastage: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API võti",
+                    "access_token": "Juurdepääsuluba",
+                    "refresh_token": "Värskenda märki",
                     "language": "Keel",
-                    "notifications": "Tõsta märguandeid häirete teadete kohta",
-                    "notifications_diagnostic": "Tõsta teatisi diagnostiliste teadete kohta",
-                    "notifications_warning": "Tõsta teatisi hoiatustaseme teadete kohta",
-                    "password": "Parool",
-                    "username": "Kasutajanimi"
-                },
-                "description": "Kui vajate abi konfiguratsioonis",
-                "title": "Electroluxi olek"
+                    "notifications": "Lubage märguanded ALERT taseme teadete jaoks",
+                    "notifications_warning": "Luba märguanded HOIATUStaseme teadete jaoks",
+                    "notifications_diagnostic": "Lubage DIAGNOSTIKA taseme teatiste märguanded"
+                }
+            },
+            "reauth_validate": {
+                "title": "Autentige Electroluxi olek uuesti",
+                "description": "Teie Electroluxi API märgid on aegunud või kehtetud. Värskendage neid värskete žetoonidega Electroluxi arendajaportaalist.",
+                "data": {
+                    "api_key": "API võti",
+                    "access_token": "Juurdepääsuluba",
+                    "refresh_token": "Värskenda märki"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Kehtetud API mandaadid. Kontrollige oma API võtit, juurdepääsuluba ja värskendusluba."
+        },
+        "abort": {
+            "single_instance_allowed": "Lubatud on ainult üks konfiguratsioon.",
+            "already_configured": "See seade on juba konfigureeritud.",
+            "already_configured_account": "See API võti on juba konfigureeritud.",
+            "reconfigure_successful": "Ümberseadistamine õnnestus."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Electroluxi olekuvalikud",
+                "description": "Konfigureerige Electroluxi oleku integreerimise sätted.",
                 "data": {
-                    "language": "Keel",
-                    "notifications": "Tõsta märguandeid häirete teadete kohta",
-                    "notifications_diagnostic": "Tõsta teatisi diagnostiliste teadete kohta",
-                    "notifications_warning": "Tõsta teatisi hoiatustaseme teadete kohta",
-                    "password": "Parool",
-                    "renew_interval": "WebSocketi pikendamise intervall (sekundid)"
+                    "language": "Kuva keel",
+                    "notifications": "Lubage märguanded ALERT taseme teadete jaoks",
+                    "notifications_warning": "Luba märguanded HOIATUStaseme teadete jaoks",
+                    "notifications_diagnostic": "Lubage DIAGNOSTIKA taseme teatiste märguanded",
+                    "renew_interval": "Veebipesa uuendamise intervall (sekundites)"
                 }
             }
         }

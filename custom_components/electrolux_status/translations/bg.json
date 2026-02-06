@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Устройството вече е конфигурирано",
-            "already_configured_account": "Акаунт вече е конфигуриран",
-            "reconfigure_successful": "Повторното конфигурация беше успешна",
-            "single_instance_allowed": "Вече конфигуриран.Възможна е само една конфигурация."
-        },
-        "error": {
-            "invalid_auth": "Невалидна автентификация"
-        },
         "step": {
             "user": {
+                "title": "Настройка на състоянието на Electrolux",
+                "description": "Свържете вашите уреди Electrolux с помощта на идентификационни данни за API от портала за разработчици на Electrolux.\n\nАко имате нужда от помощ за получаване на идентификационни данни за API, посетете: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
-                    "language": "Език",
-                    "notifications": "Повдигнете известия за известия за ниво на предупреждение",
-                    "notifications_diagnostic": "Повдигнете известия за известия за диагностично ниво",
-                    "notifications_warning": "Повдигнете известия за известия за ниво на предупреждение",
-                    "password": "Парола",
-                    "username": "Потребителско име"
-                },
-                "description": "Ако имате нужда от помощ при конфигурацията посетете: https://github.com/albaintor/homeassistant_electorux_status",
-                "title": "Electrolux статус"
+                    "api_key": "API ключ",
+                    "access_token": "Токен за достъп",
+                    "refresh_token": "Опресняване на токена",
+                    "language": "език",
+                    "notifications": "Активирайте известията за известия на ниво ALERT",
+                    "notifications_warning": "Активирайте известията за известия от ниво ПРЕДУПРЕЖДЕНИЕ",
+                    "notifications_diagnostic": "Активирайте известията за известия на ниво ДИАГНОСТИКА"
+                }
+            },
+            "reauth_validate": {
+                "title": "Повторно удостоверяване на статуса на Electrolux",
+                "description": "Вашите API токени на Electrolux са изтекли или са невалидни. Моля, актуализирайте ги с нови токени от портала за разработчици на Electrolux.",
+                "data": {
+                    "api_key": "API ключ",
+                    "access_token": "Токен за достъп",
+                    "refresh_token": "Опресняване на токена"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Невалидни идентификационни данни за API. Моля, проверете вашия API ключ, токен за достъп и токен за опресняване."
+        },
+        "abort": {
+            "single_instance_allowed": "Разрешена е само една конфигурация.",
+            "already_configured": "Това устройство вече е конфигурирано.",
+            "already_configured_account": "Този API ключ вече е конфигуриран.",
+            "reconfigure_successful": "Повторната конфигурация беше успешна."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Опции за състояние на Electrolux",
+                "description": "Конфигурирайте настройките за интегриране на Electrolux Status.",
                 "data": {
-                    "language": "Език",
-                    "notifications": "Повдигнете известия за известия за ниво на предупреждение",
-                    "notifications_diagnostic": "Повдигнете известия за известия за диагностично ниво",
-                    "notifications_warning": "Повдигнете известия за известия за ниво на предупреждение",
-                    "password": "Парола",
-                    "renew_interval": "Интервал на подновяване на WebSocket (секунди)"
+                    "language": "Език на дисплея",
+                    "notifications": "Активирайте известията за известия на ниво ALERT",
+                    "notifications_warning": "Активирайте известията за известия от ниво ПРЕДУПРЕЖДЕНИЕ",
+                    "notifications_diagnostic": "Активирайте известията за известия на ниво ДИАГНОСТИКА",
+                    "renew_interval": "Интервал за подновяване на Websocket (секунди)"
                 }
             }
         }

@@ -1,5 +1,6 @@
 """Utlities for the Electrolux Status platform."""
 
+import asyncio
 import base64
 import logging
 import math
@@ -22,7 +23,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 def get_electrolux_session(
-    api_key, access_token, refresh_token, client_session, language="eng"
+    api_key, access_token, refresh_token, client_session
 ) -> "ElectroluxApiClient":
     """Return Electrolux API Session."""
     return ElectroluxApiClient(api_key, access_token, refresh_token)
@@ -183,18 +184,6 @@ class ElectroluxApiClient:
         """Initialize the API client."""
         self._token_manager = TokenManager(access_token, refresh_token, api_key)
         self._client = ApplianceClient(self._token_manager)
-        self._user_token = None
-
-    async def get_user_token(self):
-        """Get user token - compatibility method."""
-
-        # The new API doesn't have this concept, but we can return a mock token
-        # since authentication is handled by TokenManager
-        class MockToken:
-            def __init__(self):
-                self.token = "mock_token"
-
-        return MockToken()
 
     async def get_appliances_list(self):
         """Get list of appliances."""
@@ -202,19 +191,31 @@ class ElectroluxApiClient:
         # Convert to the expected format
         result = []
         for appliance in appliances:
-            result.append(
-                {
-                    "applianceId": appliance.applianceId,
+            # Try to extract model from PNC (Product Number Code)
+            pnc = appliance.applianceId
+            model_name = getattr(appliance, "model", "Unknown")
+            if model_name == "Unknown" and pnc:
+                # Extract model from PNC format like '944188772_00:31862190-443E07363DAB'
+                pnc_parts = pnc.split("_")
+                if len(pnc_parts) > 0:
+                    model_part = pnc_parts[0]
+                    # Use the first part as model if it looks like a model number
+                    if model_part.isdigit() and len(model_part) >= 6:
+                        model_name = model_part
+
+            appliance_data = {
+                "applianceId": appliance.applianceId,
+                "applianceName": appliance.applianceName,
+                "applianceType": appliance.applianceType,
+                "connectionState": "connected",  # Assume connected
+                "applianceData": {
                     "applianceName": appliance.applianceName,
-                    "applianceType": appliance.applianceType,
-                    "connectionState": "connected",  # Assume connected
-                    "applianceData": {
-                        "applianceName": appliance.applianceName,
-                        "modelName": getattr(appliance, "model", "Unknown"),
-                    },
-                    "created": "2022-01-01T00:00:00.000Z",  # Mock creation date
-                }
-            )
+                    "modelName": model_name,
+                },
+                "created": "2022-01-01T00:00:00.000Z",  # Mock creation date
+            }
+            _LOGGER.debug("API appliance list item: %s", appliance_data)
+            result.append(appliance_data)
         return result
 
     async def get_appliances_info(self, appliance_ids):
@@ -223,15 +224,30 @@ class ElectroluxApiClient:
         for appliance_id in appliance_ids:
             try:
                 details = await self._client.get_appliance_details(appliance_id)
+                # Try to extract model from PNC if API doesn't provide it
+                # Note: Electrolux API often returns "Unknown" for model, but the PNC
+                # contains the actual product code (e.g., "944188772") which is the most
+                # specific model identifier available through the API
+                model = getattr(details, "model", "Unknown")
+                if model == "Unknown" and appliance_id:
+                    # Extract model from PNC format like '944188772_00:31862190-443E07363DAB'
+                    pnc_parts = appliance_id.split("_")
+                    if len(pnc_parts) > 0:
+                        model_part = pnc_parts[0]
+                        # Use the first part as model if it looks like a model number
+                        if model_part.isdigit() and len(model_part) >= 6:
+                            model = model_part
+
                 # Convert to expected format
                 info = {
                     "pnc": appliance_id,
                     "brand": getattr(details, "brand", "Electrolux"),
-                    "model": getattr(details, "model", "Unknown"),
+                    "model": model,
                     "device_type": getattr(details, "deviceType", "Unknown"),
                     "variant": getattr(details, "variant", "Unknown"),
                     "color": getattr(details, "color", "Unknown"),
                 }
+                _LOGGER.debug("API appliance details for %s: %s", appliance_id, info)
                 result.append(info)
             except Exception as e:
                 _LOGGER.warning(
@@ -260,15 +276,36 @@ class ElectroluxApiClient:
         return details.capabilities
 
     async def watch_for_appliance_state_updates(self, appliance_ids, callback):
-        """Watch for state updates - not implemented in new API."""
-        # The new API doesn't have websocket support mentioned
-        # This is a placeholder
-        _LOGGER.warning("Websocket functionality not available in new API")
-        pass
+        """Watch for state updates using Server-Sent Events (SSE)."""
+        try:
+            # Add listeners for each appliance
+            for appliance_id in appliance_ids:
+                self._client.add_listener(appliance_id, callback)
+                _LOGGER.debug("Added SSE listener for appliance %s", appliance_id)
+
+            # Start the event stream as a background task (it runs indefinitely)
+            self._sse_task = asyncio.create_task(self._client.start_event_stream())
+            _LOGGER.info(
+                "Started SSE event stream for %d appliances", len(appliance_ids)
+            )
+
+        except Exception as e:
+            _LOGGER.error("Failed to start SSE event stream: %s", e)
+            raise
 
     async def disconnect_websocket(self):
-        """Disconnect websocket - not implemented."""
-        pass
+        """Disconnect SSE event stream."""
+        try:
+            if hasattr(self, "_sse_task") and self._sse_task:
+                self._sse_task.cancel()
+                try:
+                    await self._sse_task
+                except asyncio.CancelledError:
+                    pass
+                self._sse_task = None
+            _LOGGER.debug("SSE disconnect completed")
+        except Exception as e:
+            _LOGGER.error("Error during SSE disconnect: %s", e)
 
     async def get_user_metadata(self):
         """Get user metadata - compatibility method."""

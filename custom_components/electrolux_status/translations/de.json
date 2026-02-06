@@ -1,41 +1,52 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Das Gerät ist bereits konfiguriert",
-            "already_configured_account": "Konto ist bereits konfiguriert",
-            "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
-            "single_instance_allowed": "Bereits konfiguriert. Nur eine einzelne Konfiguration möglich."
-        },
-        "error": {
-            "invalid_auth": "Ungültige Authentifizierung"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Sprache",
-                    "notifications": "Benachrichtigungen für Meldungen der Stufe ALERT aktivieren",
-                    "notifications_diagnostic": "Benachrichtigungen für Meldungen der Stufe DIAGNOSTIC aktivieren",
-                    "notifications_warning": "Benachrichtigungen für Meldungen der Stufe WARNING aktivieren",
-                    "password": "Passwort",
-                    "username": "Benutzername"
-                },
-                "description": "Wenn Sie Hilfe bei der Konfiguration benötigen, besuchen Sie: https://github.com/albaintor/homeassistant_electrolux_status",
-                "title": "Electrolux Status"
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Einrichtung",
+        "description": "Verbinden Sie Ihre Electrolux-Geräte mit API-Anmeldedaten vom Electrolux Developer Portal.\n\nWenn Sie Hilfe bei der Beschaffung von API-Anmeldedaten benötigen, besuchen Sie: https://github.com/albaintor/homeassistant_electrolux_status",
+        "data": {
+          "api_key": "API-Schlüssel",
+          "access_token": "Zugriffstoken",
+          "refresh_token": "Aktualisierungstoken",
+          "language": "Sprache",
+          "notifications": "Benachrichtigungen für ALERT-Stufe aktivieren",
+          "notifications_warning": "Benachrichtigungen für WARNING-Stufe aktivieren",
+          "notifications_diagnostic": "Benachrichtigungen für DIAGNOSTIC-Stufe aktivieren"
         }
+      },
+      "reauth_validate": {
+        "title": "Electrolux Status erneut authentifizieren",
+        "description": "Ihre Electrolux-API-Tokens sind abgelaufen oder ungültig. Bitte aktualisieren Sie sie mit neuen Tokens vom Electrolux Developer Portal.",
+        "data": {
+          "api_key": "API-Schlüssel",
+          "access_token": "Zugriffstoken",
+          "refresh_token": "Aktualisierungstoken"
+        }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "language": "Sprache",
-                    "notifications": "Benachrichtigungen für Meldungen der Stufe ALERT aktivieren",
-                    "notifications_diagnostic": "Benachrichtigungen für Meldungen der Stufe DIAGNOSTIC aktivieren",
-                    "notifications_warning": "Benachrichtigungen für Meldungen der Stufe WARNING aktivieren",
-                    "password": "Passwort",
-                    "renew_interval": "Erneuerungsintervall der Websocket‑Verbindung (Sekunden)"
-                }
-            }
-        }
+    "error": {
+      "invalid_auth": "Ungültige API-Anmeldedaten. Bitte überprüfen Sie Ihren API-Schlüssel, Zugriffstoken und Aktualisierungstoken."
+    },
+    "abort": {
+      "single_instance_allowed": "Nur eine einzige Konfiguration ist erlaubt.",
+      "already_configured": "Dieses Gerät ist bereits konfiguriert.",
+      "already_configured_account": "Dieser API-Schlüssel ist bereits konfiguriert.",
+      "reconfigure_successful": "Neukonfiguration war erfolgreich."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Electrolux Status Optionen",
+        "description": "Konfigurieren Sie die Electrolux Status Integration Einstellungen.",
+        "data": {
+          "language": "Anzeigesprache",
+          "notifications": "Benachrichtigungen für ALERT-Stufe aktivieren",
+          "notifications_warning": "Benachrichtigungen für WARNING-Stufe aktivieren",
+          "notifications_diagnostic": "Benachrichtigungen für DIAGNOSTIC-Stufe aktivieren",
+          "renew_interval": "Websocket-Erneuerungsintervall (Sekunden)"
+        }
+      }
+    }
+  }
 }

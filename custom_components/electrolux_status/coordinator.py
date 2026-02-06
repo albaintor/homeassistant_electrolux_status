@@ -1,18 +1,21 @@
 """Electrolux status integration."""
 
 import asyncio
-import base64
 import json
 import logging
+from datetime import timedelta
 from typing import Any
 
-import aiofiles
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
+from homeassistant.exceptions import (
+    ConfigEntryAuthFailed,
+    ConfigEntryError,
+    ConfigEntryNotReady,
+)
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import Appliance, Appliances, ElectroluxLibraryEntity
-from .const import DOMAIN, LOOKUP_DIRECTORY_PATH, TIME_ENTITIES_TO_UPDATE
+from .const import DOMAIN, TIME_ENTITIES_TO_UPDATE
 from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -35,16 +38,17 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         self.platforms = []
         self.renew_task = None
         self.renew_interval = renew_interval
-        self._token_expiry = renew_interval
-        self._websocket = None
-        self._accountid = username
+        self._sse_task = None  # Track SSE task
+        self._deferred_tasks = set()  # Track deferred update tasks
 
-        super().__init__(hass, _LOGGER, name=DOMAIN)
-
-    @property
-    def accountid(self) -> str:
-        """Encode the accountid to base64 for storage."""
-        return base64.b64encode(self._accountid.encode("utf-8")).decode("utf-8")
+        super().__init__(
+            hass,
+            _LOGGER,
+            name=DOMAIN,
+            update_interval=timedelta(
+                hours=6
+            ),  # Health check every 6 hours instead of 30 seconds
+        )
 
     async def async_login(self) -> bool:
         """Authenticate with the service."""
@@ -99,7 +103,10 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         do_deferred = True
                         break
             if do_deferred:
-                asyncio.create_task(self.deferred_update(appliance_id, 70))
+                # Track the deferred task to prevent memory leaks
+                task = asyncio.create_task(self.deferred_update(appliance_id, 70))
+                self._deferred_tasks.add(task)
+                task.add_done_callback(self._deferred_tasks.discard)
 
     def listen_websocket(self):
         """Listen for state changes."""
@@ -108,7 +115,11 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Electrolux listen_websocket for appliances %s", ",".join(ids))
         if ids is None or len(ids) == 0:
             return
-        self._websocket = asyncio.create_task(
+        # Cancel any existing SSE task before starting a new one
+        if self._sse_task and not self._sse_task.done():
+            self._sse_task.cancel()
+        # Start SSE streaming (creates its own background task)
+        self._sse_task = asyncio.create_task(
             self.api.watch_for_appliance_state_updates(ids, self.incoming_data)
         )
 
@@ -122,27 +133,51 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         )
 
     async def renew_websocket(self):
-        """Renew websocket state."""
+        """Renew SSE event stream."""
         while True:
             await asyncio.sleep(self.renew_interval)
-            _LOGGER.debug("Electrolux renew_websocket")
+            _LOGGER.debug("Electrolux renew SSE event stream")
             try:
-                await self.api.disconnect_websocket()
-            except Exception as ex:  # noqa: BLE001
-                _LOGGER.error(
-                    "Electrolux renew_websocket could not close websocket %s", ex
-                )
-            self.listen_websocket()
+                # Cancel existing SSE task before disconnecting
+                if self._sse_task and not self._sse_task.done():
+                    self._sse_task.cancel()
+                    try:
+                        await self._sse_task
+                    except asyncio.CancelledError:
+                        pass
+                    self._sse_task = None
+
+                await self.api.disconnect_websocket()  # This will be updated to properly close SSE
+                self.listen_websocket()  # Restart SSE connection
+            except Exception as ex:
+                _LOGGER.error("Electrolux renew SSE failed %s", ex)
 
     async def close_websocket(self):
-        """Close websocket."""
+        """Close SSE event stream."""
+        # Cancel renewal task
         if self.renew_task:
             self.renew_task.cancel()
             self.renew_task = None
+
+        # Cancel SSE task
+        if self._sse_task and not self._sse_task.done():
+            self._sse_task.cancel()
+            try:
+                await self._sse_task
+            except asyncio.CancelledError:
+                pass
+            self._sse_task = None
+
+        # Cancel all deferred tasks
+        for task in self._deferred_tasks.copy():
+            if not task.done():
+                task.cancel()
+        self._deferred_tasks.clear()
+
         try:
             await self.api.disconnect_websocket()
-        except Exception as ex:  # noqa: BLE001
-            _LOGGER.error("Electrolux close_websocket could not close websocket %s", ex)
+        except Exception as ex:
+            _LOGGER.error("Electrolux close SSE failed %s", ex)
 
     async def setup_entities(self):
         """Configure entities."""
@@ -173,7 +208,6 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 appliance_name = appliance_json.get("applianceData").get(
                     "applianceName"
                 )
-                model_name = appliance_json.get("applianceData").get("modelName")
                 appliance_infos = await self.api.get_appliances_info([appliance_id])
                 _LOGGER.debug(
                     "Electrolux get_appliances_info result: %s",
@@ -185,20 +219,9 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     json.dumps(appliance_state),
                 )
                 try:
-                    # json_test = '{"DoorOpen":{"access": "read", "type": "boolean"},"FilterType":{"access": "read", "type": "number"},"FilterLife":{"access": "read", "max":100,"min":0,"step":1,"type": "number"},"ECO2":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"Humidity":{"access":"read","step":1,"type":"number"},"Temp":{"access":"read","step":1,"type":"number"},"PM1":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"PM10":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"PM2_5":{"access":"read","max":65535,"min":0,"step":1,"type":"number"},"TVOC":{"access":"read","max":4295,"min":0,"step":1,"type":"number"},"Fanspeed":{"access":"readwrite","max":9,"min":1,"schedulable":true,"step":1,"type":"int"},"Workmode":{"access":"readwrite","schedulable":true,"triggers":[{"action":{"Fanspeed":{"access":"readwrite","disabled":true,"max":9,"min":1,"step":1,"type":"int"}},"condition":{"operand_1":"value","operand_2":"Auto","operator":"eq"}},{"action":{"Fanspeed":{"access":"readwrite","max":9,"min":1,"step":1,"type":"int"}},"condition":{"operand_1":"value","operand_2":"Manual","operator":"eq"}},{"action":{"Fanspeed":{"access":"readwrite","disabled":true,"type":"int"}},"condition":{"operand_1":"value","operand_2":"PowerOff","operator":"eq"}}],"type":"string","values":{"Manual":{},"PowerOff":{},"Auto":{}}},"UILight":{"access":"readwrite","default":true,"schedulable":true,"type":"boolean"},"SafetyLock":{"access":"readwrite","default":false,"type":"boolean"},"Ionizer":{"access":"readwrite","schedulable":true,"type":"boolean"}}'
-                    if model_name == "PUREA9":
-                        appliance_definition_json_path = self.hass.config.path(
-                            LOOKUP_DIRECTORY_PATH + model_name + ".json"
-                        )
-                        async with aiofiles.open(
-                            appliance_definition_json_path, mode="r"
-                        ) as handle:
-                            appliance_definition_json = await handle.read()
-                        appliance_capabilities = json.loads(appliance_definition_json)
-                    else:
-                        appliance_capabilities = (
-                            await self.api.get_appliance_capabilities(appliance_id)
-                        )
+                    appliance_capabilities = await self.api.get_appliance_capabilities(
+                        appliance_id
+                    )
                     _LOGGER.debug(
                         "Electrolux get_appliance_capabilities result: %s",
                         json.dumps(appliance_capabilities),
@@ -215,7 +238,34 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 appliance_info = appliance_infos[0] if appliance_infos else None
 
                 appliance_model = appliance_info.get("model") if appliance_info else ""
+                # Fallback to model from appliance list if info doesn't have it
+                if not appliance_model:
+                    appliance_model = appliance_json.get("applianceData", {}).get(
+                        "modelName", ""
+                    )
                 brand = appliance_info.get("brand") if appliance_info else ""
+                # Fallback to Electrolux if no brand
+                if not brand:
+                    brand = "Electrolux"
+
+                _LOGGER.debug(
+                    "Appliance %s info: name='%s', model='%s' (from %s), brand='%s' (from %s), applianceData=%s",
+                    appliance_id,
+                    appliance_name,
+                    appliance_model,
+                    (
+                        "appliance_info"
+                        if appliance_info and appliance_info.get("model")
+                        else "appliance_json"
+                    ),
+                    brand,
+                    (
+                        "appliance_info"
+                        if appliance_info and appliance_info.get("brand")
+                        else "fallback"
+                    ),
+                    appliance_json.get("applianceData", {}),
+                )
                 # appliance_profile not reported
                 appliance = Appliance(
                     coordinator=self,
@@ -249,6 +299,18 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 appliance_status = await self.api.get_appliance_state(appliance_id)
                 appliance.update(appliance_status)
             except Exception as exception:
+                error_msg = str(exception).lower()
+                # Check if this is an authentication error
+                if any(
+                    keyword in error_msg
+                    for keyword in ["401", "unauthorized", "auth", "token"]
+                ):
+                    _LOGGER.warning(
+                        "Authentication failed during data update: %s", exception
+                    )
+                    raise ConfigEntryAuthFailed(
+                        "Token expired or invalid"
+                    ) from exception
                 _LOGGER.debug("_async_update_data: %s", exception)
                 raise UpdateFailed from exception
         return self.data

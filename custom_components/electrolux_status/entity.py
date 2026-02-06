@@ -221,15 +221,51 @@ class ElectroluxEntity(CoordinatorEntity):
     @property
     def device_info(self):
         """Return identifiers of the device."""
-        return {
+        appliance = self.get_appliance
+        model = appliance.model
+        brand = appliance.brand or "Electrolux"
+        name = appliance.name
+
+        # Debug logging to see what information we have
+        _LOGGER.debug(
+            "Device info for appliance %s: name='%s', model='%s', brand='%s', appliance_type='%s'",
+            self.pnc_id,
+            name,
+            model,
+            brand,
+            appliance.appliance_type,
+        )
+
+        # If model is "Unknown" or empty, try to get better info
+        if not model or model == "Unknown":
+            # Try to get appliance type from state
+            appliance_type = appliance.appliance_type
+            if appliance_type and appliance_type != "Unknown":
+                model = appliance_type
+                _LOGGER.debug(
+                    "Using appliance_type '%s' as model for %s",
+                    appliance_type,
+                    self.pnc_id,
+                )
+            else:
+                # Use appliance name as last resort
+                model = name or "Unknown Appliance"
+                _LOGGER.debug(
+                    "Using appliance name '%s' as model for %s", model, self.pnc_id
+                )
+
+        device_info = {
             "identifiers": {(DOMAIN, self.pnc_id)},
-            "name": self.get_appliance.name,
-            "model": self.get_appliance.model,
-            "manufacturer": self.get_appliance.brand,
+            "name": name or model,
+            "model": model,
+            "manufacturer": brand,
             # Link this appliance device to the integration "hub" device
             # so Home Assistant shows the appliance as a child of the hub
             "via_device": (DOMAIN, getattr(self.config_entry, "entry_id", None)),
         }
+
+        _LOGGER.debug("Final device_info for %s: %s", self.pnc_id, device_info)
+        return device_info
 
     @property
     def entity_category(self) -> EntityCategory | None:

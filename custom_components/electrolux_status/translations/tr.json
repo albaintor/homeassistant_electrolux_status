@@ -1,39 +1,50 @@
 {
     "config": {
-        "abort": {
-            "already_configured": "Cihaz zaten yapılandırılmış",
-            "already_configured_account": "Hesap zaten yapılandırılmış",
-            "reconfigure_successful": "Yeniden yapılandırma başarılı oldu",
-            "single_instance_allowed": "Zaten yapılandırılmış.Yalnızca tek bir yapılandırma mümkündür."
-        },
-        "error": {
-            "invalid_auth": "Geçersiz kimlik doğrulama"
-        },
         "step": {
             "user": {
+                "title": "Electrolux Durum Kurulumu",
+                "description": "Electrolux cihazlarınızı, Electrolux Geliştirici Portalındaki API kimlik bilgilerini kullanarak bağlayın.\n\nAPI kimlik bilgilerini edinme konusunda yardıma ihtiyacınız varsa şu adresi ziyaret edin: https://github.com/albaintor/homeassistant_electrolux_status",
                 "data": {
+                    "api_key": "API Anahtarı",
+                    "access_token": "Erişim Jetonu",
+                    "refresh_token": "Jetonu Yenile",
                     "language": "Dil",
-                    "notifications": "Uyarı seviyesi bildirimleri için bildirimleri artırın",
-                    "notifications_diagnostic": "Teşhis Seviyesi Bildirimleri için Bildirimler Artırın",
-                    "notifications_warning": "Uyarı seviyesi bildirimleri için bildirimleri artırın",
-                    "password": "Şifre",
-                    "username": "Kullanıcı adı"
-                },
-                "description": "Yapılandırma ile ilgili yardıma ihtiyacınız varsa: https://github.com/albeintor/homeassistant_electrolux_status",
-                "title": "Electrolux Durumu"
+                    "notifications": "ALERT düzeyindeki bildirimler için bildirimleri etkinleştirin",
+                    "notifications_warning": "UYARI düzeyindeki bildirimler için bildirimleri etkinleştirin",
+                    "notifications_diagnostic": "TEŞHİS düzeyi bildirimleri için bildirimleri etkinleştir"
+                }
+            },
+            "reauth_validate": {
+                "title": "Electrolux Durumunu Yeniden Doğrulayın",
+                "description": "Electrolux API belirteçlerinizin süresi dolmuş veya geçersiz. Lütfen bunları Electrolux Geliştirici Portalından yeni tokenlarla güncelleyin.",
+                "data": {
+                    "api_key": "API Anahtarı",
+                    "access_token": "Erişim Jetonu",
+                    "refresh_token": "Jetonu Yenile"
+                }
             }
+        },
+        "error": {
+            "invalid_auth": "Geçersiz API kimlik bilgileri. Lütfen API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi kontrol edin."
+        },
+        "abort": {
+            "single_instance_allowed": "Yalnızca tek bir yapılandırmaya izin verilir.",
+            "already_configured": "Bu cihaz zaten yapılandırılmış.",
+            "already_configured_account": "Bu API Anahtarı zaten yapılandırılmış.",
+            "reconfigure_successful": "Yeniden yapılandırma başarılı oldu."
         }
     },
     "options": {
         "step": {
             "user": {
+                "title": "Electrolux Durum Seçenekleri",
+                "description": "Electrolux Durumu entegrasyon ayarlarını yapılandırın.",
                 "data": {
-                    "language": "Dil",
-                    "notifications": "Uyarı seviyesi bildirimleri için bildirimleri artırın",
-                    "notifications_diagnostic": "Teşhis Seviyesi Bildirimleri için Bildirimler Artırın",
-                    "notifications_warning": "Uyarı seviyesi bildirimleri için bildirimleri artırın",
-                    "password": "Şifre",
-                    "renew_interval": "WebSocket (saniye) yenileme aralığı"
+                    "language": "Ekran Dili",
+                    "notifications": "ALERT düzeyindeki bildirimler için bildirimleri etkinleştirin",
+                    "notifications_warning": "UYARI düzeyindeki bildirimler için bildirimleri etkinleştirin",
+                    "notifications_diagnostic": "TEŞHİS düzeyi bildirimleri için bildirimleri etkinleştir",
+                    "renew_interval": "Websocket yenileme aralığı (saniye)"
                 }
             }
         }
