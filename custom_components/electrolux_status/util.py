@@ -301,7 +301,9 @@ class ElectroluxApiClient:
                 try:
                     await self._sse_task
                 except asyncio.CancelledError:
-                    pass
+                    _LOGGER.debug(
+                        "Electrolux SSE task was cancelled during disconnect, as expected"
+                    )
                 self._sse_task = None
             _LOGGER.debug("SSE disconnect completed")
         except Exception as e:

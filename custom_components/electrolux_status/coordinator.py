@@ -144,7 +144,9 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     try:
                         await self._sse_task
                     except asyncio.CancelledError:
-                        pass
+                        _LOGGER.debug(
+                            "Electrolux SSE task was cancelled during renewal, as expected"
+                        )
                     self._sse_task = None
 
                 await self.api.disconnect_websocket()  # This will be updated to properly close SSE
@@ -165,7 +167,9 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             try:
                 await self._sse_task
             except asyncio.CancelledError:
-                pass
+                _LOGGER.debug(
+                    "Electrolux SSE task was cancelled during close, as expected"
+                )
             self._sse_task = None
 
         # Cancel all deferred tasks
