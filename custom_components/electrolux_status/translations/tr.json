@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux Kurulumu",
-                "description": "Electrolux cihazlarınızı, Electrolux Geliştirici Portalındaki API kimlik bilgilerini kullanarak bağlayın.\n\n**API kimlik bilgilerini almak için:**\n1. https://developer.electrolux.one/ adresini ziyaret edin\n2. Kaydolun ve bir başvuru oluşturun\n3. API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi alın\n\nYardıma ihtiyacınız varsa entegrasyon belgelerini ziyaret edin.",
+                "description": "Electrolux cihazlarınızı, Electrolux Geliştirici Portalındaki API kimlik bilgilerini kullanarak bağlayın.\n\n**API kimlik bilgilerini almak için:**\n1. {url} adresini ziyaret edin\n2. Kaydolun ve bir başvuru oluşturun\n3. API Anahtarınızı, Erişim Simgenizi ve Yenileme Simgenizi alın\n\nYardıma ihtiyacınız varsa entegrasyon belgelerini ziyaret edin.",
                 "data": {
                     "api_key": "API Anahtarı",
                     "access_token": "Erişim Jetonu",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Electrolux'ün kimliğini yeniden doğrulayın",
-                "description": "Electrolux API belirteçlerinizin süresi dolmuş veya geçersiz. Lütfen bunları Electrolux Geliştirici Portalından yeni tokenlarla güncelleyin.\n\nYeni tokenler oluşturmak için https://developer.electrolux.one/ adresini ziyaret edin.",
+                "description": "Electrolux API belirteçlerinizin süresi dolmuş veya geçersiz. Lütfen bunları Electrolux Geliştirici Portalından yeni tokenlarla güncelleyin.\n\nYeni tokenler oluşturmak için {url} adresini ziyaret edin.",
                 "data": {
                     "api_key": "API Anahtarı",
                     "access_token": "Erişim Jetonu",

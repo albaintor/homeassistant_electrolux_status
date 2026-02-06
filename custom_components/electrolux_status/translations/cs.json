@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Nastavení Electrolux",
-                "description": "Připojte své spotřebiče Electrolux pomocí přihlašovacích údajů API z portálu Electrolux Developer Portal.\n\n**Jak získat přihlašovací údaje API:**\n1. Navštivte https://developer.electrolux.one/\n2. Zaregistrujte se a vytvořte aplikaci\n3. Získejte svůj klíč API, přístupový token a obnovovací token\n\nPokud potřebujete pomoc, navštivte integrační dokumentaci.",
+                "description": "Připojte své spotřebiče Electrolux pomocí přihlašovacích údajů API z portálu Electrolux Developer Portal.\n\n**Jak získat přihlašovací údaje API:**\n1. Navštivte {url}\n2. Zaregistrujte se a vytvořte aplikaci\n3. Získejte svůj klíč API, přístupový token a obnovovací token\n\nPokud potřebujete pomoc, navštivte integrační dokumentaci.",
                 "data": {
                     "api_key": "Klíč API",
                     "access_token": "Přístupový token",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Znovu ověřit Electrolux",
-                "description": "Platnost vašich tokenů Electrolux API vypršela nebo jsou neplatné. Aktualizujte je pomocí nových tokenů z portálu Electrolux Developer Portal.\n\nNavštivte https://developer.electrolux.one/ a vygenerujte nové tokeny.",
+                "description": "Platnost vašich tokenů Electrolux API vypršela nebo jsou neplatné. Aktualizujte je pomocí nových tokenů z portálu Electrolux Developer Portal.\n\nNavštivte {url} a vygenerujte nové tokeny.",
                 "data": {
                     "api_key": "Klíč API",
                     "access_token": "Přístupový token",

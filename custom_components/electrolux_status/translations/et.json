@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electroluxi seadistamine",
-                "description": "Ühendage oma Electroluxi seadmed, kasutades Electroluxi arendajaportaali API mandaate.\n\n**API mandaatide hankimiseks:**\n1. Külastage veebisaiti https://developer.electrolux.one/\n2. Registreeru ja loo taotlus\n3. Hankige oma API võti, juurdepääsuluba ja värskendusluba\n\nKui vajate abi, vaadake integreerimise dokumentatsiooni.",
+                "description": "Ühendage oma Electroluxi seadmed, kasutades Electroluxi arendajaportaali API mandaate.\n\n**API mandaatide hankimiseks:**\n1. Külastage veebisaiti {url}\n2. Registreeru ja loo taotlus\n3. Hankige oma API võti, juurdepääsuluba ja värskendusluba\n\nKui vajate abi, vaadake integreerimise dokumentatsiooni.",
                 "data": {
                     "api_key": "API võti",
                     "access_token": "Juurdepääsuluba",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Autentige Electrolux uuesti",
-                "description": "Teie Electroluxi API märgid on aegunud või kehtetud. Värskendage neid värskete žetoonidega Electroluxi arendajaportaalist.\n\nUute märkide loomiseks külastage aadressi https://developer.electrolux.one/.",
+                "description": "Teie Electroluxi API märgid on aegunud või kehtetud. Värskendage neid värskete žetoonidega Electroluxi arendajaportaalist.\n\nUute märkide loomiseks külastage aadressi {url}.",
                 "data": {
                     "api_key": "API võti",
                     "access_token": "Juurdepääsuluba",

@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Konfiguracja Electroluxa",
-                "description": "Połącz swoje urządzenia Electrolux, korzystając z danych uwierzytelniających API z portalu dla programistów Electrolux.\n\n**Aby uzyskać dane uwierzytelniające API:**\n1. Odwiedź https://developer.electrolux.one/\n2. Zarejestruj się i utwórz aplikację\n3. Uzyskaj klucz API, token dostępu i token odświeżenia\n\nJeśli potrzebujesz pomocy, odwiedź dokumentację integracji.",
+                "description": "Połącz swoje urządzenia Electrolux, korzystając z danych uwierzytelniających API z portalu dla programistów Electrolux.\n\n**Aby uzyskać dane uwierzytelniające API:**\n1. Odwiedź {url}\n2. Zarejestruj się i utwórz aplikację\n3. Uzyskaj klucz API, token dostępu i token odświeżenia\n\nJeśli potrzebujesz pomocy, odwiedź dokumentację integracji.",
                 "data": {
                     "api_key": "Klucz API",
                     "access_token": "Token dostępu",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Ponownie uwierzytelnij firmę Electrolux",
-                "description": "Twoje tokeny API Electrolux utraciły ważność lub są nieprawidłowe. Zaktualizuj je, używając nowych tokenów z portalu dla programistów Electrolux.\n\nOdwiedź https://developer.electrolux.one/, aby wygenerować nowe tokeny.",
+                "description": "Twoje tokeny API Electrolux utraciły ważność lub są nieprawidłowe. Zaktualizuj je, używając nowych tokenów z portalu dla programistów Electrolux.\n\nOdwiedź {url}, aby wygenerować nowe tokeny.",
                 "data": {
                     "api_key": "Klucz API",
                     "access_token": "Token dostępu",

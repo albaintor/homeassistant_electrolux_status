@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electroluxin asennus",
-                "description": "Yhdistä Electrolux-laitteesi käyttämällä API-tunnistetietoja Electroluxin kehittäjäportaalista.\n\n**API-tunnistetietojen hankkiminen:**\n1. Käy osoitteessa https://developer.electrolux.one/\n2. Rekisteröidy ja luo sovellus\n3. Hanki API-avain, käyttöoikeus ja päivitystunnus\n\nJos tarvitset apua, tutustu integrointidokumentaatioon.",
+                "description": "Yhdistä Electrolux-laitteesi käyttämällä API-tunnistetietoja Electroluxin kehittäjäportaalista.\n\n**API-tunnistetietojen hankkiminen:**\n1. Käy osoitteessa {url}\n2. Rekisteröidy ja luo sovellus\n3. Hanki API-avain, käyttöoikeus ja päivitystunnus\n\nJos tarvitset apua, tutustu integrointidokumentaatioon.",
                 "data": {
                     "api_key": "API-avain",
                     "access_token": "Käyttöoikeustunnus",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Todenna Electrolux uudelleen",
-                "description": "Electrolux API -tunnuksesi ovat vanhentuneet tai virheelliset. Päivitä ne uusilla Tokeneilla Electroluxin kehittäjäportaalista.\n\nVieraile osoitteessa https://developer.electrolux.one/ luodaksesi uusia tunnuksia.",
+                "description": "Electrolux API -tunnuksesi ovat vanhentuneet tai virheelliset. Päivitä ne uusilla Tokeneilla Electroluxin kehittäjäportaalista.\n\nVieraile osoitteessa {url} luodaksesi uusia tunnuksia.",
                 "data": {
                     "api_key": "API-avain",
                     "access_token": "Käyttöoikeustunnus",

@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Configurare Electrolux",
-                "description": "Conectați-vă aparatele Electrolux utilizând acreditările API din Portalul pentru dezvoltatori Electrolux.\n\n**Pentru a obține acreditările API:**\n1. Vizitați https://developer.electrolux.one/\n2. Înregistrați-vă și creați o aplicație\n3. Obțineți cheia API, Tokenul de acces și Tokenul de reîmprospătare\n\nDacă aveți nevoie de ajutor, vizitați documentația de integrare.",
+                "description": "Conectați-vă aparatele Electrolux utilizând acreditările API din Portalul pentru dezvoltatori Electrolux.\n\n**Pentru a obține acreditările API:**\n1. Vizitați {url}\n2. Înregistrați-vă și creați o aplicație\n3. Obțineți cheia API, Tokenul de acces și Tokenul de reîmprospătare\n\nDacă aveți nevoie de ajutor, vizitați documentația de integrare.",
                 "data": {
                     "api_key": "Cheia API",
                     "access_token": "Token de acces",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Re-autentificați Electrolux",
-                "description": "Tokenurile tale Electrolux API au expirat sau sunt nevalide. Vă rugăm să le actualizați cu token-uri noi de pe Portalul pentru dezvoltatori Electrolux.\n\nVizitați https://developer.electrolux.one/ pentru a genera noi token-uri.",
+                "description": "Tokenurile tale Electrolux API au expirat sau sunt nevalide. Vă rugăm să le actualizați cu token-uri noi de pe Portalul pentru dezvoltatori Electrolux.\n\nVizitați {url} pentru a genera noi token-uri.",
                 "data": {
                     "api_key": "Cheia API",
                     "access_token": "Token de acces",

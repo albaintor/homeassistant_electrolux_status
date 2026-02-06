@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux Setup",
-                "description": "Anslut dina Electrolux-apparater med API-uppgifter från Electrolux utvecklarportal.\n\n**Så här får du API-uppgifter:**\n1. Besök https://developer.electrolux.one/\n2. Registrera dig och skapa en ansökan\n3. Skaffa din API Key, Access Token och Refresh Token\n\nOm du behöver hjälp, besök integrationsdokumentationen.",
+                "description": "Anslut dina Electrolux-apparater med API-uppgifter från Electrolux utvecklarportal.\n\n**Så här får du API-uppgifter:**\n1. Besök {url}\n2. Registrera dig och skapa en ansökan\n3. Skaffa din API Key, Access Token och Refresh Token\n\nOm du behöver hjälp, besök integrationsdokumentationen.",
                 "data": {
                     "api_key": "API-nyckel",
                     "access_token": "Access Token",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Autentisera Electrolux igen",
-                "description": "Dina Electrolux API-tokens har gått ut eller är ogiltiga. Uppdatera dem med nya tokens från Electrolux utvecklarportal.\n\nBesök https://developer.electrolux.one/ för att generera nya tokens.",
+                "description": "Dina Electrolux API-tokens har gått ut eller är ogiltiga. Uppdatera dem med nya tokens från Electrolux utvecklarportal.\n\nBesök {url} för att generera nya tokens.",
                 "data": {
                     "api_key": "API-nyckel",
                     "access_token": "Access Token",

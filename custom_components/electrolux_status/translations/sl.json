@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Nastavitev Electrolux",
-                "description": "Povežite svoje naprave Electrolux s poverilnicami API s portala za razvijalce Electrolux.\n\n**Če želite pridobiti poverilnice za API:**\n1. Obiščite https://developer.electrolux.one/\n2. Registrirajte se in ustvarite aplikacijo\n3. Pridobite svoj ključ API, žeton za dostop in žeton za osvežitev\n\nČe potrebujete pomoč, obiščite integracijsko dokumentacijo.",
+                "description": "Povežite svoje naprave Electrolux s poverilnicami API s portala za razvijalce Electrolux.\n\n**Če želite pridobiti poverilnice za API:**\n1. Obiščite {url}\n2. Registrirajte se in ustvarite aplikacijo\n3. Pridobite svoj ključ API, žeton za dostop in žeton za osvežitev\n\nČe potrebujete pomoč, obiščite integracijsko dokumentacijo.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Žeton za dostop",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Ponovno preverite Electrolux",
-                "description": "Vaši Electrolux API žetoni so potekli ali so neveljavni. Posodobite jih s svežimi žetoni s portala za razvijalce Electrolux.\n\nObiščite https://developer.electrolux.one/, da ustvarite nove žetone.",
+                "description": "Vaši Electrolux API žetoni so potekli ali so neveljavni. Posodobite jih s svežimi žetoni s portala za razvijalce Electrolux.\n\nObiščite {url}, da ustvarite nove žetone.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Žeton za dostop",

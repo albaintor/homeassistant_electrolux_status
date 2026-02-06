@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux Setup",
-                "description": "Connect Är Electrolux Apparater mat API Umeldungsinformatiounen aus dem Electrolux Entwéckler Portal.\n\n** Fir API Umeldungsinformatiounen ze kréien:**\n1. Besicht https://developer.electrolux.one/\n2. Aschreiwen an eng Applikatioun schafen\n3. Kritt Ären API Key, Access Token, an Refresh Token\n\nWann Dir Hëllef braucht, besicht d'Integratiounsdokumentatioun.",
+                "description": "Connect Är Electrolux Apparater mat API Umeldungsinformatiounen aus dem Electrolux Entwéckler Portal.\n\n** Fir API Umeldungsinformatiounen ze kréien:**\n1. Besicht {url}\n2. Aschreiwen an eng Applikatioun schafen\n3. Kritt Ären API Key, Access Token, an Refresh Token\n\nWann Dir Hëllef braucht, besicht d'Integratiounsdokumentatioun.",
                 "data": {
                     "api_key": "API Schlëssel",
                     "access_token": "Zougang Token",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Electrolux nei authentifizéieren",
-                "description": "Är Electrolux API Tokens sinn ofgelaf oder sinn ongëlteg. Update se w.e.g. mat frëschen Tokens vum Electrolux Developer Portal.\n\nBesicht https://developer.electrolux.one/ fir nei Tokens ze generéieren.",
+                "description": "Är Electrolux API Tokens sinn ofgelaf oder sinn ongëlteg. Update se w.e.g. mat frëschen Tokens vum Electrolux Developer Portal.\n\nBesicht {url} fir nei Tokens ze generéieren.",
                 "data": {
                     "api_key": "API Schlëssel",
                     "access_token": "Zougang Token",

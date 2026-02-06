@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux Postavljanje",
-                "description": "Povežite svoje Electrolux uređaje pomoću API vjerodajnica s Electrolux Developer Portala.\n\n**Da biste dobili API vjerodajnice:**\n1. Posjetite https://developer.electrolux.one/\n2. Registrirajte se i kreirajte aplikaciju\n3. Nabavite svoj API ključ, pristupni token i token za osvježavanje\n\nAko trebate pomoć, posjetite integracijsku dokumentaciju.",
+                "description": "Povežite svoje Electrolux uređaje pomoću API vjerodajnica s Electrolux Developer Portala.\n\n**Da biste dobili API vjerodajnice:**\n1. Posjetite {url}\n2. Registrirajte se i kreirajte aplikaciju\n3. Nabavite svoj API ključ, pristupni token i token za osvježavanje\n\nAko trebate pomoć, posjetite integracijsku dokumentaciju.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Pristupni token",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Ponovno provjerite autentičnost Electroluxa",
-                "description": "Vaši Electrolux API tokeni su istekli ili su nevažeći. Ažurirajte ih novim tokenima s Electroluxovog portala za razvojne programere.\n\nPosjetite https://developer.electrolux.one/ za generiranje novih tokena.",
+                "description": "Vaši Electrolux API tokeni su istekli ili su nevažeći. Ažurirajte ih novim tokenima s Electroluxovog portala za razvojne programere.\n\nPosjetite {url} za generiranje novih tokena.",
                 "data": {
                     "api_key": "API ključ",
                     "access_token": "Pristupni token",

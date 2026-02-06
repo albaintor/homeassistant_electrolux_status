@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Configuración de Electrolux",
-                "description": "Conecte sus electrodomésticos Electrolux utilizando credenciales API del Portal para desarrolladores de Electrolux.\n\n**Para obtener credenciales API:**\n1. Visita https://developer.electrolux.one/\n2. Regístrese y cree una aplicación.\n3. Obtenga su clave API, token de acceso y token de actualización\n\nSi necesita ayuda, visite la documentación de integración.",
+                "description": "Conecte sus electrodomésticos Electrolux utilizando credenciales API del Portal para desarrolladores de Electrolux.\n\n**Para obtener credenciales API:**\n1. Visita {url}\n2. Regístrese y cree una aplicación.\n3. Obtenga su clave API, token de acceso y token de actualización\n\nSi necesita ayuda, visite la documentación de integración.",
                 "data": {
                     "api_key": "Clave API",
                     "access_token": "Token de acceso",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Volver a autenticar Electrolux",
-                "description": "Sus tokens API de Electrolux han caducado o no son válidos. Actualícelos con tokens nuevos del Portal para desarrolladores de Electrolux.\n\nVisite https://developer.electrolux.one/ para generar nuevos tokens.",
+                "description": "Sus tokens API de Electrolux han caducado o no son válidos. Actualícelos con tokens nuevos del Portal para desarrolladores de Electrolux.\n\nVisite {url} para generar nuevos tokens.",
                 "data": {
                     "api_key": "Clave API",
                     "access_token": "Token de acceso",

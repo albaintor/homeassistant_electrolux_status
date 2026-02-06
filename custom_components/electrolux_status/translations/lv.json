@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux iestatīšana",
-                "description": "Pievienojiet savas Electrolux ierīces, izmantojot API akreditācijas datus no Electrolux izstrādātāju portāla.\n\n**Lai iegūtu API akreditācijas datus:**\n1. Apmeklējiet vietni https://developer.electrolux.one/\n2. Reģistrējieties un izveidojiet pieteikumu\n3. Iegūstiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru\n\nJa jums nepieciešama palīdzība, apmeklējiet integrācijas dokumentāciju.",
+                "description": "Pievienojiet savas Electrolux ierīces, izmantojot API akreditācijas datus no Electrolux izstrādātāju portāla.\n\n**Lai iegūtu API akreditācijas datus:**\n1. Apmeklējiet vietni {url}\n2. Reģistrējieties un izveidojiet pieteikumu\n3. Iegūstiet savu API atslēgu, piekļuves pilnvaru un atsvaidzināšanas pilnvaru\n\nJa jums nepieciešama palīdzība, apmeklējiet integrācijas dokumentāciju.",
                 "data": {
                     "api_key": "API atslēga",
                     "access_token": "Piekļuves marķieris",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Atkārtoti autentificējiet Electrolux",
-                "description": "Jūsu Electrolux API marķieriem ir beidzies derīguma termiņš vai tie ir nederīgi. Lūdzu, atjauniniet tos ar jauniem marķieriem no Electrolux izstrādātāju portāla.\n\nApmeklējiet vietni https://developer.electrolux.one/, lai ģenerētu jaunus marķierus.",
+                "description": "Jūsu Electrolux API marķieriem ir beidzies derīguma termiņš vai tie ir nederīgi. Lūdzu, atjauniniet tos ar jauniem marķieriem no Electrolux izstrādātāju portāla.\n\nApmeklējiet vietni {url}, lai ģenerētu jaunus marķierus.",
                 "data": {
                     "api_key": "API atslēga",
                     "access_token": "Piekļuves marķieris",

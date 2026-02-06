@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Configuration Electrolux",
-                "description": "Connectez vos appareils Electrolux à l'aide des informations d'identification API du portail des développeurs Electrolux.\n\n**Pour obtenir les informations d'identification de l'API :**\n1. Visitez https://developer.electrolux.one/\n2. Inscrivez-vous et créez une application\n3. Obtenez votre clé API, votre jeton d'accès et votre jeton d'actualisation\n\nSi vous avez besoin d'aide, visitez la documentation d'intégration.",
+                "description": "Connectez vos appareils Electrolux à l'aide des informations d'identification API du portail des développeurs Electrolux.\n\n**Pour obtenir les informations d'identification de l'API :**\n1. Visitez {url}\n2. Inscrivez-vous et créez une application\n3. Obtenez votre clé API, votre jeton d'accès et votre jeton d'actualisation\n\nSi vous avez besoin d'aide, visitez la documentation d'intégration.",
                 "data": {
                     "api_key": "Clé API",
                     "access_token": "Jeton d'accès",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Réauthentifier Electrolux",
-                "description": "Vos jetons API Electrolux ont expiré ou ne sont pas valides. Veuillez les mettre à jour avec de nouveaux jetons du portail des développeurs Electrolux.\n\nVisitez https://developer.electrolux.one/ pour générer de nouveaux jetons.",
+                "description": "Vos jetons API Electrolux ont expiré ou ne sont pas valides. Veuillez les mettre à jour avec de nouveaux jetons du portail des développeurs Electrolux.\n\nVisitez {url} pour générer de nouveaux jetons.",
                 "data": {
                     "api_key": "Clé API",
                     "access_token": "Jeton d'accès",

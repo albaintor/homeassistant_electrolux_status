@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "„Electrolux“ sąranka",
-                "description": "Prijunkite savo Electrolux prietaisus naudodami API kredencialus iš Electrolux kūrėjų portalo.\n\n**Kad gautumėte API kredencialus:**\n1. Apsilankykite adresu https://developer.electrolux.one/\n2. Užsiregistruokite ir sukurkite programą\n3. Gaukite API raktą, prieigos prieigos raktą ir atnaujinimo prieigos raktą\n\nJei jums reikia pagalbos, apsilankykite integravimo dokumentacijoje.",
+                "description": "Prijunkite savo Electrolux prietaisus naudodami API kredencialus iš Electrolux kūrėjų portalo.\n\n**Kad gautumėte API kredencialus:**\n1. Apsilankykite adresu {url}\n2. Užsiregistruokite ir sukurkite programą\n3. Gaukite API raktą, prieigos prieigos raktą ir atnaujinimo prieigos raktą\n\nJei jums reikia pagalbos, apsilankykite integravimo dokumentacijoje.",
                 "data": {
                     "api_key": "API raktas",
                     "access_token": "Prieigos prieigos raktas",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Iš naujo patvirtinkite Electrolux",
-                "description": "Jūsų Electrolux API prieigos raktai pasibaigė arba yra negaliojantys. Atnaujinkite juos naudodami naujus žetonus iš Electrolux kūrėjų portalo.\n\nApsilankykite https://developer.electrolux.one/, kad sukurtumėte naujus prieigos raktus.",
+                "description": "Jūsų Electrolux API prieigos raktai pasibaigė arba yra negaliojantys. Atnaujinkite juos naudodami naujus žetonus iš Electrolux kūrėjų portalo.\n\nApsilankykite {url}, kad sukurtumėte naujus prieigos raktus.",
                 "data": {
                     "api_key": "API raktas",
                     "access_token": "Prieigos prieigos raktas",

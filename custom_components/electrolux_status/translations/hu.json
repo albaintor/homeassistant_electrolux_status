@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Electrolux beállítás",
-                "description": "Csatlakoztassa Electrolux készülékeit az Electrolux fejlesztői portálon található API hitelesítő adatok segítségével.\n\n**Az API hitelesítő adatok beszerzése:**\n1. Látogassa meg a https://developer.electrolux.one/ webhelyet.\n2. Regisztráljon és hozzon létre egy alkalmazást\n3. Szerezze be az API-kulcsot, a hozzáférési tokent és a frissítési tokent\n\nHa segítségre van szüksége, keresse fel az integrációs dokumentációt.",
+                "description": "Csatlakoztassa Electrolux készülékeit az Electrolux fejlesztői portálon található API hitelesítő adatok segítségével.\n\n**Az API hitelesítő adatok beszerzése:**\n1. Látogassa meg a {url} webhelyet.\n2. Regisztráljon és hozzon létre egy alkalmazást\n3. Szerezze be az API-kulcsot, a hozzáférési tokent és a frissítési tokent\n\nHa segítségre van szüksége, keresse fel az integrációs dokumentációt.",
                 "data": {
                     "api_key": "API kulcs",
                     "access_token": "Hozzáférési token",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Hitelesítse újra az Electroluxot",
-                "description": "Electrolux API-tokenjei lejártak vagy érvénytelenek. Kérjük, frissítse őket friss tokenekkel az Electrolux fejlesztői portáljáról.\n\nLátogassa meg a https://developer.electrolux.one/ webhelyet új tokenek létrehozásához.",
+                "description": "Electrolux API-tokenjei lejártak vagy érvénytelenek. Kérjük, frissítse őket friss tokenekkel az Electrolux fejlesztői portáljáról.\n\nLátogassa meg a {url} webhelyet új tokenek létrehozásához.",
                 "data": {
                     "api_key": "API kulcs",
                     "access_token": "Hozzáférési token",

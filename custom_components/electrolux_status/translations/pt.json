@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Configuração Eletrolux",
-                "description": "Conecte seus dispositivos Electrolux usando credenciais API do Portal do Desenvolvedor Electrolux.\n\n**Para obter credenciais de API:**\n1. Visite https://developer.electrolux.one/\n2. Registre-se e crie um aplicativo\n3. Obtenha sua chave API, token de acesso e token de atualização\n\nSe precisar de ajuda, visite a documentação de integração.",
+                "description": "Conecte seus dispositivos Electrolux usando credenciais API do Portal do Desenvolvedor Electrolux.\n\n**Para obter credenciais de API:**\n1. Visite {url}\n2. Registre-se e crie um aplicativo\n3. Obtenha sua chave API, token de acesso e token de atualização\n\nSe precisar de ajuda, visite a documentação de integração.",
                 "data": {
                     "api_key": "Chave de API",
                     "access_token": "Token de acesso",
@@ -15,7 +15,7 @@
             },
             "reauth_validate": {
                 "title": "Reautenticar Electrolux",
-                "description": "Seus tokens da API Electrolux expiraram ou são inválidos. Atualize-os com novos tokens do Portal do Desenvolvedor Electrolux.\n\nVisite https://developer.electrolux.one/ para gerar novos tokens.",
+                "description": "Seus tokens da API Electrolux expiraram ou são inválidos. Atualize-os com novos tokens do Portal do Desenvolvedor Electrolux.\n\nVisite {url} para gerar novos tokens.",
                 "data": {
                     "api_key": "Chave de API",
                     "access_token": "Token de acesso",
