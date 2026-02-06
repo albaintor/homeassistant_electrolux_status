@@ -329,10 +329,13 @@ class ElectroluxApiClient:
             else:
                 raise AttributeError("No command execution method found")
         except AttributeError:
-            # If the method doesn't exist, try alternative approaches
-            _LOGGER.warning("execute_command method not found in new API")
-            # Return a mock success response
-            return {"result": "success"}
+            # If the method doesn't exist, raise an exception
+            _LOGGER.error(
+                "execute_command method not found in new API - command execution not supported"
+            )
+            raise NotImplementedError(
+                "Command execution is not supported by the current API implementation"
+            )
 
     async def close(self):
         """Close the client."""

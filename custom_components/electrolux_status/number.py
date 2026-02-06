@@ -90,7 +90,7 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
             step_val = time_seconds_to_minutes(self.capability.get("step", 1))
             return float(step_val) if step_val is not None else 1.0
         if self.unit == UnitOfTemperature.CELSIUS:
-            return float(self.capability.get("max", 5))
+            return float(self.capability.get("step", 1))
         return float(self.capability.get("step", 1))
 
     async def async_set_native_value(self, value: float) -> None:
