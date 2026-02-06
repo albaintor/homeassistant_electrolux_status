@@ -29,7 +29,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
-          pip install homeassistant ruff black pytest pytest-asyncio mypy pytest-homeassistant
+          pip install pytest-homeassistant pytest-asyncio mypy ruff black
 
       # 4️⃣ Lint & auto-fix with Ruff
       - name: Lint with Ruff
