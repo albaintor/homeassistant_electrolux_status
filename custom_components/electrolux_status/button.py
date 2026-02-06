@@ -119,7 +119,10 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
             .get("reported", {})
             .get("remoteControl")
         )
-        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+        if remote_control is not None and remote_control not in [
+            "ENABLED",
+            "NOT_SAFETY_RELEVANT_ENABLED",
+        ]:
             _LOGGER.warning(
                 "Cannot send command %s for appliance %s: remote control is %s",
                 self.val_to_send,

@@ -158,7 +158,10 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             .get("reported", {})
             .get("remoteControl")
         )
-        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+        if remote_control is not None and remote_control not in [
+            "ENABLED",
+            "NOT_SAFETY_RELEVANT_ENABLED",
+        ]:
             _LOGGER.warning(
                 "Cannot select option %s for appliance %s: remote control is %s",
                 option,

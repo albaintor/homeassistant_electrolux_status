@@ -77,7 +77,10 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
             .get("reported", {})
             .get("remoteControl")
         )
-        if remote_control not in ["ENABLED", "NOT_SAFETY_RELEVANT_ENABLED"]:
+        if remote_control is not None and remote_control not in [
+            "ENABLED",
+            "NOT_SAFETY_RELEVANT_ENABLED",
+        ]:
             _LOGGER.warning(
                 "Cannot control %s for appliance %s: remote control is %s",
                 self.entity_attr,
