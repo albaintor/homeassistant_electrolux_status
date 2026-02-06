@@ -3,7 +3,7 @@
 from homeassistant.const import Platform
 
 # Base component constants
-NAME = "Exectrolux"
+NAME = "Electrolux"
 DOMAIN = "electrolux_status"
 
 # Platforms
