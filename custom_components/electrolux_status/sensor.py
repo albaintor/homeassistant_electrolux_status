@@ -99,7 +99,7 @@ class ElectroluxSensor(ElectroluxEntity, SensorEntity):
         if self.unit == UnitOfTime.SECONDS:
             return UnitOfTime.MINUTES
         with contextlib.suppress(ValueError):
-            if self._is_valid_suggested_unit(self.unit):
+            if self.unit and self._is_valid_suggested_unit(self.unit):
                 return self.unit
         return None
 

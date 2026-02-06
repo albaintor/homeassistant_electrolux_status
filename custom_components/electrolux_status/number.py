@@ -2,8 +2,6 @@
 
 import logging
 
-from pyelectroluxocp import OneAppApi
-
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature, UnitOfTime
@@ -12,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, NUMBER
 from .entity import ElectroluxEntity
-from .util import time_minutes_to_seconds, time_seconds_to_minutes
+from .util import ElectroluxApiClient, time_minutes_to_seconds, time_seconds_to_minutes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -71,43 +69,55 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
     def native_max_value(self) -> float:
         """Return the max value."""
         if self.unit == UnitOfTime.SECONDS:
-            return time_seconds_to_minutes(self.capability.get("max", 100))
+            max_val = time_seconds_to_minutes(self.capability.get("max", 100))
+            return float(max_val) if max_val is not None else 100.0
         if self.unit == UnitOfTemperature.CELSIUS:
-            return self.capability.get("max", 300)
-        return self.capability.get("max", 100)
+            return float(self.capability.get("max", 300))
+        return float(self.capability.get("max", 100))
 
     @property
     def native_min_value(self) -> float:
         """Return the max value."""
         if self.unit == UnitOfTime.SECONDS:
-            return time_seconds_to_minutes(self.capability.get("min", 0))
-        return self.capability.get("min", 0)
+            min_val = time_seconds_to_minutes(self.capability.get("min", 0))
+            return float(min_val) if min_val is not None else 0.0
+        return float(self.capability.get("min", 0))
 
     @property
     def native_step(self) -> float:
-        """Return the max value."""
+        """Return the step value."""
         if self.unit == UnitOfTime.SECONDS:
-            return time_seconds_to_minutes(self.capability.get("step", 1))
+            step_val = time_seconds_to_minutes(self.capability.get("step", 1))
+            return float(step_val) if step_val is not None else 1.0
         if self.unit == UnitOfTemperature.CELSIUS:
-            return self.capability.get("max", 5)
-        return self.capability.get("step", 1)
+            return float(self.capability.get("max", 5))
+        return float(self.capability.get("step", 1))
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         if self.unit == UnitOfTime.SECONDS:
-            value = time_minutes_to_seconds(value)
+            converted = time_minutes_to_seconds(value)
+            value = float(converted) if converted is not None else value
         if self.capability.get("step", 1) == 1:
             value = int(value)
-        client: OneAppApi = self.api
-        
+        client: ElectroluxApiClient = self.api
+
         # --- START OF OUR FIX ---
         command = {}
         if self.entity_source == "latamUserSelections":
-            _LOGGER.debug("Electrolux: Detected latamUserSelections, building full command.")
+            _LOGGER.debug(
+                "Electrolux: Detected latamUserSelections, building full command."
+            )
             # Get the current state of all latam selections
-            current_selections = self.appliance_status.get("properties", {}).get("reported", {}).get("latamUserSelections", {})
+            current_selections = (
+                self.appliance_status.get("properties", {})
+                .get("reported", {})
+                .get("latamUserSelections", {})
+            )
             if not current_selections:
-                _LOGGER.error("Could not retrieve current latamUserSelections to build command.")
+                _LOGGER.error(
+                    "Could not retrieve current latamUserSelections to build command."
+                )
                 return
 
             # Create a copy to modify
@@ -122,8 +132,10 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         elif self.entity_source == "userSelections":
             command = {
                 self.entity_source: {
-                    "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                    self.entity_attr: value
+                    "programUID": self.appliance_status["properties"]["reported"][
+                        "userSelections"
+                    ]["programUID"],
+                    self.entity_attr: value,
                 },
             }
         elif self.entity_source:

@@ -10,11 +10,10 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
-from pyelectroluxocp import OneAppApi
-from pyelectroluxocp.apiModels import ApplienceStatusResponse
 
 from .const import DOMAIN
 from .model import ElectroluxDevice
+from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -86,7 +85,7 @@ class ElectroluxEntity(CoordinatorEntity):
 
     _attr_has_entity_name = True
 
-    appliance_status: ApplienceStatusResponse
+    appliance_status: dict[str, Any]
 
     def __init__(
         self,
@@ -94,12 +93,12 @@ class ElectroluxEntity(CoordinatorEntity):
         name: str,
         config_entry,
         pnc_id: str,
-        entity_type: Platform,
+        entity_type: Platform | None,
         entity_name,
         entity_attr,
         entity_source,
         capability: dict[str, Any],
-        unit: str,
+        unit: str | None,
         device_class: str,
         entity_category: EntityCategory,
         icon: str,
@@ -116,7 +115,7 @@ class ElectroluxEntity(CoordinatorEntity):
         self._device_class = device_class
         self._entity_category = entity_category
         self._catalog_entry = catalog_entry
-        self.api: OneAppApi = coordinator.api
+        self.api: ElectroluxApiClient = coordinator.api
         self.entity_name = entity_name
         self.entity_attr = entity_attr
         self.entity_type = entity_type
@@ -267,7 +266,7 @@ class ElectroluxEntity(CoordinatorEntity):
                     return root.get(attribute, None)
         return None
 
-    def update(self, appliance_status: ApplienceStatusResponse):
+    def update(self, appliance_status: dict[str, Any]):
         """Update the appliance status."""
         self.appliance_status = appliance_status
         # if self.hass:

@@ -63,4 +63,4 @@ class ElectroluxBinarySensor(ElectroluxEntity, BinarySensorEntity):
                 value = self.get_state_attr(mapping)
         if value is not None:
             self._cached_value = value
-        return not self._cached_value if self.invert else self._cached_value
+        return bool(not self._cached_value if self.invert else self._cached_value)

@@ -1,7 +1,5 @@
 """The electrolux Status constants."""
 
-import re
-
 from homeassistant.const import Platform
 
 # Base component constants
@@ -27,6 +25,9 @@ CONF_RENEW_INTERVAL = "renew_interval"
 CONF_NOTIFICATION_DEFAULT = "notifications"
 CONF_NOTIFICATION_DIAG = "notifications_diagnostic"
 CONF_NOTIFICATION_WARNING = "notifications_warning"
+CONF_API_KEY = "api_key"
+CONF_ACCESS_TOKEN = "access_token"
+CONF_REFRESH_TOKEN = "refresh_token"
 
 # Defaults
 DEFAULT_LANGUAGE = "English"
@@ -84,22 +85,25 @@ languages = {
 }
 
 # List of attributes to ignore and that won't be added as entities (regex format)
-ATTRIBUTES_BLACKLIST: list[str] = ["^fCMiscellaneous.+",
-                                   "fcOptisenseLoadWeight.*",
-                                   "applianceCareAndMaintenance.*",
-                                   "applianceMainBoardSwVersion",
-                                   "coolingValveState",
-                                   "networkInterface",
-                                   "temperatureRepresentation",
-                                   ]
+ATTRIBUTES_BLACKLIST: list[str] = [
+    "^fCMiscellaneous.+",
+    "fcOptisenseLoadWeight.*",
+    "applianceCareAndMaintenance.*",
+    "applianceMainBoardSwVersion",
+    "coolingValveState",
+    "networkInterface",
+    "temperatureRepresentation",
+]
 
-ATTRIBUTES_WHITELIST: list[str] = [".*waterUsage",
-                                   ".*tankAReserve",
-                                   ".*tankBReserve"]
+ATTRIBUTES_WHITELIST: list[str] = [".*waterUsage", ".*tankAReserve", ".*tankBReserve"]
 
 # Rules to simplify the naming of entities
-RENAME_RULES: list[str] = [r"^userSelections\/[^_]+_", r"^userSelections\/",
-                           r"^fCMiscellaneousState\/[^_]+_", r"^fCMiscellaneousState\/"]
+RENAME_RULES: list[str] = [
+    r"^userSelections\/[^_]+_",
+    r"^userSelections\/",
+    r"^fCMiscellaneousState\/[^_]+_",
+    r"^fCMiscellaneousState\/",
+]
 
 # List of entity names that need to be updated to 0 manually when they are close to 0
 TIME_ENTITIES_TO_UPDATE = ["timeToEnd"]

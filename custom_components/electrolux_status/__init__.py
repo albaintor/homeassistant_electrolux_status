@@ -5,9 +5,6 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_LANGUAGE,
-    CONF_PASSWORD,
-    CONF_USERNAME,
-    CONF_COUNTRY_CODE,
     EVENT_HOMEASSISTANT_STOP,
 )
 from homeassistant.core import HomeAssistant
@@ -16,9 +13,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    CONF_ACCESS_TOKEN,
+    CONF_API_KEY,
+    CONF_REFRESH_TOKEN,
     CONF_RENEW_INTERVAL,
-    DEFAULT_LANGUAGE,
     DEFAULT_COUNTRY_CODE,
+    DEFAULT_LANGUAGE,
     DEFAULT_WEBSOCKET_RENEWAL_DELAY,
     DOMAIN,
     PLATFORMS,
@@ -28,6 +28,7 @@ from .coordinator import ElectroluxCoordinator
 from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
 
 # noinspection PyUnusedLocal
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -44,21 +45,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if entry.options.get(CONF_RENEW_INTERVAL):
         renew_interval = entry.options[CONF_RENEW_INTERVAL]
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
-    country_code = entry.data.get(CONF_COUNTRY_CODE, DEFAULT_COUNTRY_CODE)
+    api_key = entry.data.get(CONF_API_KEY) or ""
+    access_token = entry.data.get(CONF_ACCESS_TOKEN) or ""
+    refresh_token = entry.data.get(CONF_REFRESH_TOKEN) or ""
     language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
     session = async_get_clientsession(hass)
 
-    client = get_electrolux_session(username, password, country_code, session, language)
+    client = get_electrolux_session(
+        api_key, access_token, refresh_token, session, language
+    )
     coordinator = ElectroluxCoordinator(
         hass,
         client=client,
         renew_interval=renew_interval,
-        username=username,
+        username=api_key,  # Use API key as account identifier
     )
 
-    await coordinator.get_stored_token()
+    # await coordinator.get_stored_token()  # Not needed with new SDK
     if not await coordinator.async_login():
         raise ConfigEntryAuthFailed("Electrolux wrong credentials")
 

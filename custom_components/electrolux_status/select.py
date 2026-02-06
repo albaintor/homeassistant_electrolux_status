@@ -4,8 +4,6 @@ import contextlib
 import logging
 from typing import Any
 
-from pyelectroluxocp.oneAppApi import OneAppApi
-
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform, UnitOfTemperature
@@ -15,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, SELECT
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
+from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -78,13 +77,15 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         )
         values_dict: dict[str, Any] | None = self.capability.get("values", None)
         self.options_list: dict[str, str] = {}
-        for value in values_dict:
-            entry: dict[str, Any] = values_dict[value]
-            if "disabled" in entry:
-                continue
+        if values_dict:
+            for value in values_dict:
+                entry: dict[str, Any] | None = values_dict.get(value)
+                if not entry or "disabled" in entry:
+                    continue
 
-            label = self.format_label(value)
-            self.options_list[label] = value
+                label = self.format_label(value)
+                if label is not None:
+                    self.options_list[label] = value
 
     @property
     def entity_domain(self):
@@ -126,9 +127,10 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
         label = None
         try:
-            label = list(self.options_list.keys())[
-                list(self.options_list.values()).index(value)
-            ]
+            if value is not None:
+                label = list(self.options_list.keys())[
+                    list(self.options_list.values()).index(value)
+                ]
         except Exception as ex:  # noqa: BLE001
             _LOGGER.info(
                 "Electrolux error value %s does not exist in the list %s. %s",
@@ -139,7 +141,8 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         # When value not in the catalog -> add the value to the list then
         if label is None:
             label = self.format_label(value)
-            self.options_list[label] = value
+            if label is not None and value is not None:
+                self.options_list[label] = str(value)
         if label is not None:
             self._cached_value = label
         else:
@@ -149,6 +152,9 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         value = self.options_list.get(option, None)
+        if value is None:
+            return
+
         if (
             isinstance(self.unit, UnitOfTemperature)
             or self.entity_attr.startswith("targetTemperature")
@@ -158,19 +164,21 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             with contextlib.suppress(ValueError):
                 value = float(value)
 
-        if value is None:
-            return
+        _LOGGER.debug(
+            "Electrolux select option before reported status %s",
+            self.appliance_status["properties"]["reported"],
+        )
 
-        _LOGGER.debug("Electrolux select option before reported status %s", self.appliance_status["properties"]['reported'])
-
-        client: OneAppApi = self.api
+        client: ElectroluxApiClient = self.api
         command: dict[str, Any] = {}
         if self.entity_source:
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"][
+                            "userSelections"
+                        ]["programUID"],
+                        self.entity_attr: value,
                     },
                 }
             else:

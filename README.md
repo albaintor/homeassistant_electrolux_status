@@ -22,6 +22,14 @@ Thank you for your understanding and support.
 ## Prerequisites
 
 All devices need configured and Alias set in the Electrolux app prior to configuration.
+
+**API Access**: This integration requires API credentials from the official Electrolux Developer Portal:
+- Visit https://developer.electrolux.one/
+- Register and create an application
+- Obtain API Key, Access Token, and Refresh Token
+
+The integration works with Electrolux and Electrolux owned brands, like AEG, Frigidaire, Husqvarna.
+
 If this does not occur the home assistant integration may raise an authentication error depending on device type and region such as:
 
 - My Electrolux Care/My AEG Care (EMEA region)
@@ -37,11 +45,17 @@ _If the integration does not appear add a new repository in HACS manually: `http
 1. Search for `Electrolux Status` in HACS.
 2. Click install.
 3. In the HA UI go to `Configuration` -> `Integrations` and search for `Electrolux Status`.
-4. Insert your Electrolux credentials
+4. You will need to obtain API credentials from the Electrolux Developer Portal:
+   - Visit https://developer.electrolux.one/
+   - Create an account and register your application
+   - Obtain your API Key, Access Token, and Refresh Token
+5. Enter your API credentials in the configuration flow
+
+**Important**: This integration has been migrated to use the official Electrolux Group Developer API. The old username/password authentication method is no longer supported.
 
 **Known issues :**
 
-- This integration is based on new APIs and may be unstable
+- This integration has been migrated to the official Electrolux Group Developer API (v0.2.0)
 - Some commands don't work (to be investigated) : several dropdown lists like setting analog temperature...
 - Upstream API does not currently support `language`
 - Issues with authentication, if the integration can't start and you see a "403 forbidden" error in the logs, there is a workaround : try to login to the website of your appliance (eg aeg.fr, aeg.nl, electrolux...) with the account and password from the app. If the website reports that the password is wrong : change it using "forgot password" link and try again to configure the integration

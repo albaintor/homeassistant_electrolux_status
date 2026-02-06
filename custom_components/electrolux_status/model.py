@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, TypedDict
 
-from pyelectroluxocp.oneAppApiClient import UserToken
-
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.button import ButtonDeviceClass
 from homeassistant.components.number import NumberDeviceClass
@@ -53,7 +51,7 @@ class ElectroluxDevice:
     # some entities return a string dict in capabilities but
     # an int in the api values. A defined dictionary can convert
     # those values from integer back to dictionary
-    value_mapping: dict[int, str] = field(default_factory=dict)
+    value_mapping: dict[float, str] = field(default_factory=dict)
 
     # some on/off entiites derive their state from different api values
     # for instance, the state of the iceMaker is derived from
@@ -80,4 +78,4 @@ class ElectroluxDevice:
 class ElectroluxTokenStore(TypedDict):
     """Serialized exposed entities storage storage collection."""
 
-    accounts: dict[str, UserToken]
+    accounts: dict[str, dict[str, Any]]

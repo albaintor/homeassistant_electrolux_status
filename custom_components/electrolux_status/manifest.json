@@ -8,12 +8,12 @@
   "integration_type": "hub",
   "iot_class": "cloud_push",
   "issue_tracker": "https://github.com/albaintor/homeassistant_electrolux_status/issues",
-  "loggers": ["pyelectroluxocp"],
+  "loggers": ["electrolux_group_developer_sdk"],
   "requirements": [
-    "pyelectroluxocp==0.1.3",
+    "electrolux-group-developer-sdk==0.2.0",
     "aiofiles==24.1.0"
   ],
   "ssdp": [],
-  "version": "2.2.0",
+  "version": "3.0.0",
   "zeroconf": []
 }

@@ -3,8 +3,6 @@
 import logging
 from typing import Any
 
-from pyelectroluxocp import OneAppApi
-
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -12,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SWITCH
 from .entity import ElectroluxEntity
-from .util import string_to_boolean
+from .util import ElectroluxApiClient, string_to_boolean
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -60,29 +58,39 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
 
         if value is None:
             return self._cached_value
-        self._cached_value = value
-        return value
+        # Ensure value is boolean
+        if isinstance(value, bool):
+            self._cached_value = value
+            return value
+        else:
+            # If it's not a boolean, try to convert it
+            bool_value = bool(value)
+            self._cached_value = bool_value
+            return bool_value
 
     async def switch(self, value: bool) -> None:
         """Control switch state."""
-        client: OneAppApi = self.api
+        client: ElectroluxApiClient = self.api
         # Electrolux bug - needs string not bool
+        command_value = "ON" if value else "OFF"
         if "values" in self.capability:
-            value = "ON" if value else "OFF"
+            command_value = "ON" if value else "OFF"
 
         if self.entity_source:
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"][
+                            "userSelections"
+                        ]["programUID"],
+                        self.entity_attr: command_value,
                     },
                 }
             else:
-                command = {self.entity_source: {self.entity_attr: value}}
+                command = {self.entity_source: {self.entity_attr: command_value}}
         else:
-            command = {self.entity_attr: value}
-        _LOGGER.debug("Electrolux set value %s", value)
+            command = {self.entity_attr: command_value}
+        _LOGGER.debug("Electrolux set value %s", command_value)
         result = await client.execute_appliance_command(self.pnc_id, command)
         _LOGGER.debug("Electrolux set value result %s", result)
 

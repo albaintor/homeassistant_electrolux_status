@@ -3,17 +3,16 @@
 import logging
 from typing import Any
 
-from pyelectroluxocp.oneAppApi import OneAppApi
-
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import BUTTON, DOMAIN, icon_mapping
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
+from .util import ElectroluxApiClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -47,7 +46,7 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
         name: str,
         config_entry,
         pnc_id: str,
-        entity_type: str,
+        entity_type: Platform,
         entity_name,
         entity_attr,
         entity_source,
@@ -113,14 +112,16 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
 
     async def send_command(self) -> bool:
         """Send a command to the device."""
-        client: OneAppApi = self.api
+        client: ElectroluxApiClient = self.api
         value = self.val_to_send
         if self.entity_source:
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"][
+                            "userSelections"
+                        ]["programUID"],
+                        self.entity_attr: value,
                     },
                 }
             else:

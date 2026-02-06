@@ -1,11 +1,10 @@
 """Adds config flow for Electrolux Status."""
 
-from collections.abc import Mapping
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import (
     CONN_CLASS_CLOUD_PUSH,
     ConfigEntry,
@@ -13,7 +12,7 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
     OptionsFlow,
 )
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_COUNTRY_CODE
+from homeassistant.const import CONF_COUNTRY_CODE, CONF_PASSWORD
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -25,12 +24,14 @@ from homeassistant.helpers.selector import (
 )
 
 from .const import (
+    CONF_ACCESS_TOKEN,
+    CONF_API_KEY,
     CONF_LANGUAGE,
     CONF_NOTIFICATION_DEFAULT,
     CONF_NOTIFICATION_DIAG,
     CONF_NOTIFICATION_WARNING,
+    CONF_REFRESH_TOKEN,
     DEFAULT_LANGUAGE,
-    DEFAULT_COUNTRY_CODE,
     DOMAIN,
     languages,
 )
@@ -57,16 +58,16 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
             # check if the specified account is configured already
             # to prevent them from being added twice
             for entry in self._async_current_entries():
-                if user_input[CONF_USERNAME] == entry.data.get("username", None):
+                if user_input[CONF_API_KEY] == entry.data.get("api_key", None):
                     return self.async_abort(reason="already_configured_account")
 
             valid = await self._test_credentials(
-                user_input[CONF_USERNAME], user_input[CONF_PASSWORD], user_input[CONF_COUNTRY_CODE]
+                user_input[CONF_API_KEY],
+                user_input[CONF_ACCESS_TOKEN],
+                user_input[CONF_REFRESH_TOKEN],
             )
             if valid:
-                return self.async_create_entry(
-                    title=user_input[CONF_USERNAME], data=user_input
-                )
+                return self.async_create_entry(title="Electrolux", data=user_input)
             self._errors["base"] = "invalid_auth"
 
             return await self._show_config_form(user_input)
@@ -84,12 +85,12 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         self._errors = {}
         if user_input is not None:
             valid = await self._test_credentials(
-                user_input[CONF_USERNAME], user_input[CONF_PASSWORD], user_input[CONF_COUNTRY_CODE]
+                user_input[CONF_API_KEY],
+                user_input[CONF_ACCESS_TOKEN],
+                user_input[CONF_REFRESH_TOKEN],
             )
             if valid:
-                return self.async_create_entry(
-                    title=user_input[CONF_USERNAME], data=user_input
-                )
+                return self.async_create_entry(title="Electrolux", data=user_input)
             self._errors["base"] = "invalid_auth"
             return await self._show_config_form(user_input)
         return await self._show_config_form(user_input)
@@ -103,47 +104,46 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
         data_schema = {
-            vol.Required(CONF_USERNAME): TextSelector(
-                TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
+            vol.Required(CONF_API_KEY): TextSelector(
+                TextSelectorConfig(type=TextSelectorType.TEXT, autocomplete="api-key")
             ),
-            vol.Required(CONF_PASSWORD): TextSelector(
+            vol.Required(CONF_ACCESS_TOKEN): TextSelector(
                 TextSelectorConfig(
-                    type=TextSelectorType.PASSWORD, autocomplete="current-password"
+                    type=TextSelectorType.PASSWORD, autocomplete="access-token"
                 )
             ),
-            vol.Required(CONF_COUNTRY_CODE, default=DEFAULT_COUNTRY_CODE): TextSelector(
+            vol.Required(CONF_REFRESH_TOKEN): TextSelector(
                 TextSelectorConfig(
-                    type=TextSelectorType.TEXT, autocomplete="country-code"
+                    type=TextSelectorType.PASSWORD, autocomplete="refresh-token"
                 )
             ),
         }
         if self.show_advanced_options:
-            data_schema.update(
-                {
-                    vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
-                        {
-                            "select": {
-                                "options": list(languages.keys()),
-                                "mode": "dropdown",
-                            }
+            data_schema = {
+                **data_schema,
+                vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
+                    {
+                        "select": {
+                            "options": list(languages.keys()),
+                            "mode": "dropdown",
                         }
-                    ),
-                    vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
-                }
-            )
+                    }
+                ),
+                vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
+                vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
+                vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+            }
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
         )
 
-    async def _test_credentials(self, username, password, country_code):
+    async def _test_credentials(self, api_key, access_token, refresh_token):
         """Return true if credentials is valid."""
         try:
             client = get_electrolux_session(
-                username, password, country_code, async_get_clientsession(self.hass)
+                api_key, access_token, refresh_token, async_get_clientsession(self.hass)
             )
             await client.get_appliances_list()
         except Exception as inst:  # pylint: disable=broad-except  # noqa: BLE001
@@ -157,7 +157,7 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
 
     def __init__(self, config_entry) -> None:
         """Initialize HACS options flow."""
-        self.config_entry = config_entry
+        self._config_entry = config_entry
         self.options = dict(config_entry.options)
 
     async def async_step_init(self, user_input=None) -> ConfigFlowResult:
@@ -186,7 +186,9 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
                             autocomplete="current-password",
                         )
                     ),
-                    vol.Required(CONF_COUNTRY_CODE, default=current_country_code): TextSelector(
+                    vol.Required(
+                        CONF_COUNTRY_CODE, default=current_country_code
+                    ): TextSelector(
                         TextSelectorConfig(
                             type=TextSelectorType.TEXT, autocomplete="country-code"
                         )
@@ -232,6 +234,6 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
         }
         self.hass.config_entries.async_update_entry(self.config_entry, data=data)
         return self.async_create_entry(
-            title=self.config_entry.data.get(CONF_USERNAME),
+            title="Electrolux",
             data=data,
         )
