@@ -70,10 +70,29 @@ def translate_dict(data, dest_language):
 
 def main():
     """Main translation function."""
+    # Skip languages that are already manually translated
+    manually_translated = [
+        # "de",
+        # "fr",
+        # "es",
+        # "it",
+        # "nl",
+        # "pl",
+        # "sv",
+        # "da",
+        # "no",
+        # "pt",
+        # "ru",
+    ]
     for language_name, language_code in languages.items():
         if language_code == "en":
             continue
-
+        # Skip manually translated languages
+        if language_code in manually_translated:
+            print(
+                f"Skipping {language_name} ({language_code}.json) - already manually translated"
+            )
+            continue
         print(f"Translating {language_name} ({language_code}.json)")
 
         try:
