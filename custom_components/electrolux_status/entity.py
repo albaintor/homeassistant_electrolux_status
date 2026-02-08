@@ -34,6 +34,33 @@ async def async_setup_entry(
                 for entity in appliance.entities
                 if entity.entity_type == "entity"
             ]
+
+            # Filter out fPPN_ prefixed entities if a matching non-prefixed entity exists
+            filtered_entities = []
+            entity_attrs = {entity.entity_attr for entity in entities}
+
+            for entity in entities:
+                entity_attr_lower = entity.entity_attr.lower()
+                # Skip fPPN_ prefixed entities if a matching non-prefixed entity exists
+                if entity_attr_lower.startswith("fppn_"):
+                    base_attr = entity_attr_lower.replace("fppn_", "").strip("_")
+                    # Check if any non-fPPN version exists
+                    has_matching_base = any(
+                        other_attr.lower().replace("fppn_", "").strip("_") == base_attr
+                        for other_attr in entity_attrs
+                        if not other_attr.lower().startswith("fppn_")
+                    )
+                    if has_matching_base:
+                        _LOGGER.debug(
+                            "Skipping duplicate fPPN entity %s for appliance %s (base entity exists)",
+                            entity.entity_attr,
+                            appliance_id,
+                        )
+                        continue
+
+                filtered_entities.append(entity)
+
+            entities = filtered_entities
             _LOGGER.debug(
                 "Electrolux add %d entities to registry for appliance %s",
                 len(entities),
@@ -106,7 +133,7 @@ class ElectroluxEntity(CoordinatorEntity):
         icon: str,
         catalog_entry: ElectroluxDevice | None = None,
     ) -> None:
-        """Initaliaze the entity."""
+        """Initialize the entity."""
         super().__init__(coordinator)
         self.root_attribute = ["properties", "reported"]
         self.data: Appliances | None = None
@@ -126,30 +153,31 @@ class ElectroluxEntity(CoordinatorEntity):
         self.pnc_id = pnc_id
         self.unit = unit
         self.capability = capability
+        # Set entity_key for consistent FRIENDLY_NAMES lookup
+        # Strip any 'fppn_' prefix and make case-insensitive for robust matching
+        self.entity_key = entity_attr.lower().replace("fppn_", "").strip("_")
         # Do not force `entity_id` here. Home Assistant's entity registry
         # manages stable `entity_id` values based on `unique_id`.
         # Preserving or migrating existing entity_ids should be done
         # via the entity registry APIs during setup, not by assigning
         # `self.entity_id` here which can break users' automations.
-        if catalog_entry:
-            self.entity_registry_enabled_default = (
-                catalog_entry.entity_registry_enabled_default
-            )
         _LOGGER.debug("Electrolux new entity %s for appliance %s", name, pnc_id)
 
     def setup(self, data: Appliances) -> None:
-        """Initialiaze setup."""
+        """Initialize setup."""
         self.data = data
 
     @property
     def entity_domain(self) -> str:
-        """Enitity domain for the entry."""
+        """Entity domain for the entry."""
         return "sensor"
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
-        return f"{self.config_entry.entry_id}-{self.entity_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
+        # Normalize entity_attr by removing fPPN prefix for consistent unique_ids
+        normalized_attr = self.entity_attr.lower().replace("fppn_", "").strip("_")
+        return f"{self.config_entry.entry_id}-{normalized_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
 
     # Disabled this as this removes the value from display : there is no readonly property for entities
     # @property
@@ -212,6 +240,14 @@ class ElectroluxEntity(CoordinatorEntity):
     def icon(self) -> str | None:
         """Return the icon of the entity."""
         return self._icon
+
+    @property
+    def entity_registry_enabled_default(self) -> bool:
+        """Return if the entity should be enabled when first added to the entity registry."""
+        # Use catalog entry value if available, otherwise default to True
+        if self._catalog_entry:
+            return self._catalog_entry.entity_registry_enabled_default
+        return True
 
     # @property
     # def get_entity(self) -> ApplianceEntity:
@@ -303,7 +339,7 @@ class ElectroluxEntity(CoordinatorEntity):
                     return root.get(attribute, None)
         return None
 
-    def update(self, appliance_status: ApplianceState | dict[str, Any]):
+    def update(self, appliance_status: ApplianceState | dict[str, Any]) -> None:
         """Update the appliance status."""
         # Cast needed because ApplianceState TypedDict is not directly assignable to dict[str, Any] in mypy,
         # despite being a subtype, due to TypedDict's structural typing constraints.
@@ -317,6 +353,28 @@ class ElectroluxEntity(CoordinatorEntity):
         if self.entity_source:
             return f"{self.entity_source}/{self.entity_attr}"
         return self.entity_attr
+
+    def is_remote_control_enabled(self) -> bool:
+        """Check if remote control is enabled for this appliance.
+
+        Returns True if remote control status contains 'ENABLED'
+        (including 'NOT_SAFETY_RELEVANT_ENABLED').
+        """
+        if not self.appliance_status:
+            return False
+
+        # Check for remoteControl in the appliance status
+        remote_control_status = self.appliance_status.get("remoteControl")
+        if remote_control_status is None:
+            # Also check in properties.reported
+            reported = self.appliance_status.get("properties", {}).get("reported", {})
+            remote_control_status = reported.get("remoteControl")
+
+        if remote_control_status:
+            return "ENABLED" in str(remote_control_status)
+
+        # If no remote control status found, assume it's enabled
+        return True
 
     @property
     def catalog_entry(self) -> ElectroluxDevice | None:

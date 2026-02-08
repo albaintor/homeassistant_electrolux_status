@@ -1,4 +1,4 @@
-"""Defined catalog of entities for refridgerator type devices."""
+"""Defined catalog of entities for refrigerator type devices."""
 
 from homeassistant.components.switch import SwitchDeviceClass
 

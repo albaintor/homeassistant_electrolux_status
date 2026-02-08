@@ -53,15 +53,21 @@ def deep_merge_dicts(dict1: dict[str, Any], dict2: dict[str, Any]) -> dict[str, 
 class ElectroluxLibraryEntity:
     """Electrolux Library Entity."""
 
+    name: str
+    status: str
+    state: dict[str, Any]
+    appliance_info: dict[str, Any]
+    capabilities: dict[str, Any] | None
+
     def __init__(
         self,
         name,
         status: str,
         state: dict[str, Any],
         appliance_info: dict[str, Any],
-        capabilities: dict[str, Any],
+        capabilities: dict[str, Any] | None,
     ) -> None:
-        """Initaliaze the entity."""
+        """Initialize the entity."""
         self.name = name
         self.status = status
         self.state = state
@@ -73,7 +79,7 @@ class ElectroluxLibraryEntity:
         """Return the reported state of the appliance."""
         return self.state.get("properties", {}).get("reported")
 
-    def get_name(self):
+    def get_name(self) -> str:
         """Get entity name."""
         return self.name
 
@@ -167,6 +173,9 @@ class ElectroluxLibraryEntity:
 
         May contain slashes for nested keys.
         """
+        if not self.capabilities:
+            return None
+
         if self.capabilities.get(attr_name, None):
             return self.capabilities.get(attr_name)
 
@@ -182,7 +191,7 @@ class ElectroluxLibraryEntity:
 
         return result if isinstance(result, dict) else None
 
-    def get_entity_unit(self, attr_name: str):
+    def get_entity_unit(self, attr_name: str) -> str | None:
         """Get entity unit type."""
         capability_def = self.get_capability(attr_name)
         if not capability_def:
@@ -195,7 +204,7 @@ class ElectroluxLibraryEntity:
             return UnitOfTemperature.CELSIUS
         return None
 
-    def get_entity_device_class(self, attr_name: str):
+    def get_entity_device_class(self, attr_name: str) -> Any:
         """Get entity device class."""
         capability_def: dict[str, Any] | None = self.get_capability(attr_name)
         if not capability_def:

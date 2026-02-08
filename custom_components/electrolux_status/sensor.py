@@ -12,9 +12,17 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SENSOR
 from .entity import ElectroluxEntity
-from .util import create_notification
+from .util import create_notification, get_capability
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+FRIENDLY_NAMES = {
+    "ovwater_tank_empty": "Water Tank Status",
+    "foodProbeSupported": "Food Probe Support",
+    "foodProbeInsertionState": "Food Probe",
+    "ovcleaning_ended": "Cleaning Status",
+    "ovfood_probe_end_of_cooking": "Probe End of Cooking",
+}
 
 
 async def async_setup_entry(
@@ -41,9 +49,21 @@ class ElectroluxSensor(ElectroluxEntity, SensorEntity):
     """Electrolux Status Sensor class."""
 
     @property
-    def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+    def entity_domain(self) -> str:
+        """Entity domain for the entry. Used for consistent entity_id."""
         return SENSOR
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        # Check for friendly name first using entity_key
+        friendly_name = FRIENDLY_NAMES.get(self.entity_key)
+        if friendly_name:
+            return friendly_name
+        # Fall back to catalog entry friendly name
+        if self.catalog_entry and self.catalog_entry.friendly_name:
+            return self.catalog_entry.friendly_name.capitalize()
+        return self._name
 
     @property
     def suggested_display_precision(self) -> int | None:
@@ -62,13 +82,36 @@ class ElectroluxSensor(ElectroluxEntity, SensorEntity):
     def native_value(self) -> str | int | float:
         """Return the state of the sensor."""
         value = self.extract_value()
-        if self.capability.get("access") == "constant":
-            value = self.capability.get("default")
+
+        # Special handling for sensors that should get live data instead of constants
+        if self.entity_key in [
+            "ovwater_tank_empty",
+            "foodProbeSupported",
+            "display_food_probe_temperature_c",
+        ]:
+            if self.entity_key == "ovwater_tank_empty":
+                live_value = self.reported_state.get("waterTankEmpty")
+                if live_value is not None:
+                    # If value is STEAM_TANK_FULL, tank is not empty (Off)
+                    value = live_value != "STEAM_TANK_FULL"
+            elif self.entity_key == "foodProbeSupported":
+                # Get from capabilities as it's a capability flag, not state
+                live_value = self.capability.get("foodProbeSupported")
+                if live_value is not None:
+                    value = live_value
+            elif self.entity_key == "display_food_probe_temperature_c":
+                # Point to targetFoodProbeTemperatureC from reported properties
+                live_value = self.reported_state.get("targetFoodProbeTemperatureC")
+                if live_value is not None:
+                    value = live_value
+        elif get_capability(self.capability, "access") == "constant":
+            value = get_capability(self.capability, "default")
         elif self.entity_attr == "alerts":
             value = len(value) if value is not None else 0
         elif value is not None and isinstance(self.unit, UnitOfTime):
             # Electrolux bug - prevent negative/disabled timers
             value = max(value, 0)
+
         if self.catalog_entry and self.catalog_entry.value_mapping:
             # Electrolux presents as string but returns an int
             # the mapping entry allows us to correctly display this to the frontend
@@ -89,6 +132,9 @@ class ElectroluxSensor(ElectroluxEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self) -> str | None:
         """Return unit of measurement."""
+        # Special handling for food probe temperature sensor
+        if self.entity_attr == "targetFoodProbeTemperatureC":
+            return UnitOfTemperature.CELSIUS
         # store the value of the sensor in the native format
         return self.unit
 

@@ -1,16 +1,15 @@
-"""Button platform for Electrolux Status."""
+"""Text platform for Electrolux Status."""
 
 import logging
 from typing import Any
 
-from homeassistant.components.button import ButtonEntity
+from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import BUTTON, DOMAIN, icon_mapping
+from .const import DOMAIN, TEXT
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
 from .util import ElectroluxApiClient, map_command_error_to_home_assistant_error
@@ -23,23 +22,23 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Configure button platform."""
+    """Configure text platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
             entities = [
-                entity for entity in appliance.entities if entity.entity_type == BUTTON
+                entity for entity in appliance.entities if entity.entity_type == TEXT
             ]
             _LOGGER.debug(
-                "Electrolux add %d BUTTON entities to registry for appliance %s",
+                "Electrolux add %d TEXT entities to registry for appliance %s",
                 len(entities),
                 appliance_id,
             )
             async_add_entities(entities)
 
 
-class ElectroluxButton(ElectroluxEntity, ButtonEntity):
-    """Electrolux Status button class."""
+class ElectroluxText(ElectroluxEntity, TextEntity):
+    """Electrolux Status Text class."""
 
     def __init__(
         self,
@@ -57,9 +56,8 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
         entity_category: EntityCategory,
         icon: str,
         catalog_entry: ElectroluxDevice | None,
-        val_to_send: str,
     ) -> None:
-        """Initialize the Button Entity."""
+        """Initialize the Text Entity."""
         super().__init__(
             coordinator=coordinator,
             capability=capability,
@@ -76,56 +74,28 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
             icon=icon,
             catalog_entry=catalog_entry,
         )
-        self.val_to_send = val_to_send
 
     @property
-    def entity_domain(self):
+    def entity_domain(self) -> str:
         """Entity domain for the entry. Used for consistent entity_id."""
-        return BUTTON
+        return TEXT
 
     @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-        return f"{self.config_entry.entry_id}-{self.val_to_send}-{self.entity_attr}-{self.entity_source}-{self.pnc_id}"
+    def native_value(self) -> str | None:
+        """Return the current text value."""
+        value = self.extract_value()
+        if value is None:
+            if self.catalog_entry and self.catalog_entry.state_mapping:
+                mapping = self.catalog_entry.state_mapping
+                value = self.get_state_attr(mapping)
+        if value is not None and not isinstance(value, str):
+            value = str(value)
+        return value
 
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        name = self._name
-        if self.catalog_entry and self.catalog_entry.friendly_name:
-            name = (
-                f"{self.get_appliance.name} {self.catalog_entry.friendly_name.lower()}"
-            )
-        # Get the last word from the 'name' variable
-        # and compare to the command we are sending duplicate names
-        # "air filter state reset reset" for instance
-        last_word = name.split()[-1]
-        if last_word.lower() == str(self.val_to_send).lower():
-            return name
-        return f"{name} {self.val_to_send}"
-
-    @property
-    def icon(self) -> str | None:
-        """Return the icon of the entity."""
-        return self._icon or icon_mapping.get(
-            self.val_to_send, "mdi:gesture-tap-button"
-        )
-
-    async def send_command(self) -> bool:
-        """Send a command to the device."""
-        # Check if remote control is enabled before sending command
-        if not self.is_remote_control_enabled():
-            _LOGGER.warning(
-                "Remote control is disabled for appliance %s, cannot execute command for %s",
-                self.pnc_id,
-                self.entity_attr,
-            )
-            raise HomeAssistantError(
-                "Remote control is disabled for this appliance. Please check the appliance settings."
-            )
-
+    async def async_set_value(self, value: str) -> None:
+        """Set the text value."""
         client: ElectroluxApiClient = self.api
-        value = self.val_to_send
+
         command: dict[str, Any]
         if self.entity_source:
             if self.entity_source == "userSelections":
@@ -141,7 +111,8 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
                 command = {self.entity_source: {self.entity_attr: value}}
         else:
             command = {self.entity_attr: value}
-        _LOGGER.debug("Electrolux send command %s", command)
+
+        _LOGGER.debug("Electrolux set text value %s", command)
         try:
             result = await client.execute_appliance_command(self.pnc_id, command)
         except Exception as ex:
@@ -174,13 +145,5 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
                 raise map_command_error_to_home_assistant_error(
                     ex, self.entity_attr, _LOGGER
                 ) from ex
-        _LOGGER.debug("Electrolux send command result %s", result)
-        return True
-
-    async def async_press(self) -> None:
-        """Execute a button press."""
-        await self.send_command()
+        _LOGGER.debug("Electrolux set text value result %s", result)
         await self.coordinator.async_request_refresh()
-        # await self.hass.async_add_executor_job(self.send_command)
-        # if self.entity_attr == "ExecuteCommand":
-        #     await self.hass.async_add_executor_job(self.coordinator.api.setHacl, self.get_appliance.pnc_id, "0x0403", self.val_to_send, self.entity_source)

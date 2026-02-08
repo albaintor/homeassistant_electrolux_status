@@ -39,6 +39,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
 
+    # Always create new coordinator for clean, predictable behavior
+    _LOGGER.debug("Electrolux creating coordinator instance")
     renew_interval = DEFAULT_WEBSOCKET_RENEWAL_DELAY
 
     api_key = entry.data.get(CONF_API_KEY) or ""
@@ -51,38 +53,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass,
         client=client,
         renew_interval=renew_interval,
-        username=api_key,  # Use API key as account identifier
+        username=api_key,
     )
+    coordinator.config_entry = entry
 
-    # await coordinator.get_stored_token()  # Not needed with new SDK
+    # Authenticate
     if not await coordinator.async_login():
         raise ConfigEntryAuthFailed("Electrolux wrong credentials")
 
-    # Bug ?
-    if coordinator.config_entry is None:
-        coordinator.config_entry = entry
-
+    # Store coordinator
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     # Initialize entities
     _LOGGER.debug("async_setup_entry setup_entities")
     await coordinator.setup_entities()
     _LOGGER.debug("async_setup_entry listen_websocket")
-    coordinator.listen_websocket()
+    await coordinator.listen_websocket()
     _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
     await coordinator.launch_websocket_renewal_task()
 
-    async def _close_api(event):
-        await coordinator.api.close()
-
-    entry.async_on_unload(
-        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _close_api)
-    )
-
-    entry.async_on_unload(entry.add_update_listener(update_listener))
-
     _LOGGER.debug("async_setup_entry async_config_entry_first_refresh")
-    # Fill in the values for first time
     await coordinator.async_config_entry_first_refresh()
 
     if not coordinator.last_update_success:
@@ -95,6 +85,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("async_setup_entry async_forward_entry_setups")
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Setup cleanup handlers
+    async def _close_api(event):
+        await coordinator.api.close()
+
+    entry.async_on_unload(
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _close_api)
+    )
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     _LOGGER.debug("async_setup_entry OVER")
     return True
 
@@ -106,8 +105,17 @@ async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> Non
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
-    coordinator: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
-    await coordinator.close_websocket()
+    coordinator: ElectroluxCoordinator = hass.data[DOMAIN].get(entry.entry_id)
+
+    if coordinator:
+        # Proper cleanup of coordinator resources
+        await coordinator.close_websocket()
+        await coordinator.api.close()
+
+        # Remove from registry to prevent memory leaks
+        hass.data[DOMAIN].pop(entry.entry_id, None)
+
+    # Unload platforms
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 

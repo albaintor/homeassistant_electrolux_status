@@ -78,8 +78,7 @@ class Appliance:
         model: str,
         state: ApplianceState,
     ) -> None:
-        """Initiate the appliance."""
-        self.own_capabilties = False
+        """Initialize the appliance."""
         self.data = None
         self.coordinator = coordinator
         self.model = model
@@ -111,33 +110,34 @@ class Appliance:
             cast(dict[str, Any], self.state).get("applianceData", {}).get("modelName")
         )
 
-    def update(self, appliance_status: ApplianceState | dict[str, Any]):
+    def update(self, appliance_status: ApplianceState | dict[str, Any]) -> None:
         """Update appliance status."""
         from typing import cast
 
         self.state = cast(ApplianceState, appliance_status)
-        self.update_missing_entities()
+        self.initialize_constant_values()
         for entity in self.entities:
             entity.update(self.state)
 
-    def update_missing_entities(self) -> None:
-        """Add missing entities when no capabilities returned by the API.
-
-        This is done dynamically but only when the reported state contains the attributes.
-        """
-        if not self.own_capabilties or not self.reported_state or not self.data:
+    def initialize_constant_values(self) -> None:
+        """Initialize constant values from catalog in reported_state."""
+        if not self.reported_state:
             return
 
+        # Initialize constant values from catalog
         for key, catalog_item in self.catalog.items():
-            category = self.data.get_category(key)
-            category_state = (
-                self.reported_state.get(category, None) if category else None
-            )
-            if (category and category_state and category_state.get(key)) or (
-                not category and self.reported_state.get(key, None)
+            if (
+                catalog_item.capability_info.get("access") == "constant"
+                and catalog_item.capability_info.get("default") is not None
             ):
-                # Create entity logic here, but since we moved, perhaps leave or adjust
-                pass
+                # Only set if not already present in reported_state
+                if key not in self.reported_state:
+                    self.reported_state[key] = catalog_item.capability_info["default"]
+                    _LOGGER.debug(
+                        "Electrolux initialized constant value for %s: %s",
+                        key,
+                        catalog_item.capability_info["default"],
+                    )
 
     @property
     def catalog(self) -> dict[str, Any]:
@@ -175,15 +175,45 @@ class Appliance:
 
         return result if isinstance(result, dict) else None
 
-    def update_reported_data(self, reported_data: dict[str, Any]):
+    def update_reported_data(self, reported_data: dict[str, Any]) -> None:
         """Update the reported data."""
         _LOGGER.debug("Electrolux update reported data %s", reported_data)
         try:
-            self.reported_state.update(
-                deep_merge_dicts(self.reported_state, reported_data)
-            )
+            # Handle incremental updates with "property" and "value" keys
+            if "property" in reported_data and "value" in reported_data:
+                property_name = reported_data["property"]
+                property_value = reported_data["value"]
+                _LOGGER.debug(
+                    "Electrolux incremental update: %s = %s",
+                    property_name,
+                    property_value,
+                )
+                # Update the specific property in reported_state
+                self.reported_state[property_name] = property_value
+            else:
+                # Handle full state updates - preserve constant values
+                # Store constant values before merge
+                constant_values = {}
+                for key, catalog_item in self.catalog.items():
+                    if (
+                        catalog_item.capability_info.get("access") == "constant"
+                        and key in self.reported_state
+                    ):
+                        constant_values[key] = self.reported_state[key]
+
+                # Perform the merge
+                self.reported_state.update(
+                    deep_merge_dicts(self.reported_state, reported_data)
+                )
+
+                # Restore constant values that may have been overwritten
+                for key, value in constant_values.items():
+                    if (
+                        key not in reported_data
+                    ):  # Only restore if not explicitly updated
+                        self.reported_state[key] = value
+
             _LOGGER.debug("Electrolux updated reported data %s", self.state)
-            self.update_missing_entities()
             for entity in self.entities:
                 entity.update(self.state)
 
@@ -348,7 +378,7 @@ class Appliance:
 
         return []
 
-    def setup(self, data: Any):
+    def setup(self, data: Any) -> None:
         """Configure the entity."""
         self.data: Any = data
         self.entities: list[Any] = []

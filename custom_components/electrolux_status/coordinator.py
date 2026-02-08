@@ -56,9 +56,13 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         try:
             # Test authentication by fetching appliances
             await self.api.get_appliances_list()
-            _LOGGER.debug("Electrolux logged in successfully")
+            _LOGGER.info("Electrolux logged in successfully")
             return True
         except Exception as ex:
+            error_msg = str(ex).lower()
+            if "invalid grant" in error_msg:
+                _LOGGER.error("Electrolux authentication failed: invalid grant")
+                raise ConfigEntryAuthFailed("Invalid credentials") from ex
             _LOGGER.error("Could not log in to ElectroluxStatus, %s", ex)
             raise ConfigEntryError from ex
         return False
@@ -86,17 +90,40 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             _LOGGER.exception(exception)  # noqa: TRY401
             raise UpdateFailed from exception
 
-    def incoming_data(self, data: dict[str, dict[str, Any]]):
+    def incoming_data(self, data: dict[str, Any]) -> None:
         """Process incoming data."""
         _LOGGER.debug("Electrolux appliance state updated %s", json.dumps(data))
         # Update reported data
         appliances: Any = self.data.get("appliances", None)
-        for appliance_id, appliance_data in data.items():
+        if not appliances:
+            _LOGGER.warning("No appliances data available for incoming data update")
+            return
+
+        # Handle incremental updates: {"applianceId": "...", "property": "...", "value": "..."}
+        if data and "applianceId" in data and "property" in data and "value" in data:
+            appliance_id = data["applianceId"]
             appliance = appliances.get_appliance(appliance_id)
-            appliance.update_reported_data(appliance_data)
-        self.async_set_updated_data(self.data)
-        # Bug in Electrolux library : no data sent when appliance cycle is over
-        for appliance_id, appliance_data in data.items():
+            if appliance is None:
+                _LOGGER.warning(
+                    "Received incremental data for unknown appliance %s, ignoring",
+                    appliance_id,
+                )
+                return
+
+            try:
+                appliance.update_reported_data({data["property"]: data["value"]})
+            except Exception as ex:
+                _LOGGER.error(
+                    "Failed to update incremental reported data for appliance %s: %s",
+                    appliance_id,
+                    ex,
+                )
+                return
+
+            self.async_set_updated_data(self.data)
+
+            # Check for deferred update due to Electrolux bug: no data sent when appliance cycle is over
+            appliance_data = {data["property"]: data["value"]}
             do_deferred = False
             for key, value in appliance_data.items():
                 if key in TIME_ENTITIES_TO_UPDATE:
@@ -108,27 +135,90 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 task = asyncio.create_task(self.deferred_update(appliance_id, 70))
                 self._deferred_tasks.add(task)
                 task.add_done_callback(self._deferred_tasks.discard)
+            return
 
-    def listen_websocket(self):
+        # Handle bulk updates: {"appliance_id1": {...}, "appliance_id2": {...}}
+        # Extract appliance ID from the SSE payload
+        appliance_id = data.get("applianceId") or data.get("appliance_id")
+        if not appliance_id:
+            _LOGGER.warning("No applianceId found in SSE data: %s", data)
+            return
+
+        appliance = appliances.get_appliance(appliance_id)
+        if appliance is None:
+            _LOGGER.warning(
+                "Received data for unknown appliance %s, ignoring", appliance_id
+            )
+            return
+
+        # Extract the actual appliance data from the payload
+        appliance_data = data.get("data") or data.get("state") or data
+        if appliance_data == data:
+            # If no specific data field, assume the whole payload except applianceId is the data
+            appliance_data = {
+                k: v
+                for k, v in data.items()
+                if k not in ["applianceId", "appliance_id", "userId", "timestamp"]
+            }
+
+        try:
+            appliance.update_reported_data(appliance_data)
+        except Exception as ex:
+            _LOGGER.error(
+                "Failed to update reported data for appliance %s: %s",
+                appliance_id,
+                ex,
+            )
+            return
+
+        self.async_set_updated_data(self.data)
+
+        # Check for deferred update due to Electrolux bug: no data sent when appliance cycle is over
+        do_deferred = False
+        for key, value in appliance_data.items():
+            if key in TIME_ENTITIES_TO_UPDATE:
+                if value is not None and 0 < value <= 1:
+                    do_deferred = True
+                    break
+        if do_deferred:
+            # Track the deferred task to prevent memory leaks
+            task = asyncio.create_task(self.deferred_update(appliance_id, 70))
+            self._deferred_tasks.add(task)
+            task.add_done_callback(self._deferred_tasks.discard)
+
+    async def listen_websocket(self):
         """Listen for state changes."""
         appliances: Any = self.data.get("appliances", None)
         ids = appliances.get_appliance_ids()
         _LOGGER.debug("Electrolux listen_websocket for appliances %s", ",".join(ids))
         if ids is None or len(ids) == 0:
             return
-        # Cancel any existing SSE task before starting a new one
+
+        # Cancel and await existing SSE task to prevent resource leaks
         if self._sse_task and not self._sse_task.done():
             self._sse_task.cancel()
-        # Start SSE streaming (creates its own background task)
+            try:
+                await self._sse_task
+            except asyncio.CancelledError:
+                _LOGGER.debug("Previous SSE task cancelled successfully")
+            self._sse_task = None
+
+        # Start new SSE streaming
         self._sse_task = asyncio.create_task(
             self.api.watch_for_appliance_state_updates(ids, self.incoming_data)
         )
 
     async def launch_websocket_renewal_task(self):
         """Start the renewal of websocket."""
+        # Cancel and await existing renewal task to prevent resource leaks
         if self.renew_task:
             self.renew_task.cancel()
+            try:
+                await self.renew_task
+            except asyncio.CancelledError:
+                _LOGGER.debug("Previous renewal task cancelled successfully")
             self.renew_task = None
+
         self.renew_task = asyncio.create_task(
             self.renew_websocket(), name="Electrolux renewal websocket"
         )
@@ -151,7 +241,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     self._sse_task = None
 
                 await self.api.disconnect_websocket()  # This will be updated to properly close SSE
-                self.listen_websocket()  # Restart SSE connection
+                await self.listen_websocket()  # Restart SSE connection
             except Exception as ex:
                 _LOGGER.error("Electrolux renew SSE failed %s", ex)
 
@@ -232,7 +322,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         json.dumps(appliance_capabilities),
                     )
                 except Exception as exception:  # noqa: BLE001
-                    _LOGGER.warning(
+                    _LOGGER.debug(
                         "Electrolux unable to retrieve capabilities, we are going on our own",
                         exception,
                     )

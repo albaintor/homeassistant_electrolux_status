@@ -14,7 +14,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, SELECT
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
-from .util import ElectroluxApiClient
+from .util import (
+    ElectroluxApiClient,
+    format_command_for_appliance,
+    map_command_error_to_home_assistant_error,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -90,7 +94,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return SELECT
 
     def format_label(self, value: str | None) -> str | None:
@@ -158,10 +162,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             .get("reported", {})
             .get("remoteControl")
         )
-        if remote_control is not None and remote_control not in [
-            "ENABLED",
-            "NOT_SAFETY_RELEVANT_ENABLED",
-        ]:
+        if remote_control is not None and "ENABLED" not in str(remote_control):
             _LOGGER.warning(
                 "Cannot select option %s for appliance %s: remote control is %s",
                 option,
@@ -185,6 +186,11 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             with contextlib.suppress(ValueError):
                 value = float(value)
 
+        # Format the value according to appliance capabilities
+        formatted_value = format_command_for_appliance(
+            self.capability, self.entity_attr, value
+        )
+
         _LOGGER.debug(
             "Electrolux select option before reported status %s",
             self.appliance_status["properties"]["reported"],
@@ -199,23 +205,49 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
                         "programUID": self.appliance_status["properties"]["reported"][
                             "userSelections"
                         ]["programUID"],
-                        self.entity_attr: value,
+                        self.entity_attr: formatted_value,
                     },
                 }
             else:
-                command = {self.entity_source: {self.entity_attr: value}}
+                command = {self.entity_source: {self.entity_attr: formatted_value}}
         else:
-            command = {self.entity_attr: value}
+            command = {self.entity_attr: formatted_value}
 
         _LOGGER.debug("Electrolux select option %s", command)
         try:
             result = await client.execute_appliance_command(self.pnc_id, command)
         except Exception as ex:
             error_msg = str(ex).lower()
-            if "disconnected" in error_msg or "command_validation_error" in error_msg:
-                raise HomeAssistantError("Appliance is disconnected or not available")
-            raise
+            if "command_validation_error" in error_msg:
+                # Try wrapping in userSelections as a generic fallback for command validation errors
+                _LOGGER.debug(
+                    "Trying %s command with userSelections wrapper",
+                    self.entity_attr,
+                )
+                try:
+                    fallback_command = {
+                        "userSelections": {
+                            self.entity_attr: formatted_value,
+                        },
+                    }
+                    result = await client.execute_appliance_command(
+                        self.pnc_id, fallback_command
+                    )
+                    _LOGGER.debug(
+                        "Electrolux %s fallback command succeeded", self.entity_attr
+                    )
+                except Exception as fallback_ex:
+                    # Use shared error mapping for fallback errors
+                    raise map_command_error_to_home_assistant_error(
+                        fallback_ex, self.entity_attr, _LOGGER
+                    ) from fallback_ex
+            else:
+                # Use shared error mapping for other errors
+                raise map_command_error_to_home_assistant_error(
+                    ex, self.entity_attr, _LOGGER
+                ) from ex
         _LOGGER.debug("Electrolux select option result %s", result)
+        await self.coordinator.async_request_refresh()
 
     @property
     def options(self) -> list[str]:

@@ -6,7 +6,6 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.config_entries import (
-    CONN_CLASS_CLOUD_PUSH,
     ConfigEntry,
     ConfigFlow,
     ConfigFlowResult,
@@ -40,7 +39,6 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[ca
     """Config flow for Electrolux Status."""
 
     VERSION = 1
-    CONNECTION_CLASS = CONN_CLASS_CLOUD_PUSH
 
     def __init__(self) -> None:
         """Initialize."""
@@ -169,7 +167,7 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[ca
             )
         return vol.Schema(data_schema)
 
-    async def _show_config_form(self, user_input, step_id="user"):
+    async def _show_config_form(self, user_input, step_id="user") -> ConfigFlowResult:
         """Show the configuration form to edit location data."""
         defaults = user_input or {}
 
@@ -209,7 +207,7 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
         """Manage the options."""
         return await self.async_step_user()
 
-    def _get_options_schema(self):
+    def _get_options_schema(self) -> vol.Schema:
         """Get the options schema with current values."""
         # Get current values from config entry data and options
         current_api_key = self._config_entry.data.get(CONF_API_KEY, "")

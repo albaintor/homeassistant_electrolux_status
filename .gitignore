@@ -415,6 +415,7 @@ dmypy.json
 cython_debug/
 
 .vscode
+.github/**/*instruction*
 
 # PyCharm
 #  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can
