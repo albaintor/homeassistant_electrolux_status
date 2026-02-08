@@ -42,14 +42,22 @@ async def async_setup_entry(
 
             for entity in entities:
                 entity_attr_lower = entity.entity_attr.lower()
-                # Skip fPPN_ prefixed entities if a matching non-prefixed entity exists
-                if entity_attr_lower.startswith("fppn_"):
-                    base_attr = entity_attr_lower.replace("fppn_", "").strip("_")
+                # Skip fPPN prefixed entities if a matching non-prefixed entity exists
+                if entity_attr_lower.startswith("fppn"):
+                    base_attr = (
+                        entity_attr_lower.replace("fppn_", "")
+                        .replace("fppn", "")
+                        .strip("_")
+                    )
                     # Check if any non-fPPN version exists
                     has_matching_base = any(
-                        other_attr.lower().replace("fppn_", "").strip("_") == base_attr
+                        other_attr.lower()
+                        .replace("fppn_", "")
+                        .replace("fppn", "")
+                        .strip("_")
+                        == base_attr
                         for other_attr in entity_attrs
-                        if not other_attr.lower().startswith("fppn_")
+                        if not other_attr.lower().startswith("fppn")
                     )
                     if has_matching_base:
                         _LOGGER.debug(
@@ -155,8 +163,14 @@ class ElectroluxEntity(CoordinatorEntity):
         self.unit = unit
         self.capability = capability
         # Set entity_key for consistent FRIENDLY_NAMES lookup
-        # Strip any 'fppn_' prefix and make case-insensitive for robust matching
-        self.entity_key = entity_attr.lower().replace("fppn_", "").strip("_")
+        # Strip any 'fppn' prefix (with or without underscore) and make case-insensitive for robust matching
+        entity_attr_lower = entity_attr.lower()
+        if entity_attr_lower.startswith("fppn_"):
+            self.entity_key = entity_attr_lower.replace("fppn_", "").strip("_")
+        elif entity_attr_lower.startswith("fppn"):
+            self.entity_key = entity_attr_lower.replace("fppn", "").strip("_")
+        else:
+            self.entity_key = entity_attr_lower.strip("_")
         # Do not force `entity_id` here. Home Assistant's entity registry
         # manages stable `entity_id` values based on `unique_id`.
         # Preserving or migrating existing entity_ids should be done
@@ -176,13 +190,42 @@ class ElectroluxEntity(CoordinatorEntity):
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
-        # Use a hash of the API key for stable unique_id that doesn't change on re-setup
+        # First, try to find existing entity with old unique_id format (config_entry.entry_id based)
+        # to maintain backward compatibility and prevent entity duplication
+        registry = er.async_get(self.coordinator.hass)
+        entity_attr_normalized = self.entity_attr.lower()
+        if entity_attr_normalized.startswith("fppn_"):
+            entity_attr_normalized = entity_attr_normalized.replace("fppn_", "").strip(
+                "_"
+            )
+        elif entity_attr_normalized.startswith("fppn"):
+            entity_attr_normalized = entity_attr_normalized.replace("fppn", "").strip(
+                "_"
+            )
+        old_unique_id = f"{self.config_entry.entry_id}-{entity_attr_normalized}-{self.entity_source or 'root'}-{self.pnc_id}"
+
+        # Check if an entity with the old unique_id exists in the registry
+        for entity_entry in registry.entities.values():
+            if (
+                entity_entry.config_entry_id == self.config_entry.entry_id
+                and entity_entry.unique_id == old_unique_id
+            ):
+                # Use the old unique_id to maintain compatibility
+                return old_unique_id
+
+        # Use new stable unique_id based on API key hash for new installations
         api_key = self.config_entry.data.get(CONF_API_KEY, "")
         api_key_hash = (
             hashlib.sha256(api_key.encode()).hexdigest()[:16] if api_key else "unknown"
         )
         # Normalize entity_attr by removing fPPN prefix for consistent unique_ids
-        normalized_attr = self.entity_attr.lower().replace("fppn_", "").strip("_")
+        normalized_attr = self.entity_attr.lower()
+        if normalized_attr.startswith("fppn_"):
+            normalized_attr = normalized_attr.replace("fppn_", "").strip("_")
+        elif normalized_attr.startswith("fppn"):
+            normalized_attr = normalized_attr.replace("fppn", "").strip("_")
+        else:
+            normalized_attr = normalized_attr.strip("_")
         return f"{api_key_hash}-{normalized_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
 
     # Disabled this as this removes the value from display : there is no readonly property for entities
@@ -345,9 +388,25 @@ class ElectroluxEntity(CoordinatorEntity):
                 if self.entity_source:
                     category: dict[str, Any] | None = root.get(self.entity_source, None)
                     if category:
-                        return category.get(attribute)
+                        result = category.get(attribute)
+                        _LOGGER.debug(
+                            "Extracted value for %s/%s: %s",
+                            self.entity_source,
+                            attribute,
+                            result,
+                        )
+                        return result
                 else:
-                    return root.get(attribute, None)
+                    result = root.get(attribute, None)
+                    _LOGGER.debug("Extracted value for %s: %s", attribute, result)
+                    return result
+        _LOGGER.debug(
+            "No value found for entity %s (attr: %s, source: %s, appliance_status keys: %s)",
+            self.name,
+            self.entity_attr,
+            self.entity_source,
+            list(self.appliance_status.keys()) if self.appliance_status else None,
+        )
         return None
 
     def update(self, appliance_status: ApplianceState | dict[str, Any]) -> None:
