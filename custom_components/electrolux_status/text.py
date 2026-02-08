@@ -99,11 +99,14 @@ class ElectroluxText(ElectroluxEntity, TextEntity):
         command: dict[str, Any]
         if self.entity_source:
             if self.entity_source == "userSelections":
+                # Safer access to avoid KeyError if userSelections is missing
+                reported = self.appliance_status.get("properties", {}).get(
+                    "reported", {}
+                )
+                program_uid = reported.get("userSelections", {}).get("programUID")
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"][
-                            "userSelections"
-                        ]["programUID"],
+                        "programUID": program_uid,
                         self.entity_attr: value,
                     },
                 }
@@ -116,34 +119,9 @@ class ElectroluxText(ElectroluxEntity, TextEntity):
         try:
             result = await client.execute_appliance_command(self.pnc_id, command)
         except Exception as ex:
-            error_msg = str(ex).lower()
-            if "command_validation_error" in error_msg:
-                # Try wrapping in userSelections as a generic fallback for command validation errors
-                _LOGGER.debug(
-                    "Trying %s command with userSelections wrapper",
-                    self.entity_attr,
-                )
-                try:
-                    fallback_command = {
-                        "userSelections": {
-                            self.entity_attr: value,
-                        },
-                    }
-                    result = await client.execute_appliance_command(
-                        self.pnc_id, fallback_command
-                    )
-                    _LOGGER.debug(
-                        "Electrolux %s fallback command succeeded", self.entity_attr
-                    )
-                except Exception as fallback_ex:
-                    # Use shared error mapping for fallback errors
-                    raise map_command_error_to_home_assistant_error(
-                        fallback_ex, self.entity_attr, _LOGGER
-                    ) from fallback_ex
-            else:
-                # Use shared error mapping for other errors
-                raise map_command_error_to_home_assistant_error(
-                    ex, self.entity_attr, _LOGGER
-                ) from ex
+            # Use shared error mapping for all errors
+            raise map_command_error_to_home_assistant_error(
+                ex, self.entity_attr, _LOGGER
+            ) from ex
         _LOGGER.debug("Electrolux set text value result %s", result)
         await self.coordinator.async_request_refresh()

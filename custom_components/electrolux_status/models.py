@@ -177,16 +177,15 @@ class Appliance:
 
     def update_reported_data(self, reported_data: dict[str, Any]) -> None:
         """Update the reported data."""
-        _LOGGER.debug("Electrolux update reported data %s", reported_data)
+        _LOGGER.debug("Electrolux update reported data")
         try:
             # Handle incremental updates with "property" and "value" keys
             if "property" in reported_data and "value" in reported_data:
                 property_name = reported_data["property"]
                 property_value = reported_data["value"]
                 _LOGGER.debug(
-                    "Electrolux incremental update: %s = %s",
+                    "Electrolux incremental update for property: %s",
                     property_name,
-                    property_value,
                 )
                 # Update the specific property in reported_state
                 self.reported_state[property_name] = property_value
@@ -213,7 +212,7 @@ class Appliance:
                     ):  # Only restore if not explicitly updated
                         self.reported_state[key] = value
 
-            _LOGGER.debug("Electrolux updated reported data %s", self.state)
+            _LOGGER.debug("Electrolux updated reported data")
             for entity in self.entities:
                 entity.update(self.state)
 

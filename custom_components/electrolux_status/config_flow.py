@@ -184,7 +184,11 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[ca
         """Return true if credentials is valid."""
         try:
             client = get_electrolux_session(
-                api_key, access_token, refresh_token, async_get_clientsession(self.hass)
+                api_key,
+                access_token,
+                refresh_token,
+                async_get_clientsession(self.hass),
+                self.hass,
             )
             await client.get_appliances_list()
         except (ConnectionError, TimeoutError, ValueError, KeyError) as e:
@@ -260,7 +264,11 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
         """Return true if credentials is valid."""
         try:
             client = get_electrolux_session(
-                api_key, access_token, refresh_token, async_get_clientsession(self.hass)
+                api_key,
+                access_token,
+                refresh_token,
+                async_get_clientsession(self.hass),
+                self.hass,
             )
             await client.get_appliances_list()
         except (ConnectionError, TimeoutError, ValueError, KeyError) as e:

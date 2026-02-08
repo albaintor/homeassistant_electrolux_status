@@ -15,6 +15,7 @@ from .const import DOMAIN, SELECT
 from .entity import ElectroluxEntity
 from .model import ElectroluxDevice
 from .util import (
+    AuthenticationError,
     ElectroluxApiClient,
     format_command_for_appliance,
     map_command_error_to_home_assistant_error,
@@ -85,7 +86,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         if values_dict:
             for value in values_dict:
                 entry: dict[str, Any] | None = values_dict.get(value)
-                if not entry or "disabled" in entry:
+                if entry and "disabled" in entry:
                     continue
 
                 label = self.format_label(value)
@@ -200,11 +201,14 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         command: dict[str, Any] = {}
         if self.entity_source:
             if self.entity_source == "userSelections":
+                # Safer access to avoid KeyError if userSelections is missing
+                reported = self.appliance_status.get("properties", {}).get(
+                    "reported", {}
+                )
+                program_uid = reported.get("userSelections", {}).get("programUID")
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"][
-                            "userSelections"
-                        ]["programUID"],
+                        "programUID": program_uid,
                         self.entity_attr: formatted_value,
                     },
                 }
@@ -216,36 +220,14 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         _LOGGER.debug("Electrolux select option %s", command)
         try:
             result = await client.execute_appliance_command(self.pnc_id, command)
+        except AuthenticationError as auth_ex:
+            # Handle authentication errors by triggering reauthentication
+            await self.coordinator.handle_authentication_error(auth_ex)
         except Exception as ex:
-            error_msg = str(ex).lower()
-            if "command_validation_error" in error_msg:
-                # Try wrapping in userSelections as a generic fallback for command validation errors
-                _LOGGER.debug(
-                    "Trying %s command with userSelections wrapper",
-                    self.entity_attr,
-                )
-                try:
-                    fallback_command = {
-                        "userSelections": {
-                            self.entity_attr: formatted_value,
-                        },
-                    }
-                    result = await client.execute_appliance_command(
-                        self.pnc_id, fallback_command
-                    )
-                    _LOGGER.debug(
-                        "Electrolux %s fallback command succeeded", self.entity_attr
-                    )
-                except Exception as fallback_ex:
-                    # Use shared error mapping for fallback errors
-                    raise map_command_error_to_home_assistant_error(
-                        fallback_ex, self.entity_attr, _LOGGER
-                    ) from fallback_ex
-            else:
-                # Use shared error mapping for other errors
-                raise map_command_error_to_home_assistant_error(
-                    ex, self.entity_attr, _LOGGER
-                ) from ex
+            # Use shared error mapping for all errors
+            raise map_command_error_to_home_assistant_error(
+                ex, self.entity_attr, _LOGGER, self.capability
+            ) from ex
         _LOGGER.debug("Electrolux select option result %s", result)
         await self.coordinator.async_request_refresh()
 

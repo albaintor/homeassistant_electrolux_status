@@ -10,8 +10,7 @@
   "issue_tracker": "https://github.com/albaintor/homeassistant_electrolux_status/issues",
   "loggers": ["electrolux_group_developer_sdk"],
   "requirements": [
-    "electrolux-group-developer-sdk>=0.2.0",
-    "aiofiles>=24.1.0"
+    "electrolux-group-developer-sdk>=0.2.0"
   ],
   "ssdp": [],
   "version": "3.1.00",

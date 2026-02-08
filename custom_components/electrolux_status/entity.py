@@ -1,5 +1,6 @@
 """Entity platform for Electrolux Status."""
 
+import hashlib
 import logging
 from typing import Any, cast
 
@@ -12,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-from .const import DOMAIN
+from .const import CONF_API_KEY, DOMAIN
 from .model import ElectroluxDevice
 from .models import Appliance, Appliances, ApplianceState
 from .util import ElectroluxApiClient
@@ -175,9 +176,14 @@ class ElectroluxEntity(CoordinatorEntity):
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
+        # Use a hash of the API key for stable unique_id that doesn't change on re-setup
+        api_key = self.config_entry.data.get(CONF_API_KEY, "")
+        api_key_hash = (
+            hashlib.sha256(api_key.encode()).hexdigest()[:16] if api_key else "unknown"
+        )
         # Normalize entity_attr by removing fPPN prefix for consistent unique_ids
         normalized_attr = self.entity_attr.lower().replace("fppn_", "").strip("_")
-        return f"{self.config_entry.entry_id}-{normalized_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
+        return f"{api_key_hash}-{normalized_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
 
     # Disabled this as this removes the value from display : there is no readonly property for entities
     # @property
@@ -228,6 +234,11 @@ class ElectroluxEntity(CoordinatorEntity):
     def reported_state(self) -> dict[str, Any]:
         """Return reported state of the appliance."""
         return self.appliance_status.get("properties", {}).get("reported", {})
+
+    @property
+    def is_dam_appliance(self) -> bool:
+        """Return True if this is a DAM (One Connected Platform) appliance."""
+        return self.pnc_id.startswith("1:")
 
     @property
     def name(self) -> str:
@@ -358,7 +369,7 @@ class ElectroluxEntity(CoordinatorEntity):
         """Check if remote control is enabled for this appliance.
 
         Returns True if remote control status contains 'ENABLED'
-        (including 'NOT_SAFETY_RELEVANT_ENABLED').
+        (including 'NOT_SAFETY_RELEVANT_ENABLED') or is None.
         """
         if not self.appliance_status:
             return False
@@ -369,6 +380,10 @@ class ElectroluxEntity(CoordinatorEntity):
             # Also check in properties.reported
             reported = self.appliance_status.get("properties", {}).get("reported", {})
             remote_control_status = reported.get("remoteControl")
+
+        # Allow None as a valid enabled state (some appliances don't report remoteControl)
+        if remote_control_status is None:
+            return True
 
         if remote_control_status:
             return "ENABLED" in str(remote_control_status)

@@ -1,44 +1,18 @@
 """Translation script using deep-translator for all languages."""
 
 import json
+import os
 import time
 
 from deep_translator import GoogleTranslator
 
-# Read English translations
-with open("en.json", encoding="utf-8") as file:
-    en_data = json.load(file)
 
-# Define the target languages (excluding English)
-languages = {
-    "български": "bg",
-    "český": "cs",
-    "Dansk": "da",
-    "Deutsch": "de",
-    "ελληνικός": "el",
-    "eesti": "et",
-    "Suomi": "fi",
-    "Français": "fr",
-    "Hrvatski": "hr",
-    "magyar": "hu",
-    "Italiano": "it",
-    "latviešu": "lv",
-    "lietuvių": "lt",
-    "Lëtzebuergesch": "lb",
-    "nederlands": "nl",
-    "norsk": "no",
-    "polski": "pl",
-    "Português": "pt",
-    "Português Brasil": "pt_br",
-    "Română": "ro",
-    "русский": "ru",
-    "slovenský": "sk",
-    "slovenščina": "sl",
-    "Español": "es",
-    "Svenska": "sv",
-    "Türkçe": "tr",
-    "Українська": "uk",
-}
+def load_en_data():
+    """Load English translations."""
+    base_dir = os.path.dirname(__file__)
+    en_path = os.path.join(base_dir, "en.json")
+    with open(en_path, encoding="utf-8") as file:
+        return json.load(file)
 
 
 def translate_text(text, dest_language):
@@ -70,6 +44,40 @@ def translate_dict(data, dest_language):
 
 def main():
     """Main translation function."""
+    # Read English translations
+    en_data = load_en_data()
+
+    # Define the target languages (excluding English)
+    languages = {
+        "български": "bg",
+        "český": "cs",
+        "Dansk": "da",
+        "Deutsch": "de",
+        "ελληνικός": "el",
+        "eesti": "et",
+        "Suomi": "fi",
+        "Français": "fr",
+        "Hrvatski": "hr",
+        "magyar": "hu",
+        "Italiano": "it",
+        "latviešu": "lv",
+        "lietuvių": "lt",
+        "Lëtzebuergesch": "lb",
+        "nederlands": "nl",
+        "norsk": "no",
+        "polski": "pl",
+        "Português": "pt",
+        "Português Brasil": "pt_br",
+        "Română": "ro",
+        "русский": "ru",
+        "slovenský": "sk",
+        "slovenščina": "sl",
+        "Español": "es",
+        "Svenska": "sv",
+        "Türkçe": "tr",
+        "Українська": "uk",
+    }
+
     # Skip languages that are already manually translated
     manually_translated = [
         # "de",
@@ -98,7 +106,10 @@ def main():
         try:
             translated_data = translate_dict(en_data, language_code)
 
-            with open(f"{language_code}.json", "w", encoding="utf-8") as file:
+            output_path = os.path.join(
+                os.path.dirname(__file__), f"{language_code}.json"
+            )
+            with open(output_path, "w", encoding="utf-8") as file:
                 json.dump(translated_data, file, ensure_ascii=False, indent=4)
 
             print(f"✓ Completed {language_name}")
@@ -106,7 +117,10 @@ def main():
         except Exception as e:
             print(f"✗ Failed to translate {language_name}: {e}")
             # Fallback to English
-            with open(f"{language_code}.json", "w", encoding="utf-8") as file:
+            output_path = os.path.join(
+                os.path.dirname(__file__), f"{language_code}.json"
+            )
+            with open(output_path, "w", encoding="utf-8") as file:
                 json.dump(en_data, file, ensure_ascii=False, indent=4)
 
     print("\n🎉 Translation completed for all languages!")

@@ -694,11 +694,18 @@ CATALOG_BASE: dict[str, ElectroluxDevice] = {
         entity_category=None,
         entity_icon="mdi:thermometer",
     ),
-    "targetTemperatureF": ElectroluxDevice(
-        device_class=SensorDeviceClass.TEMPERATURE,
-        unit=UnitOfTemperature.FAHRENHEIT,
+    "targetDuration": ElectroluxDevice(
+        capability_info={
+            "access": "readwrite",
+            "type": "number",
+            "max": 86340,
+            "min": 0,
+            "step": 60,
+        },
+        device_class=NumberDeviceClass.TEMPERATURE,  # readwrite needs NumberDeviceClass / read is SensorDeviceClass
+        unit=UnitOfTime.SECONDS,
         entity_category=None,
-        entity_icon="mdi:thermometer",
+        entity_icon="mdi:clock-start",
     ),
     "timeToEnd": ElectroluxDevice(
         capability_info={"access": "read", "type": "number"},

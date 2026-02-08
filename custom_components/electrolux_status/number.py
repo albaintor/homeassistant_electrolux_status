@@ -13,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, NUMBER
 from .entity import ElectroluxEntity
 from .util import (
+    AuthenticationError,
     ElectroluxApiClient,
     format_command_for_appliance,
     map_command_error_to_home_assistant_error,
@@ -203,7 +204,7 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
                 f"Remote control disabled (status: {remote_control})"
             )
 
-        if self.unit == UnitOfTime.SECONDS:
+        if self.native_unit_of_measurement == UnitOfTime.MINUTES:
             converted = time_minutes_to_seconds(value)
             value = float(converted) if converted is not None else value
         if self.capability.get("step", 1) == 1:
@@ -244,11 +245,12 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
 
         # Original logic as a fallback for other entities
         elif self.entity_source == "userSelections":
+            # Safer access to avoid KeyError if userSelections is missing
+            reported = self.appliance_status.get("properties", {}).get("reported", {})
+            program_uid = reported.get("userSelections", {}).get("programUID")
             command = {
                 self.entity_source: {
-                    "programUID": self.appliance_status["properties"]["reported"][
-                        "userSelections"
-                    ]["programUID"],
+                    "programUID": program_uid,
                     self.entity_attr: formatted_value,
                 },
             }
@@ -260,36 +262,14 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         _LOGGER.debug("Electrolux set value %s", command)
         try:
             result = await client.execute_appliance_command(self.pnc_id, command)
+        except AuthenticationError as auth_ex:
+            # Handle authentication errors by triggering reauthentication
+            await self.coordinator.handle_authentication_error(auth_ex)
         except Exception as ex:
-            error_msg = str(ex).lower()
-            if "command_validation_error" in error_msg:
-                # Try wrapping in userSelections as a generic fallback for command validation errors
-                _LOGGER.debug(
-                    "Trying %s command with userSelections wrapper",
-                    self.entity_attr,
-                )
-                try:
-                    fallback_command = {
-                        "userSelections": {
-                            self.entity_attr: formatted_value,
-                        },
-                    }
-                    result = await client.execute_appliance_command(
-                        self.pnc_id, fallback_command
-                    )
-                    _LOGGER.debug(
-                        "Electrolux %s fallback command succeeded", self.entity_attr
-                    )
-                except Exception as fallback_ex:
-                    # Use shared error mapping for fallback errors
-                    raise map_command_error_to_home_assistant_error(
-                        fallback_ex, self.entity_attr, _LOGGER
-                    ) from fallback_ex
-            else:
-                # Use shared error mapping for other errors
-                raise map_command_error_to_home_assistant_error(
-                    ex, self.entity_attr, _LOGGER
-                ) from ex
+            # Use shared error mapping for all errors
+            raise map_command_error_to_home_assistant_error(
+                ex, self.entity_attr, _LOGGER, self.capability
+            ) from ex
         _LOGGER.debug("Electrolux set value result %s", result)
         await self.coordinator.async_request_refresh()
 
@@ -301,27 +281,16 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         return self.unit
 
     @property
+    def available(self) -> bool:
+        """Return if the entity is available.
+
+        Keep entities available to provide consistent UI experience.
+        Let the API handle validation errors for unsupported operations.
+        """
+        return True
+
+    @property
     def entity_registry_enabled_default(self) -> bool:
         """Return if the entity should be enabled when first added to the entity registry."""
-        # Check if this entity is supported by the current program
-        current_program = self.reported_state.get("program")
-        if (
-            current_program
-            and hasattr(self.get_appliance, "data")
-            and self.get_appliance.data
-        ):
-            appliance_data = self.get_appliance.data
-            if hasattr(appliance_data, "capabilities") and appliance_data.capabilities:
-                program_capabilities = (
-                    appliance_data.capabilities.get("program", {})
-                    .get("values", {})
-                    .get(current_program, {})
-                )
-                if program_capabilities:
-                    # Check if this entity attribute is supported in the current program
-                    entity_key = (
-                        self.entity_attr.lower().replace("fppn_", "").strip("_")
-                    )
-                    return entity_key in program_capabilities
-        # Fall back to global capabilities if no program-specific data
-        return super().entity_registry_enabled_default
+        # Always enable entities by default - availability is controlled by the available property
+        return True

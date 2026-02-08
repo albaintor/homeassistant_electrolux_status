@@ -9,7 +9,6 @@ from typing import Any, cast
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import (
     ConfigEntryAuthFailed,
-    ConfigEntryError,
     ConfigEntryNotReady,
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -35,6 +34,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         username: str,
     ) -> None:
         """Initialize."""
+        self.hass = hass
         self.api = client
         self.platforms: list[str] = []
         self.renew_task = None
@@ -63,9 +63,33 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             if "invalid grant" in error_msg:
                 _LOGGER.error("Electrolux authentication failed: invalid grant")
                 raise ConfigEntryAuthFailed("Invalid credentials") from ex
+            # For transient network/other errors, allow HA to retry setup
             _LOGGER.error("Could not log in to ElectroluxStatus, %s", ex)
-            raise ConfigEntryError from ex
+            raise ConfigEntryNotReady from ex
         return False
+
+    async def handle_authentication_error(self, exception: Exception) -> None:
+        """Handle authentication errors by raising ConfigEntryAuthFailed.
+
+        This method should be called when authentication errors are detected
+        during command execution or other API calls outside the normal update cycle.
+        """
+        error_msg = str(exception).lower()
+        if any(
+            keyword in error_msg
+            for keyword in [
+                "401",
+                "unauthorized",
+                "auth",
+                "token",
+                "invalid grant",
+                "forbidden",
+            ]
+        ):
+            _LOGGER.warning("Authentication failed during operation: %s", exception)
+            raise ConfigEntryAuthFailed(
+                "Token expired or invalid - please reauthenticate"
+            ) from exception
 
     async def deferred_update(self, appliance_id: str, delay: int) -> None:
         """Deferred update due to Electrolux not sending updated data at the end of the appliance program/cycle."""
@@ -86,13 +110,15 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 appliance_status = await self.api.get_appliance_state(appliance_id)
                 appliance.update(appliance_status)
                 self.async_set_updated_data(self.data)
+        except asyncio.CancelledError:
+            raise
         except Exception as exception:
             _LOGGER.exception(exception)  # noqa: TRY401
             raise UpdateFailed from exception
 
     def incoming_data(self, data: dict[str, Any]) -> None:
         """Process incoming data."""
-        _LOGGER.debug("Electrolux appliance state updated %s", json.dumps(data))
+        _LOGGER.debug("Electrolux appliance state updated")
         # Update reported data
         appliances: Any = self.data.get("appliances", None)
         if not appliances:
@@ -132,7 +158,9 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         break
             if do_deferred:
                 # Track the deferred task to prevent memory leaks
-                task = asyncio.create_task(self.deferred_update(appliance_id, 70))
+                task = self.hass.async_create_task(
+                    self.deferred_update(appliance_id, 70)
+                )
                 self._deferred_tasks.add(task)
                 task.add_done_callback(self._deferred_tasks.discard)
             return
@@ -182,7 +210,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     break
         if do_deferred:
             # Track the deferred task to prevent memory leaks
-            task = asyncio.create_task(self.deferred_update(appliance_id, 70))
+            task = self.hass.async_create_task(self.deferred_update(appliance_id, 70))
             self._deferred_tasks.add(task)
             task.add_done_callback(self._deferred_tasks.discard)
 
@@ -204,7 +232,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             self._sse_task = None
 
         # Start new SSE streaming
-        self._sse_task = asyncio.create_task(
+        self._sse_task = self.hass.async_create_task(
             self.api.watch_for_appliance_state_updates(ids, self.incoming_data)
         )
 
@@ -219,7 +247,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 _LOGGER.debug("Previous renewal task cancelled successfully")
             self.renew_task = None
 
-        self.renew_task = asyncio.create_task(
+        self.renew_task = self.hass.async_create_task(
             self.renew_websocket(), name="Electrolux renewal websocket"
         )
 
@@ -242,6 +270,8 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
 
                 await self.api.disconnect_websocket()  # This will be updated to properly close SSE
                 await self.listen_websocket()  # Restart SSE connection
+            except asyncio.CancelledError:
+                raise
             except Exception as ex:
                 _LOGGER.error("Electrolux renew SSE failed %s", ex)
 
@@ -393,6 +423,8 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             try:
                 appliance_status = await self.api.get_appliance_state(appliance_id)
                 appliance.update(appliance_status)
+            except asyncio.CancelledError:
+                raise
             except Exception as exception:
                 error_msg = str(exception).lower()
                 # Check if this is an authentication error

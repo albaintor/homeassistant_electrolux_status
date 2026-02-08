@@ -2,6 +2,8 @@
 
 This directory contains two Python scripts designed to help with testing and development of the Electrolux Status Home Assistant integration. These scripts allow you to interact directly with the Electrolux API to inspect appliance details and test commands.
 
+## Note: If you regenerate api key and tokens in electrolux api portal for use these scripts, the integration most likely must be reauthenticated with newly generated credentials
+
 ## 📋 Scripts Overview
 
 ### 1. `script_appliance_details.py` - Appliance Information Tool
@@ -26,7 +28,7 @@ python script_appliance_details.py
 2. **Appliance Selection**: Shows numbered list of all your appliances
 3. **Data Retrieval**: Fetches state and capabilities for selected appliance
 4. **Analysis**: Searches for model information and key properties
-5. **Export**: Saves raw JSON data to a file named after the appliance ID
+5. **Export**: Saves raw JSON data to a text file named after the appliance ID for further analysis
 
 #### Output Files:
 The script creates files named after the appliance model with the PNC (Product Number Code) stripped (e.g., `BSE788380M.txt`) containing:

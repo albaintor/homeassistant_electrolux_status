@@ -12,10 +12,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, SWITCH
 from .entity import ElectroluxEntity
 from .util import (
+    AuthenticationError,
     ElectroluxApiClient,
     format_command_for_appliance,
     map_command_error_to_home_assistant_error,
-    string_to_boolean,
 )
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -58,9 +58,6 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
             if self.catalog_entry and self.catalog_entry.state_mapping:
                 mapping = self.catalog_entry.state_mapping
                 value = self.get_state_attr(mapping)
-        # Electrolux returns strings for some true/false states
-        if value is not None and isinstance(value, str):
-            value = string_to_boolean(value, False)
 
         if value is None:
             return self._cached_value if self._cached_value is not None else False
@@ -96,11 +93,14 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
         command: dict[str, Any]
         if self.entity_source:
             if self.entity_source == "userSelections":
+                # Safer access to avoid KeyError if userSelections is missing
+                reported = self.appliance_status.get("properties", {}).get(
+                    "reported", {}
+                )
+                program_uid = reported.get("userSelections", {}).get("programUID")
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"][
-                            "userSelections"
-                        ]["programUID"],
+                        "programUID": program_uid,
                         self.entity_attr: command_value,
                     },
                 }
@@ -108,40 +108,18 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
                 command = {self.entity_source: {self.entity_attr: command_value}}
         else:
             command = {self.entity_attr: command_value}
-        _LOGGER.debug("Electrolux set value %s", command_value)
+        _LOGGER.debug("Electrolux set value")
         try:
-            result = await client.execute_appliance_command(self.pnc_id, command)
+            await client.execute_appliance_command(self.pnc_id, command)
+        except AuthenticationError as auth_ex:
+            # Handle authentication errors by triggering reauthentication
+            await self.coordinator.handle_authentication_error(auth_ex)
         except Exception as ex:
-            error_msg = str(ex).lower()
-            if "command_validation_error" in error_msg:
-                # Try wrapping in userSelections as a generic fallback for command validation errors
-                _LOGGER.debug(
-                    "Trying %s command with userSelections wrapper",
-                    self.entity_attr,
-                )
-                try:
-                    fallback_command = {
-                        "userSelections": {
-                            self.entity_attr: command_value,
-                        },
-                    }
-                    result = await client.execute_appliance_command(
-                        self.pnc_id, fallback_command
-                    )
-                    _LOGGER.debug(
-                        "Electrolux %s fallback command succeeded", self.entity_attr
-                    )
-                except Exception as fallback_ex:
-                    # Use shared error mapping for fallback errors
-                    raise map_command_error_to_home_assistant_error(
-                        fallback_ex, self.entity_attr, _LOGGER
-                    ) from fallback_ex
-            else:
-                # Use shared error mapping for other errors
-                raise map_command_error_to_home_assistant_error(
-                    ex, self.entity_attr, _LOGGER
-                ) from ex
-        _LOGGER.debug("Electrolux set value result %s", result)
+            # Use shared error mapping for all errors
+            raise map_command_error_to_home_assistant_error(
+                ex, self.entity_attr, _LOGGER, self.capability
+            ) from ex
+        _LOGGER.debug("Electrolux set value completed")
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""

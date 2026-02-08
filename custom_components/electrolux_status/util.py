@@ -53,11 +53,21 @@ class RateLimitError(CommandError):
     pass
 
 
+class AuthenticationError(CommandError):
+    """Authentication failed - tokens expired or invalid."""
+
+    pass
+
+
 def get_electrolux_session(
-    api_key, access_token, refresh_token, client_session
+    api_key, access_token, refresh_token, client_session, hass=None
 ) -> "ElectroluxApiClient":
-    """Return Electrolux API Session."""
-    return ElectroluxApiClient(api_key, access_token, refresh_token)
+    """Return Electrolux API Session.
+
+    Note: client_session is currently unused by the underlying SDK but is kept
+    for future compatibility when the SDK supports passing in a shared aiohttp session.
+    """
+    return ElectroluxApiClient(api_key, access_token, refresh_token, hass)
 
 
 def should_send_notification(config_entry, alert_severity, alert_status) -> bool:
@@ -204,7 +214,7 @@ def string_to_boolean(value: str | None, fallback=True) -> bool | str | None:
         return True
     if normalize_input in off_values:
         return False
-    _LOGGER.debug("Electrolux unable to convert %s to boolean", value)
+    _LOGGER.debug("Electrolux unable to convert value to boolean")
     if fallback:
         return value
     return False
@@ -216,6 +226,7 @@ async def execute_command_with_error_handling(
     command: dict[str, Any],
     entity_attr: str,
     logger: logging.Logger,
+    capability: dict[str, Any] | None = None,
 ) -> Any:
     """Execute command with standardized error handling.
 
@@ -241,11 +252,16 @@ async def execute_command_with_error_handling(
 
     except Exception as ex:
         # Use shared error mapping function
-        raise map_command_error_to_home_assistant_error(ex, entity_attr, logger) from ex
+        raise map_command_error_to_home_assistant_error(
+            ex, entity_attr, logger, capability
+        ) from ex
 
 
 def map_command_error_to_home_assistant_error(
-    ex: Exception, entity_attr: str, logger: logging.Logger
+    ex: Exception,
+    entity_attr: str,
+    logger: logging.Logger,
+    capability: dict[str, Any] | None = None,
 ) -> HomeAssistantError:
     """Map command exceptions to user-friendly Home Assistant errors.
 
@@ -262,6 +278,26 @@ def map_command_error_to_home_assistant_error(
     Returns:
         HomeAssistantError with user-friendly message
     """
+
+    # Check for authentication errors first - these should be handled differently
+    error_str = str(ex).lower()
+    if any(
+        keyword in error_str
+        for keyword in [
+            "401",
+            "unauthorized",
+            "forbidden",
+            "invalid grant",
+            "token",
+            "auth",
+        ]
+    ):
+        logger.warning(
+            "Authentication error detected for %s: %s",
+            entity_attr,
+            ex,
+        )
+        raise AuthenticationError("Authentication failed") from ex
 
     # Method 1: Try to parse structured error response
     error_data = None
@@ -371,16 +407,16 @@ def map_command_error_to_home_assistant_error(
                             detail_lower = str(detail).lower()
 
                             if "invalid step" in detail_lower:
-                                # Parse step information if available
-                                if "5" in str(detail):
-                                    detail_message = (
-                                        "Temperature must be set in 5°C increments."
-                                    )
-                                else:
-                                    detail_message = "Temperature must be set in valid increments for this appliance."
+                                # Get step value from capability for dynamic error message
+                                step_value = "valid"
+                                if capability:
+                                    step = capability.get("step")
+                                    if step is not None:
+                                        step_value = str(step)
+                                detail_message = f"Invalid Value: This appliance requires increments of {step_value}."
 
                             elif "type mismatch" in detail_lower:
-                                detail_message = "Command format error. The appliance received an incompatible command type."
+                                detail_message = "Integration Error: Formatting mismatch (Expected Boolean/String)."
 
                             elif (
                                 "temporary_locked" in detail_lower
@@ -618,8 +654,9 @@ def format_command_for_appliance(
 class ElectroluxApiClient:
     """Wrapper for the new Electrolux API client to maintain compatibility."""
 
-    def __init__(self, api_key: str, access_token: str, refresh_token: str):
+    def __init__(self, api_key: str, access_token: str, refresh_token: str, hass=None):
         """Initialize the API client."""
+        self.hass = hass
         self._token_manager = TokenManager(access_token, refresh_token, api_key)
         self._client = ApplianceClient(self._token_manager)
 
@@ -652,7 +689,7 @@ class ElectroluxApiClient:
                 },
                 "created": "2022-01-01T00:00:00.000Z",  # Mock creation date
             }
-            _LOGGER.debug("API appliance list item: %s", appliance_data)
+            _LOGGER.debug("API appliance list item processed")
             result.append(appliance_data)
         return result
 
@@ -685,7 +722,7 @@ class ElectroluxApiClient:
                     "variant": getattr(details, "variant", "Unknown"),
                     "color": getattr(details, "color", "Unknown"),
                 }
-                _LOGGER.debug("API appliance details for %s: %s", appliance_id, info)
+                _LOGGER.debug("API appliance details retrieved for %s", appliance_id)
                 result.append(info)
             except Exception as e:
                 _LOGGER.warning(
@@ -722,7 +759,12 @@ class ElectroluxApiClient:
                 _LOGGER.debug("Added SSE listener for appliance %s", appliance_id)
 
             # Start the event stream as a background task (it runs indefinitely)
-            self._sse_task = asyncio.create_task(self._client.start_event_stream())
+            if self.hass:
+                self._sse_task = self.hass.async_create_task(
+                    self._client.start_event_stream()
+                )
+            else:
+                self._sse_task = asyncio.create_task(self._client.start_event_stream())
             _LOGGER.debug(
                 "Started SSE event stream for %d appliances", len(appliance_ids)
             )
@@ -774,14 +816,8 @@ class ElectroluxApiClient:
             raise NotImplementedError(
                 "Command execution is not supported by the current API implementation"
             )
-        except Exception as ex:
-            # Check for hardware safety errors (406/COMMAND_VALIDATION_ERROR)
-            error_msg = str(ex).lower()
-            if "406" in error_msg or "command_validation_error" in error_msg:
-                raise HomeAssistantError(
-                    "Remote control is disabled. Please physically enable 'Remote Start' on your appliance."
-                ) from ex
-            # Re-raise other exceptions
+        except Exception:
+            # Re-raise all exceptions to be handled by the calling entity
             raise
 
     async def close(self):

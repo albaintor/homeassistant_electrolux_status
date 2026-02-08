@@ -12,10 +12,10 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntry
 
-from .const import DOMAIN
+from .const import CONF_ACCESS_TOKEN, CONF_API_KEY, CONF_REFRESH_TOKEN, DOMAIN
 from .coordinator import ElectroluxCoordinator
 
-REDACT_CONFIG: set[str] = set()
+REDACT_CONFIG: set[str] = {CONF_API_KEY, CONF_ACCESS_TOKEN, CONF_REFRESH_TOKEN}
 
 
 async def async_get_config_entry_diagnostics(
@@ -23,6 +23,18 @@ async def async_get_config_entry_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     data = await _async_get_diagnostics(hass, entry)
+
+    # Include redacted config entry data
+    data["config_entry"] = {
+        "entry_id": entry.entry_id,
+        "domain": entry.domain,
+        "title": entry.title,
+        "data": dict(entry.data),  # Will be redacted by async_redact_data
+        "options": dict(entry.options),
+        "unique_id": entry.unique_id,
+        "disabled_by": entry.disabled_by,
+    }
+
     device_registry = dr.async_get(hass)
     data.update(
         device_info=[
@@ -40,8 +52,20 @@ async def async_get_device_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a device entry."""
     data = await _async_get_diagnostics(hass, entry)
+
+    # Include redacted config entry data
+    data["config_entry"] = {
+        "entry_id": entry.entry_id,
+        "domain": entry.domain,
+        "title": entry.title,
+        "data": dict(entry.data),  # Will be redacted by async_redact_data
+        "options": dict(entry.options),
+        "unique_id": entry.unique_id,
+        "disabled_by": entry.disabled_by,
+    }
+
     data.update(device_info=_async_device_as_dict(hass, device))
-    return data
+    return async_redact_data(data, REDACT_CONFIG)
 
 
 @callback
@@ -51,25 +75,56 @@ async def _async_get_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     app_entry: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
-    user_metadata = await app_entry.api.get_user_metadata()
-    appliances_list = await app_entry.api.get_appliances_list()
-    appliances_info = await app_entry.api.get_appliances_info(
-        [x["applianceId"] for x in appliances_list]
-    )
+
     data = {
-        "user_metadata": user_metadata,
-        "appliances_info": appliances_info,
-        "appliances_list": appliances_list,
+        "user_metadata": None,
+        "appliances_info": None,
+        "appliances_list": None,
         "appliances_detail": {},
+        "errors": [],
     }
-    for appliance in appliances_list:
-        appliance_id = appliance["applianceId"]
-        data["appliances_detail"][appliance_id] = {
-            "capabilities": await app_entry.api.get_appliance_capabilities(
-                appliance_id
-            ),
-            "state": await app_entry.api.get_appliance_state(appliance_id),
-        }
+
+    try:
+        data["user_metadata"] = await app_entry.api.get_user_metadata()
+    except Exception as ex:
+        data["errors"].append(f"Failed to get user metadata: {ex}")
+
+    try:
+        data["appliances_list"] = await app_entry.api.get_appliances_list()
+    except Exception as ex:
+        data["errors"].append(f"Failed to get appliances list: {ex}")
+        # Can't continue without appliances list
+        return async_redact_data(data, REDACT_CONFIG)
+
+    if data["appliances_list"]:
+        try:
+            data["appliances_info"] = await app_entry.api.get_appliances_info(
+                [x["applianceId"] for x in data["appliances_list"]]
+            )
+        except Exception as ex:
+            data["errors"].append(f"Failed to get appliances info: {ex}")
+
+        for appliance in data["appliances_list"]:
+            appliance_id = appliance["applianceId"]
+            appliance_detail = {}
+
+            try:
+                appliance_detail["capabilities"] = (
+                    await app_entry.api.get_appliance_capabilities(appliance_id)
+                )
+            except Exception as ex:
+                appliance_detail["capabilities_error"] = str(ex)
+
+            try:
+                appliance_detail["state"] = await app_entry.api.get_appliance_state(
+                    appliance_id
+                )
+            except Exception as ex:
+                appliance_detail["state_error"] = str(ex)
+
+            if appliance_detail:
+                data["appliances_detail"][appliance_id] = appliance_detail
+
     return async_redact_data(data, REDACT_CONFIG)
 
 

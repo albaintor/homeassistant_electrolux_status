@@ -28,11 +28,17 @@ This release introduces **capability-driven command formatting** and **intuitive
 
 ### 🐛 **Bug Fixes**
 
+All opened issues should be fixed in this version. Please check and test.
+
 - **API Rejection Prevention**: Fixed "invalid step" and "Type mismatch" errors through capability-aware formatting
 - **Command Structure Issues**: Resolved problems with nested command structures for different entity sources
 - **Value Type Conversion**: Proper handling of Home Assistant boolean/string values to API-expected formats
 - **SSE Event Handling**: Fixed `AttributeError: 'NoneType' object has no attribute 'update_reported_data'` crash when receiving Server-Sent Events for unknown appliances (issue #4)
-- **Real-time Sensor Updates**: Fixed sensors not updating in real-time by properly handling both incremental and bulk SSE data formats from the Electrolux API
+- **Real-time Sensor Updates**: Fixed sensors not updating in real-time by properly handling both incremental and bulk SSE data formats from the Electrolux API (issue #3)
+- **Select Entity Options**: Fixed select entities showing no options by correcting the logic that was incorrectly filtering out valid empty-dict value entries (issue #1)
+- **Remote Control Status**: Fixed "Remote control disabled" errors for appliances that don't report remoteControl status by treating `None` as a valid enabled state
+- **406 Error Differentiation**: Enhanced error handling for 406 responses with specific messages for type mismatches, invalid steps (with dynamic step values), and remote control status validation
+- **Error Masking Fix**: Removed hardcoded 406 error handling that was masking sophisticated error analysis, allowing proper differentiation between remote control issues and other validation errors
 
 ### 🔧 **Technical Improvements**
 
