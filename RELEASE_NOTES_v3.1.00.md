@@ -39,7 +39,7 @@ All opened issues should be fixed in this version. Please check and test.
 - **Remote Control Status**: Fixed "Remote control disabled" errors for appliances that don't report remoteControl status by treating `None` as a valid enabled state
 - **406 Error Differentiation**: Enhanced error handling for 406 responses with specific messages for type mismatches, invalid steps (with dynamic step values), and remote control status validation
 - **Error Masking Fix**: Removed hardcoded 406 error handling that was masking sophisticated error analysis, allowing proper differentiation between remote control issues and other validation errors
-
+- **Several other bug fixes I don't remember** 😊
 ### 🔧 **Technical Improvements**
 
 #### **Core Architecture**
