@@ -13,7 +13,7 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
     OptionsFlow,
 )
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_COUNTRY_CODE
+from homeassistant.const import CONF_COUNTRY_CODE, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -29,8 +29,8 @@ from .const import (
     CONF_NOTIFICATION_DEFAULT,
     CONF_NOTIFICATION_DIAG,
     CONF_NOTIFICATION_WARNING,
-    DEFAULT_LANGUAGE,
     DEFAULT_COUNTRY_CODE,
+    DEFAULT_LANGUAGE,
     DOMAIN,
     languages,
 )
@@ -61,7 +61,9 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
                     return self.async_abort(reason="already_configured_account")
 
             valid = await self._test_credentials(
-                user_input[CONF_USERNAME], user_input[CONF_PASSWORD], user_input[CONF_COUNTRY_CODE]
+                user_input[CONF_USERNAME],
+                user_input[CONF_PASSWORD],
+                user_input[CONF_COUNTRY_CODE],
             )
             if valid:
                 return self.async_create_entry(
@@ -84,7 +86,9 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
         self._errors = {}
         if user_input is not None:
             valid = await self._test_credentials(
-                user_input[CONF_USERNAME], user_input[CONF_PASSWORD], user_input[CONF_COUNTRY_CODE]
+                user_input[CONF_USERNAME],
+                user_input[CONF_PASSWORD],
+                user_input[CONF_COUNTRY_CODE],
             )
             if valid:
                 return self.async_create_entry(
@@ -186,7 +190,9 @@ class ElectroluxStatusOptionsFlowHandler(OptionsFlow):
                             autocomplete="current-password",
                         )
                     ),
-                    vol.Required(CONF_COUNTRY_CODE, default=current_country_code): TextSelector(
+                    vol.Required(
+                        CONF_COUNTRY_CODE, default=current_country_code
+                    ): TextSelector(
                         TextSelectorConfig(
                             type=TextSelectorType.TEXT, autocomplete="country-code"
                         )
