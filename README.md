@@ -37,7 +37,7 @@ _If the integration does not appear add a new repository in HACS manually: `http
 1. Search for `Electrolux Status` in HACS.
 2. Click install.
 3. In the HA UI go to `Configuration` -> `Integrations` and search for `Electrolux Status`.
-4. Insert your Electrolux credentials
+4. Insert your Electrolux credentials ( You can test the credentials in https://developer.electrolux.one/login)
 
 **Known issues :**
 
