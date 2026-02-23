@@ -123,13 +123,16 @@ def _async_remove_old_device_identifiers(
         device_list = list(device_registry.devices.values())  # <-- make a list copy
         for device in device_list:
             # Only check devices for this domain
-            for domain, deviceid in device.identifiers:
-                if domain != DOMAIN:
-                    continue
+            try:
+                for domain, deviceid in device.identifiers:
+                    if domain != DOMAIN:
+                        continue
 
-                if deviceid not in all_api_ids:
-                    _LOGGER.debug("Removing old device idendifier: %s", deviceid)
-                    device_registry.async_remove_device(device.id)
+                    if deviceid not in all_api_ids:
+                        _LOGGER.debug("Removing old device idendifier: %s", deviceid)
+                        device_registry.async_remove_device(device.id)
+            except Exception as e:
+                _LOGGER.error("Unable to remove old device idendifier, please report: %s %s", device.identifiers, e)
 
 
 async def async_remove_config_entry_device(
