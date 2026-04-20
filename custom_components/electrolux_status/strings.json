@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Electrolux Status",
-        "description": "If you need help with the configuration visit: https://github.com/albaintor/homeassistant_electrolux_status",
+        "description": "If you need help with the configuration visit the project page",
         "data": {
           "username": "[%key:common::config_flow::data::username%]",
           "password": "[%key:common::config_flow::data::password%]",
