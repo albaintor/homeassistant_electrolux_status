@@ -19,7 +19,7 @@
                     "password": "Parole",
                     "username": "Lietotājvārds"
                 },
-                "description": "Ja jums ir nepieciešama palīdzība konfigurācijas apmeklējumā: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Ja jums ir nepieciešama palīdzība konfigurācijas apmeklējumā homepage",
                 "title": "Elektrolux statuss"
             }
         }

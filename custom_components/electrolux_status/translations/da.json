@@ -19,7 +19,7 @@
                     "password": "Adgangskode",
                     "username": "Brugernavn"
                 },
-                "description": "Hvis du har brug for hjælp til konfigurationsbesøget: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Hvis du har brug for hjælp til konfigurationsbesøget homepage",
                 "title": "Elektrolux -status"
             }
         }

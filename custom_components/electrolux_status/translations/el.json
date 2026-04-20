@@ -19,7 +19,7 @@
                     "password": "Κωδικός",
                     "username": "Όνομα χρήστη"
                 },
-                "description": "Εάν χρειάζεστε βοήθεια επισκεφτείτε τον σύνδεσμο: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Εάν χρειάζεστε βοήθεια επισκεφτείτε τον σύνδεσμο homepage",
                 "title": "Κατάσταση ηλεκτρικής ενέργειας"
             }
         }

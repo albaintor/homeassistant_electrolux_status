@@ -19,7 +19,7 @@
                     "password": "Heslo",
                     "username": "Užívateľské meno"
                 },
-                "description": "Ak potrebujete pomoc s konfiguráciou, navštívte: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Ak potrebujete pomoc s konfiguráciou, navštívte homepage",
                 "title": "Status"
             }
         }

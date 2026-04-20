@@ -19,7 +19,7 @@
                     "password": "Şifre",
                     "username": "Kullanıcı adı"
                 },
-                "description": "Yapılandırma ile ilgili yardıma ihtiyacınız varsa: https://github.com/albeintor/homeassistant_electrolux_status",
+                "description": "Yapılandırma ile ilgili yardıma ihtiyacınız varsa:  homepage",
                 "title": "Electrolux Durumu"
             }
         }

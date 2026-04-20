@@ -19,7 +19,7 @@
                     "password": "Parolă",
                     "username": "Nume de utilizator"
                 },
-                "description": "Dacă aveți nevoie de ajutor cu configurația, vizitați: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Dacă aveți nevoie de ajutor cu configurația, vizitați homepage",
                 "title": "Stare electrolux"
             }
         }

@@ -19,7 +19,7 @@
                     "password": "Hasło",
                     "username": "Nazwa użytkownika"
                 },
-                "description": "Jeśli potrzebujesz pomocy w konfiguracji, odwiedź: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Jeśli potrzebujesz pomocy w konfiguracji, odwiedź homepage",
                 "title": "Electrolux Status"
             }
         }

@@ -19,7 +19,7 @@
                     "password": "Парола",
                     "username": "Потребителско име"
                 },
-                "description": "Ако имате нужда от помощ при конфигурацията посетете: https://github.com/albaintor/homeassistant_electorux_status",
+                "description": "Ако имате нужда от помощ при конфигурацията посетете",
                 "title": "Electrolux статус"
             }
         }

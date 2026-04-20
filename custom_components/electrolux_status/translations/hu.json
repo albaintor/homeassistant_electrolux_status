@@ -19,7 +19,7 @@
                     "password": "Jelszó",
                     "username": "Felhasználónév"
                 },
-                "description": "Ha segítségre van szüksége a konfigurációhoz, látogasson el: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Ha segítségre van szüksége a konfigurációhoz, látogasson el homepage",
                 "title": "Elektrolux állapot"
             }
         }

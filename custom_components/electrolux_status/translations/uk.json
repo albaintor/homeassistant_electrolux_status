@@ -19,7 +19,7 @@
                     "password": "Пароль",
                     "username": "Ім'я користувача"
                 },
-                "description": "Якщо вам потрібна допомога з конфігураційною відвідуванням: https://github.com/albaintor/homeassistant_electrolux_status",
+                "description": "Якщо вам потрібна допомога з конфігураційною відвідуванням homepage",
                 "title": "Статус електролукс"
             }
         }
