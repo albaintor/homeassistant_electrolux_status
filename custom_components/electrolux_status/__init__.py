@@ -13,6 +13,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
@@ -29,6 +30,8 @@ from .coordinator import ElectroluxCoordinator
 from .util import get_electrolux_session
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 # noinspection PyUnusedLocal
@@ -49,10 +52,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
     country_code = entry.data.get(CONF_COUNTRY_CODE, DEFAULT_COUNTRY_CODE)
-    language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
+    # language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
     session = async_get_clientsession(hass)
 
-    client = get_electrolux_session(username, password, country_code, session, language)
+    client = get_electrolux_session(username, password, country_code, session)
     coordinator = ElectroluxCoordinator(
         hass,
         client=client,
@@ -78,9 +81,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
     # await coordinator.launch_websocket_renewal_task()
 
-    entry.async_on_unload(
-        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close)
-    )
+    entry.async_on_unload(hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close))
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
@@ -109,7 +110,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 @callback
 def _async_remove_old_device_identifiers(
     hass: HomeAssistant,
-    config_entry: ConfigType,
+    config_entry: ConfigEntry,
 ) -> None:
     """Remove the bad device registry entries."""
     _LOGGER.debug("_async_remove_old_device_identifiers")
@@ -136,7 +137,7 @@ def _async_remove_old_device_identifiers(
 
 
 async def async_remove_config_entry_device(
-    hass: HomeAssistant, config_entry: ConfigType, device_entry: dr.DeviceEntry
+    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
     """Remove a config entry from a device."""
     _LOGGER.debug("async_remove_config_entry_device")
@@ -159,7 +160,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
     coordinator: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
     await coordinator.close_websocket()
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id, None)
+        if not hass.data[DOMAIN]:
+            hass.data.pop(DOMAIN, None)
+
+    return unload_ok
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

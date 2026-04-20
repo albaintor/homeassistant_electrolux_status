@@ -41,6 +41,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 HEADERS = {"Content-type": "application/json; charset=UTF-8"}
 
+
 def deep_merge_dicts(dict1, dict2):
     """Recursively merge two dictionaries."""
     result = dict1.copy()
@@ -50,6 +51,7 @@ def deep_merge_dicts(dict1, dict2):
         else:
             result[key] = value
     return result
+
 
 class ElectroluxLibraryEntity:
     """Electrolux Library Entity."""
@@ -62,7 +64,7 @@ class ElectroluxLibraryEntity:
         appliance_info: ApplianceInfoResponse,
         capabilities: dict[str, Any],
     ) -> None:
-        """Initaliaze the entity."""
+        """Initialize the entity."""
         self.name = name
         self.status = status
         self.state = state
@@ -107,10 +109,7 @@ class ElectroluxLibraryEntity:
                 if (
                     (char.isupper() or char.isdigit())
                     and (sensor[i - 1].isupper() or sensor[i - 1].isdigit())
-                    and (
-                        (i == len(sensor) - 1)
-                        or (sensor[i + 1].isupper() or sensor[i + 1].isdigit())
-                    )
+                    and ((i == len(sensor) - 1) or (sensor[i + 1].isupper() or sensor[i + 1].isdigit()))
                 ):
                     group += char
                 elif (char.isupper() or char.isdigit()) and sensor[i - 1].islower():
@@ -227,29 +226,17 @@ class ElectroluxLibraryEntity:
             return None
 
         # Exception (Electrolux bug)
-        if (
-            type_object == "boolean"
-            and access == "readwrite"
-            and capability_def.get("values", None) is not None
-        ):
+        if type_object == "boolean" and access == "readwrite" and capability_def.get("values", None) is not None:
             return SWITCH
 
         # List of values ? if values is defined and has at least 1 entry
         values: dict[str, Any] | None = capability_def.get("values", None)
-        if (
-            values
-            and access == "readwrite"
-            and isinstance(values, dict)
-            and len(values) > 0
-        ):
+        if values and access == "readwrite" and isinstance(values, dict) and len(values) > 0:
             if type_object == "string":
                 upper_values = {str(k).upper() for k in values}
                 if upper_values == {"ON", "OFF"}:
                     return SWITCH
-            if (
-                type_object not in ["number", "temperature"]
-                or capability_def.get("min", None) is None
-            ):
+            if type_object not in ["number", "temperature"] or capability_def.get("min", None) is None:
                 return SELECT
 
         match type_object:
@@ -267,8 +254,7 @@ class ElectroluxLibraryEntity:
                 return SENSOR
             case _:
                 if (
-                    self.get_entity_name(attr_name) == "executeCommand"
-                    and access == "read"
+                    self.get_entity_name(attr_name) == "executeCommand" and access == "read"
                 ):  # FIX for https://github.com/albaintor/homeassistant_electrolux_status/issues/74
                     return BUTTON
                 if access == "write":
@@ -312,11 +298,7 @@ class ElectroluxLibraryEntity:
                     return False
             return True
 
-        sources = [
-            key
-            for key in list(self.capabilities.keys())
-            if keep_source(key)
-        ]
+        sources = [key for key in list(self.capabilities.keys()) if keep_source(key)]
 
         for key, value in self.capabilities.items():
             if not keep_source(key):
@@ -324,11 +306,7 @@ class ElectroluxLibraryEntity:
 
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
-                    if (
-                        isinstance(sub_value, dict)
-                        and "access" in sub_value
-                        and "type" in sub_value
-                    ):
+                    if isinstance(sub_value, dict) and "access" in sub_value and "type" in sub_value:
                         sources.append(f"{key}/{sub_key}")
             elif "access" in value and "type" in value:
                 sources.append(key)
@@ -383,9 +361,9 @@ class Appliance:
         CR: Refridgerator
         WM: Washing Machine
         """
-        return self.reported_state.get("applianceInfo", {}).get(
-            "applianceType"
-        ) or self.state.get("applianceData", {}).get("modelName")
+        return self.reported_state.get("applianceInfo", {}).get("applianceType") or self.state.get(
+            "applianceData", {}
+        ).get("modelName")
 
     @property
     def catalog(self) -> dict[str, ElectroluxDevice]:
@@ -473,10 +451,7 @@ class Appliance:
         if catalog_item:
             if capability_info is None:
                 capability_info = catalog_item.capability_info
-            elif (
-                "values" not in capability_info
-                and "values" in catalog_item.capability_info
-            ):
+            elif "values" not in capability_info and "values" in catalog_item.capability_info:
                 capability_info["values"] = catalog_item.capability_info["values"]
 
             device_class = catalog_item.device_class
@@ -575,21 +550,14 @@ class Appliance:
                 if catalog_item:
                     if catalog_item.entity_value_named:
                         entity["name"] = command
-                    if (
-                        catalog_item.entity_icons_value_map
-                        and catalog_item.entity_icons_value_map.get(command, None)
-                    ):
-                        entity["icon"] = catalog_item.entity_icons_value_map.get(
-                            command
-                        )
+                    if catalog_item.entity_icons_value_map and catalog_item.entity_icons_value_map.get(command, None):
+                        entity["icon"] = catalog_item.entity_icons_value_map.get(command)
                 # Instanciate the new entity and append it
                 entities.append(entity_class(**entity))
             return entities
 
         if entity_type in PLATFORMS:
-            commands = (
-                capability_info.get("values", {}) if entity_type == BUTTON else None
-            )
+            commands = capability_info.get("values", {}) if entity_type == BUTTON else None
             return electrolux_entity_factory(
                 name=display_name,
                 entity_type=entity_type,
@@ -633,9 +601,7 @@ class Appliance:
             if catalog_item := self.catalog.get(static_attribute, None):
                 if (entity := self.get_entity(static_attribute)) is None:
                     # catalog definition and automatic checks fail to determine type
-                    _LOGGER.debug(
-                        "Electrolux static_attribute undefined %s", static_attribute
-                    )
+                    _LOGGER.debug("Electrolux static_attribute undefined %s", static_attribute)
                     continue
                 # add to the capability dict
                 keys = static_attribute.split("/")

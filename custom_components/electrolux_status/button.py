@@ -27,9 +27,7 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity for entity in appliance.entities if entity.entity_type == BUTTON
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == BUTTON]
             _LOGGER.debug(
                 "Electrolux add %d BUTTON entities to registry for appliance %s",
                 len(entities),
@@ -80,22 +78,20 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return BUTTON
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
-        return f"{self.config_entry.entry_id}-{self.val_to_send}-{self.entity_attr}-{self.entity_source}-{self.pnc_id}"
+        return f"{self.config_entry.entry_id}-{self.val_to_send}-{self.entity_attr}-{self.entity_source or 'root'}-{self.pnc_id}"
 
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
         name = self._name
         if self.catalog_entry and self.catalog_entry.friendly_name:
-            name = (
-                f"{self.get_appliance.name} {self.catalog_entry.friendly_name.lower()}"
-            )
+            name = f"{self.get_appliance.name} {self.catalog_entry.friendly_name.lower()}"
         # Get the last word from the 'name' variable
         # and compare to the command we are sending duplicate names
         # "air filter state reset reset" for instance
@@ -107,9 +103,7 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
     @property
     def icon(self) -> str | None:
         """Return the icon of the entity."""
-        return self._icon or icon_mapping.get(
-            self.val_to_send, "mdi:gesture-tap-button"
-        )
+        return self._icon or icon_mapping.get(self.val_to_send, "mdi:gesture-tap-button")
 
     async def send_command(self) -> bool:
         """Send a command to the device."""
@@ -119,8 +113,8 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
+                        self.entity_attr: value,
                     },
                 }
             else:

@@ -23,11 +23,7 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity
-                for entity in appliance.entities
-                if entity.entity_type == BINARY_SENSOR
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == BINARY_SENSOR]
             _LOGGER.debug(
                 "Electrolux add %d BINARY_SENSOR entities to registry for appliance %s",
                 len(entities),
@@ -41,7 +37,7 @@ class ElectroluxBinarySensor(ElectroluxEntity, BinarySensorEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return BINARY_SENSOR
 
     @property
@@ -56,7 +52,8 @@ class ElectroluxBinarySensor(ElectroluxEntity, BinarySensorEntity):
         """Return true if the binary_sensor is on."""
         value = self.extract_value()
         if isinstance(value, str):
-            value = string_to_boolean(value, True)
+            converted = string_to_boolean(value, False)
+            value = converted if isinstance(converted, bool) else False
         if value is None:
             if self.catalog_entry and self.catalog_entry.state_mapping:
                 mapping = self.catalog_entry.state_mapping

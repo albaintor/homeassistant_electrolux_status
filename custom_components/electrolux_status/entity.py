@@ -27,11 +27,7 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity
-                for entity in appliance.entities
-                if entity.entity_type == "entity"
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == "entity"]
             _LOGGER.debug(
                 "Electrolux add %d entities to registry for appliance %s",
                 len(entities),
@@ -41,7 +37,7 @@ async def async_setup_entry(
 
 
 class ElectroluxEntity(CoordinatorEntity):
-    """Class for Electorolux devices."""
+    """Class for Electrolux devices."""
 
     _attr_has_entity_name = True
 
@@ -64,7 +60,7 @@ class ElectroluxEntity(CoordinatorEntity):
         icon: str,
         catalog_entry: ElectroluxDevice | None = None,
     ) -> None:
-        """Initaliaze the entity."""
+        """Initialize the entity."""
         super().__init__(coordinator)
         self.root_attribute = ["properties", "reported"]
         self.data = None
@@ -86,9 +82,7 @@ class ElectroluxEntity(CoordinatorEntity):
         self.capability = capability
         self.entity_id = f"{self.entity_domain}.{self.get_appliance.brand}_{self.get_appliance.name}_{self.entity_source}_{self.entity_attr}"
         if catalog_entry:
-            self.entity_registry_enabled_default = (
-                catalog_entry.entity_registry_enabled_default
-            )
+            self.entity_registry_enabled_default = catalog_entry.entity_registry_enabled_default
         _LOGGER.debug("Electrolux new entity %s for appliance %s", name, pnc_id)
 
     def setup(self, data):
@@ -97,7 +91,7 @@ class ElectroluxEntity(CoordinatorEntity):
 
     @property
     def entity_domain(self) -> str:
-        """Enitity domain for the entry."""
+        """Entity domain for the entry."""
         return "sensor"
 
     @property
@@ -202,9 +196,7 @@ class ElectroluxEntity(CoordinatorEntity):
             root = cast(any, self.appliance_status)
             # Format returned by push is slightly different from format returned by API : fields are at root level
             # Let's check if we can find the fields at root first
-            if (
-                self.entity_source and root.get(self.entity_source, None) is not None
-            ) or root.get(attribute, None):
+            if (self.entity_source and root.get(self.entity_source, None) is not None) or root.get(attribute, None):
                 root_attribute = None
             if root_attribute:
                 for item in root_attribute:

@@ -28,9 +28,7 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity for entity in appliance.entities if entity.entity_type == SELECT
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == SELECT]
             _LOGGER.debug(
                 "Electrolux add %d SELECT entities to registry for appliance %s",
                 len(entities),
@@ -88,7 +86,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return SELECT
 
     def format_label(self, value: str | None) -> str | None:
@@ -126,9 +124,7 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
         label = None
         try:
-            label = list(self.options_list.keys())[
-                list(self.options_list.values()).index(value)
-            ]
+            label = list(self.options_list.keys())[list(self.options_list.values()).index(value)]
         except Exception as ex:  # noqa: BLE001
             _LOGGER.info(
                 "Electrolux error value %s does not exist in the list %s. %s",
@@ -161,7 +157,9 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         if value is None:
             return
 
-        _LOGGER.debug("Electrolux select option before reported status %s", self.appliance_status["properties"]['reported'])
+        _LOGGER.debug(
+            "Electrolux select option before reported status %s", self.appliance_status["properties"]["reported"]
+        )
 
         client: OneAppApi = self.api
         command: dict[str, Any] = {}
@@ -169,8 +167,8 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
+                        self.entity_attr: value,
                     },
                 }
             else:

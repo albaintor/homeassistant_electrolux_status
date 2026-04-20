@@ -21,9 +21,7 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-def get_electrolux_session(
-    username, password, country_code, client_session, language="eng"
-) -> OneAppApi:
+def get_electrolux_session(username, password, country_code, client_session) -> OneAppApi:
     """Return OneAppApi Session."""
     return OneAppApi(username, password, country_code, client_session)
 
@@ -49,9 +47,7 @@ def create_notification(
 ):
     """Create a notification."""
 
-    message = (
-        f"Alert: {alert_name}</br>Severity: {alert_severity}</br>Status: {alert_status}"
-    )
+    message = f"Alert: {alert_name}</br>Severity: {alert_severity}</br>Status: {alert_status}"
 
     if should_send_notification(config_entry, alert_severity, alert_status) is False:
         _LOGGER.debug(
@@ -96,6 +92,8 @@ def time_minutes_to_seconds(minutes: float | None) -> int | None:
 
 def string_to_boolean(value: str | None, fallback=True) -> bool | str | None:
     """Convert a string input to boolean."""
+    if value is None:
+        return None if fallback else False
     on_values = {
         "charging",
         "connected",

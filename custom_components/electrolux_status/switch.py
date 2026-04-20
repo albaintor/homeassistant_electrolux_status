@@ -26,11 +26,9 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity for entity in appliance.entities if entity.entity_type == SWITCH
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == SWITCH]
             _LOGGER.debug(
-                "Electrolux add %d SENSOR entities to registry for appliance %s",
+                "Electrolux add %d SWITCH entities to registry for appliance %s",
                 len(entities),
                 appliance_id,
             )
@@ -42,7 +40,7 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return SWITCH
 
     @property
@@ -74,8 +72,8 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
             if self.entity_source == "userSelections":
                 command = {
                     self.entity_source: {
-                        "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                        self.entity_attr: value
+                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
+                        self.entity_attr: value,
                     },
                 }
             else:

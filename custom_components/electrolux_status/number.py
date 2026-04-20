@@ -26,9 +26,7 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     if appliances := coordinator.data.get("appliances", None):
         for appliance_id, appliance in appliances.appliances.items():
-            entities = [
-                entity for entity in appliance.entities if entity.entity_type == NUMBER
-            ]
+            entities = [entity for entity in appliance.entities if entity.entity_type == NUMBER]
             _LOGGER.debug(
                 "Electrolux add %d NUMBER entities to registry for appliance %s",
                 len(entities),
@@ -42,7 +40,7 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
 
     @property
     def entity_domain(self):
-        """Enitity domain for the entry. Used for consistent entity_id."""
+        """Entity domain for the entry. Used for consistent entity_id."""
         return NUMBER
 
     @property
@@ -99,13 +97,15 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         if self.capability.get("step", 1) == 1:
             value = int(value)
         client: OneAppApi = self.api
-        
+
         # --- START OF OUR FIX ---
         command = {}
         if self.entity_source == "latamUserSelections":
             _LOGGER.debug("Electrolux: Detected latamUserSelections, building full command.")
             # Get the current state of all latam selections
-            current_selections = self.appliance_status.get("properties", {}).get("reported", {}).get("latamUserSelections", {})
+            current_selections = (
+                self.appliance_status.get("properties", {}).get("reported", {}).get("latamUserSelections", {})
+            )
             if not current_selections:
                 _LOGGER.error("Could not retrieve current latamUserSelections to build command.")
                 return
@@ -122,8 +122,8 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         elif self.entity_source == "userSelections":
             command = {
                 self.entity_source: {
-                    "programUID": self.appliance_status["properties"]['reported']["userSelections"]['programUID'],
-                    self.entity_attr: value
+                    "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
+                    self.entity_attr: value,
                 },
             }
         elif self.entity_source:

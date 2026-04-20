@@ -93,19 +93,13 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
 
     async def update_token_lifetime(self, token: UserToken) -> None:
         """Store the lifetime of the token into the coordinator."""
-        if (
-            self._token is None
-            or self._token.token != token.token
-            or self._token.expiresAt != token.expiresAt
-        ):
+        if self._token is None or self._token.token != token.token or self._token.expiresAt != token.expiresAt:
             self._token = token
             self._store.async_delay_save(self._save_token, SAVE_DELAY)
 
         # Convert the token expiry time to UTC timezone aware then compare
         # token to time 5 minutes from now so we can renew before expiry
-        utc_expiry = dt_util.utc_from_timestamp(
-            self._token.expiresAt.timestamp(), tz=UTC
-        )
+        utc_expiry = dt_util.utc_from_timestamp(self._token.expiresAt.timestamp(), tz=UTC)
         utc_in_5_minutes = dt_util.now(time_zone=UTC) + timedelta(minutes=5)
 
         if utc_expiry <= utc_in_5_minutes:
@@ -118,18 +112,18 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             await self.launch_token_renewal_task()
 
     @callback
-    def _save_token(self) -> ElectroluxTokenStore:
+    def _save_token(self) -> ElectroluxTokenStore | None:
         """Return token data to store in a file."""
         _LOGGER.debug("Saving token to store for %s", self._accountid)
         data = self._token_store
 
-        data["accounts"][self.accountid] = {
-            "token": self._token.token,
-            "expiresAt": self._token.expiresAt.isoformat(),
-        }
-
         if self._token is None:
             del data["accounts"][self.accountid]
+        else:
+            data["accounts"][self.accountid] = {
+                "token": self._token.token,
+                "expiresAt": self._token.expiresAt.isoformat(),
+            }
 
         self._token_store = data
         return data
@@ -188,9 +182,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 return True
             _LOGGER.debug("Electrolux wrong credentials")
         except ClientResponseError as ex:
-            _LOGGER.debug(
-                "HTTP error occurred during login to ElectroluxStatus: %s", ex
-            )
+            _LOGGER.debug("HTTP error occurred during login to ElectroluxStatus: %s", ex)
             self._store.async_delay_save(self._clear_token, SAVE_DELAY)
             if ex.status == 429:
                 raise ConfigEntryNotReady(
@@ -205,9 +197,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
 
     async def deferred_update(self, appliance_id: str, delay: int) -> None:
         """Deferred update due to Electrolux not sending updated data at the end of the appliance program/cycle."""
-        _LOGGER.debug(
-            "Electrolux scheduling deferred update for appliance %s", appliance_id
-        )
+        _LOGGER.debug("Electrolux scheduling deferred update for appliance %s", appliance_id)
         await asyncio.sleep(delay)
         _LOGGER.debug(
             "Electrolux scheduled deferred update for appliance %s running",
@@ -251,18 +241,14 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Electrolux listen_websocket for appliances %s", ",".join(ids))
         if ids is None or len(ids) == 0:
             return
-        self._websocket = asyncio.create_task(
-            self.api.watch_for_appliance_state_updates(ids, self.incoming_data)
-        )
+        self._websocket = asyncio.create_task(self.api.watch_for_appliance_state_updates(ids, self.incoming_data))
 
     async def launch_websocket_renewal_task(self):
         """Start the renewal of websocket."""
         if self.renew_task:
             self.renew_task.cancel()
             self.renew_task = None
-        self.renew_task = asyncio.create_task(
-            self.renew_websocket(), name="Electrolux renewal websocket"
-        )
+        self.renew_task = asyncio.create_task(self.renew_websocket(), name="Electrolux renewal websocket")
 
     async def renew_websocket(self):
         """Renew websocket state."""
@@ -272,9 +258,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             try:
                 await self.api.disconnect_websocket()
             except Exception as ex:  # noqa: BLE001
-                _LOGGER.error(
-                    "Electrolux renew_websocket could not close websocket %s", ex
-                )
+                _LOGGER.error("Electrolux renew_websocket could not close websocket %s", ex)
             self.listen_websocket()
 
     def _cancel_token_task(self):
@@ -287,9 +271,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         """Start the renewal of token."""
         _LOGGER.debug("configuring token_renewal_task")
         self._cancel_token_task()
-        self.token_task = asyncio.create_task(
-            self.token_renewal_task(), name="Electrolux renewal token"
-        )
+        self.token_task = asyncio.create_task(self.token_renewal_task(), name="Electrolux renewal token")
 
     async def token_renewal_task(self):
         """Renew token."""
@@ -330,12 +312,8 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         try:
             appliances_list = await self.api.get_appliances_list()
             if appliances_list is None:
-                _LOGGER.error(
-                    "Electrolux unable to retrieve appliances list. Cancelling setup"
-                )
-                raise ConfigEntryNotReady(
-                    "Electrolux unable to retrieve appliances list. Cancelling setup"
-                )
+                _LOGGER.error("Electrolux unable to retrieve appliances list. Cancelling setup")
+                raise ConfigEntryNotReady("Electrolux unable to retrieve appliances list. Cancelling setup")
             _LOGGER.debug(
                 "Electrolux get_appliances_list %s %s",
                 self.api,
@@ -348,9 +326,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 connection_status = appliance_json.get("connectionState")
                 _LOGGER.debug("Electrolux found appliance %s", appliance_id)
                 # appliance_profile = await self.hass.async_add_executor_job(self.api.getApplianceProfile, appliance)
-                appliance_name = appliance_json.get("applianceData").get(
-                    "applianceName"
-                )
+                appliance_name = appliance_json.get("applianceData").get("applianceName")
                 model_name = appliance_json.get("applianceData").get("modelName")
                 appliance_infos = await self.api.get_appliances_info([appliance_id])
                 _LOGGER.debug(
@@ -368,15 +344,11 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         appliance_definition_json_path = self.hass.config.path(
                             LOOKUP_DIRECTORY_PATH + model_name + ".json"
                         )
-                        async with aiofiles.open(
-                            appliance_definition_json_path, mode="r"
-                        ) as handle:
+                        async with aiofiles.open(appliance_definition_json_path, mode="r") as handle:
                             appliance_definition_json = await handle.read()
                         appliance_capabilities = json.loads(appliance_definition_json)
                     else:
-                        appliance_capabilities = (
-                            await self.api.get_appliance_capabilities(appliance_id)
-                        )
+                        appliance_capabilities = await self.api.get_appliance_capabilities(appliance_id)
                     _LOGGER.debug(
                         "Electrolux get_appliance_capabilities result: %s",
                         json.dumps(appliance_capabilities),

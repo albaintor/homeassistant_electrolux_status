@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
+import aiofiles
 import attr
 
 from homeassistant.components.diagnostics import async_redact_data
@@ -12,7 +14,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntry
 
-from .const import DOMAIN
+from .const import DOMAIN, LOOKUP_DIRECTORY_PATH
 from .coordinator import ElectroluxCoordinator
 
 REDACT_CONFIG = {}
@@ -44,7 +46,6 @@ async def async_get_device_diagnostics(
     return data
 
 
-@callback
 async def _async_get_diagnostics(
     hass: HomeAssistant,
     entry: ConfigEntry,
