@@ -8,7 +8,7 @@ import logging
 from typing import Any
 
 import aiofiles
-from aiohttp import ClientResponseError
+from aiohttp import ClientConnectorError, ClientResponseError
 from pyelectroluxocp import OneAppApi
 from pyelectroluxocp.apiModels import UserTokenResponse
 from pyelectroluxocp.oneAppApiClient import UserToken
@@ -166,7 +166,16 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
             )
             # Load the token into the API
             self.api._user_token = self._token  # noqa: SLF001
-            await self.api._get_gigya_client()  # noqa: SLF001
+            try:
+                await self.api._get_gigya_client()  # noqa: SLF001
+            except ClientConnectorError as ex:
+                # Network/DNS not ready yet (typical at HA host boot before
+                # the resolver is up). Let HA retry the entry setup instead
+                # of failing permanently.
+                _LOGGER.debug(
+                    "Network not ready while validating stored token: %s", ex
+                )
+                raise ConfigEntryNotReady from ex
 
     async def async_login(self) -> bool:
         """Authenticate with the service."""
@@ -190,6 +199,15 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                     "Please log out of another device or wait until an existing session expires"
                 ) from ex
             raise ConfigEntryError from ex
+        except ClientConnectorError as ex:
+            # Treat connection-level failures (DNS, no route, refused) as
+            # transient so HA retries the entry setup with backoff. This is
+            # the typical failure mode when the integration starts before
+            # the host's network/DNS is fully up after a reboot.
+            _LOGGER.debug(
+                "Network not ready while logging in to ElectroluxStatus: %s", ex
+            )
+            raise ConfigEntryNotReady from ex
         except Exception as ex:
             _LOGGER.error("Could not log in to ElectroluxStatus, %s", ex)
             raise ConfigEntryError from ex
