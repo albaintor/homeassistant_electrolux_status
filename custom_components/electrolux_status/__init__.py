@@ -125,9 +125,13 @@ def _async_remove_old_device_identifiers(
         for device in device_list:
             # Only check devices for this domain
             try:
-                for domain, deviceid in device.identifiers:
-                    if domain != DOMAIN:
+                for identifier in device.identifiers:
+                    # Other integrations may use identifier tuples that are
+                    # not (domain, id) 2-tuples (e.g. AdGuard uses a 4-tuple),
+                    # so index instead of unpacking to avoid ValueError.
+                    if identifier[0] != DOMAIN:
                         continue
+                    deviceid = identifier[1]
 
                     if deviceid not in all_api_ids:
                         _LOGGER.debug("Removing old device idendifier: %s", deviceid)
