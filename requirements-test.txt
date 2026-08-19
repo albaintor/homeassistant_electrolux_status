@@ -1,0 +1,8 @@
+# Test-only dependencies. The integration's own runtime requirements are
+# declared in custom_components/electrolux_status/manifest.json.
+homeassistant
+pytest
+
+# Mirrors manifest.json, needed to import the integration under test.
+pyelectroluxocp==0.1.3
+aiofiles==25.1.0

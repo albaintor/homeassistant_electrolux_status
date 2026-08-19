@@ -223,6 +223,21 @@ class ElectroluxEntity(CoordinatorEntity):
                     return root.get(attribute, None)
         return None
 
+    def apply_value_mapping(self, value: Any) -> Any:
+        """Translate a raw value through the catalog's value_mapping.
+
+        Some capabilities are described with string values but reported as
+        integers; the mapping converts them back. Shared by every platform that
+        displays a catalog-mapped value.
+        """
+        if value is None or not self.catalog_entry or not self.catalog_entry.value_mapping:
+            return value
+        mapping = self.catalog_entry.value_mapping
+        if value in mapping:
+            _LOGGER.debug("Mapping %s: %s to %s", self.json_path, value, mapping)
+            return mapping.get(value, value)
+        return value
+
     def update(self, appliance_status: ApplienceStatusResponse):
         """Update the appliance status."""
         self.appliance_status = appliance_status

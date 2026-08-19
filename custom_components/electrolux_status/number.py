@@ -51,11 +51,15 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         else:
             value = self.extract_value()
 
-        if not value:
+        # Test for None rather than falsiness: 0 is a legitimate reading, and
+        # treating it as missing made any number whose value and default are
+        # both 0 fall through to an empty cache and render as unknown. The
+        # hob's extractor run-on duration does exactly that when it is unset.
+        if value is None:
             value = self.capability.get("default", None)
             if value == "INVALID_OR_NOT_SET_TIME":
                 value = self.capability.get("min", None)
-        if not value:
+        if value is None:
             return self._cached_value
         if isinstance(self.unit, UnitOfTemperature):
             value = round(value, 2)

@@ -1,0 +1,19 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  pytest:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "actions/setup-python@v5"
+        with:
+          # Home Assistant 2026.8 requires >=3.14.2
+          python-version: "3.14"
+      - name: Install dependencies
+        run: pip install -r requirements-test.txt
+      - name: Run tests
+        run: python -m pytest tests/ -v

@@ -67,13 +67,9 @@ class ElectroluxSensor(ElectroluxEntity, SensorEntity):
         elif value is not None and isinstance(self.unit, UnitOfTime):
             # Electrolux bug - prevent negative/disabled timers
             value = max(value, 0)
-        if self.catalog_entry and self.catalog_entry.value_mapping:
-            # Electrolux presents as string but returns an int
-            # the mapping entry allows us to correctly display this to the frontend
-            mapping = self.catalog_entry.value_mapping
-            _LOGGER.debug("Mapping %s: %s to %s", self.json_path, value, mapping)
-            if value in mapping:
-                value = mapping.get(value, value)
+        # Electrolux presents as string but returns an int; the mapping entry
+        # allows us to correctly display this to the frontend
+        value = self.apply_value_mapping(value)
         if isinstance(value, str):
             if "_" in value:
                 value = value.replace("_", " ")

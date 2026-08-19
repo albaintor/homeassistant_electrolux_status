@@ -1,0 +1,120 @@
+[
+  {
+    "applianceData": {
+      "applianceName": "Hob",
+      "created": "2026-08-12T16:33:36.484Z",
+      "modelName": "HB"
+    },
+    "applianceId": "12345678_00:11223344-AABBCCDDEEFF",
+    "connectionState": "connected",
+    "properties": {
+      "desired": {},
+      "metadata": {},
+      "metadataDesired": {},
+      "reported": {
+        "alerts": [],
+        "applianceInfo": {
+          "applianceType": "HB",
+          "capabilityHash": "ecc77014ae687c3c987010215a14b17e47a5ae8136d32dd0a36b46debaf73100"
+        },
+        "applianceMode": "NORMAL",
+        "applianceState": "OFF",
+        "childLock": false,
+        "connectivityState": "connected",
+        "cpv": "00",
+        "hobHood": {
+          "hobToHoodFanSpeed": "OFF",
+          "hobToHoodMode": "H4",
+          "hobToHoodState": "AUTOMATIC",
+          "hoodFilterCharcIndication": false,
+          "targetDuration": 0,
+          "timeToEnd": -1,
+          "windowNotification": "NONE"
+        },
+        "hobModule1": {
+          "bridgeMode": "MODE_2_2",
+          "heatingModuleType": 0,
+          "hobFrontZone": "HZ1",
+          "hobMiddleZone": "000",
+          "hobRearZone": "HZ2",
+          "procookLevelFront": 3,
+          "procookLevelRear": 3
+        },
+        "hobModule2": {
+          "bridgeMode": "MODE_2_2",
+          "heatingModuleType": 0,
+          "hobFrontZone": "HZ3",
+          "hobMiddleZone": "000",
+          "hobRearZone": "HZ4",
+          "procookLevelFront": 9,
+          "procookLevelRear": 3
+        },
+        "hobZone1": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE",
+          "reminderTime": -1,
+          "residualHeatState": "NO",
+          "runningTime": -1,
+          "targetDuration": 0
+        },
+        "hobZone2": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE",
+          "reminderTime": -1,
+          "residualHeatState": "NO",
+          "runningTime": -1,
+          "targetDuration": 0,
+          "timeToEnd": -1
+        },
+        "hobZone3": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE",
+          "reminderTime": -1,
+          "residualHeatState": "NO",
+          "runningTime": -1,
+          "targetDuration": 0
+        },
+        "hobZone4": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE",
+          "reminderTime": -1,
+          "residualHeatState": "NO",
+          "runningTime": -1,
+          "targetDuration": 0,
+          "timeToEnd": -1
+        },
+        "hobZone7": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE"
+        },
+        "hobZone8": {
+          "heatingQualitativeLevel": 0,
+          "hobCoil": {},
+          "hobMaxPowerLevel": 253,
+          "hobPotDetected": "NO_POT_IDLE"
+        },
+        "keySoundTone": "CLICK",
+        "networkInterface": {
+          "linkQualityIndicator": "VERY_GOOD",
+          "niuSwUpdateCurrentDescription": "A16323312A-S00006975A",
+          "otaState": "IDLE",
+          "swAncAndRevision": "S00006975A",
+          "swVersion": "v1.9.2_hacl"
+        },
+        "remoteControl": "NOT_SAFETY_RELEVANT_ENABLED",
+        "uiLockMode": false
+      }
+    },
+    "status": "enabled"
+  }
+]

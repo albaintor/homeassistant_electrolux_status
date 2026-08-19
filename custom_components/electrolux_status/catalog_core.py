@@ -14,9 +14,19 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityCategory
 
+from .catalog_hob import HB
 from .catalog_purifier import A9
 from .catalog_refrigerator import EHE6899SA
 from .model import ElectroluxDevice
+
+# definitions of appliance-type explicit overrides, keyed by the
+# applianceInfo/applianceType reported by the appliance (HB = hob,
+# WM = washing machine, TD = tumble dryer, CR = refrigerator, ...).
+# Prefer this over CATALOG_MODEL: it applies to every model of a
+# given type instead of a single sales code.
+CATALOG_APPLIANCE_TYPE: dict[str, dict[str, ElectroluxDevice]] = {
+    "HB": HB,
+}
 
 # definitions of model explicit overrides. These will be used to
 # create a new catalog with a merged definition of properties

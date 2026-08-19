@@ -60,6 +60,22 @@ This list is non-exhaustive and your appliance may work even if not present here
 | ELECTROLUX   | EHE6899SA | 609L UltimateTaste 900 |
 | ELECTROLUX   | EHE6799SA | 609L UltimateTaste 900 |
 
+**Induction Hob**
+
+| Manufacturer | Model      | Description                                 |
+| :----------- | :--------- | :------------------------------------------ |
+| AEG          | CCE84779CB | 8000 ComboHob, with integrated extractor    |
+
+Hobs are supported by appliance type (`HB`), so other Wi-Fi hobs are likely to
+work even though only the model above has been verified on real hardware. Hob
+zones are discovered from the appliance itself, so bridged and flexible zones
+appear automatically.
+
+Cooking zone power, running time, residual heat and pot detection are exposed
+read-only. The integrated extractor is controllable: fan speed, manual/automatic
+mode, hob-to-hood level and run-on duration. Cooking controls are deliberately
+not writable, see `custom_components/electrolux_status/catalog_hob.py`.
+
 **Dishwasher**
 
 | Manufacturer | Model      | Description    |

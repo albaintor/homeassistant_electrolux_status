@@ -10,6 +10,7 @@ from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory, Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SELECT
@@ -76,13 +77,21 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         )
         values_dict: dict[str, Any] | None = self.capability.get("values", None)
         self.options_list: dict[str, str] = {}
+        # Values the appliance can report but refuses to be set to. They are
+        # kept out of the selectable options while still being displayable,
+        # e.g. a hob hood reports hobToHoodState AUTO_SUSPEND but marks it
+        # disabled in its capability document.
+        self.readonly_options: set[str] = set()
+        # Reverse index, so resolving the reported value to its label is a dict
+        # lookup rather than a scan of every option on each state write.
+        self.label_by_value: dict[Any, str] = {}
         for value in values_dict:
             entry: dict[str, Any] = values_dict[value]
-            if "disabled" in entry:
-                continue
-
             label = self.format_label(value)
             self.options_list[label] = value
+            self.label_by_value[value] = label
+            if "disabled" in entry:
+                self.readonly_options.add(label)
 
     @property
     def entity_domain(self):
@@ -108,42 +117,47 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
     #         return "mdi:XXX"
     #     return "mdi:YYY"
 
+    def reported_value(self) -> Any:
+        """Return the reported value with any catalog mapping applied.
+
+        Shared by current_option and options so the two cannot disagree about
+        which option the appliance is currently reporting.
+        """
+        return self.apply_value_mapping(self.extract_value())
+
     @property
     def current_option(self) -> str:
         """Return the current option."""
-        value = self.extract_value()
+        value = self.reported_value()
 
         if value is None:
             return self._cached_value
 
-        if self.catalog_entry and self.catalog_entry.value_mapping:
-            mapping = self.catalog_entry.value_mapping
-            _LOGGER.debug("Mapping %s: %s to %s", self.json_path, value, mapping)
-            if value in mapping:
-                value = mapping.get(value, value)
-
-        label = None
-        try:
-            label = list(self.options_list.keys())[list(self.options_list.values()).index(value)]
-        except Exception as ex:  # noqa: BLE001
-            _LOGGER.info(
-                "Electrolux error value %s does not exist in the list %s. %s",
-                value,
-                self.options_list.values(),
-                ex,
-            )
-        # When value not in the catalog -> add the value to the list then
+        label = self.label_by_value.get(value)
+        # Electrolux capability documents omit values that appliances really
+        # do report, which is why this fallback exists. Learn the value and
+        # leave it selectable - only values the document explicitly flags as
+        # disabled are withheld.
         if label is None:
+            _LOGGER.info(
+                "Electrolux %s reported %s, which its capabilities do not list; adding it",
+                self.json_path,
+                value,
+            )
             label = self.format_label(value)
             self.options_list[label] = value
-        if label is not None:
-            self._cached_value = label
-        else:
-            label = self._cached_value
+            self.label_by_value[value] = label
+        self._cached_value = label
         return label
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
+        if option in self.readonly_options:
+            # Reachable from a script: the value is in options while the
+            # appliance reports it, so HA's own validation lets it through.
+            raise ServiceValidationError(
+                f"{self.name} cannot be set to {option}: the appliance reports that value as disabled"
+            )
         value = self.options_list.get(option, None)
         if (
             isinstance(self.unit, UnitOfTemperature)
@@ -182,5 +196,22 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
 
     @property
     def options(self) -> list[str]:
-        """Return a set of selectable options."""
-        return list(self.options_list.keys())
+        """Return a set of selectable options.
+
+        Values the capability document marks as disabled are not offered.
+
+        Home Assistant renders no state at all for a select whose current
+        option is absent from this list, so a disabled value is kept in the
+        list while the appliance is actually reporting it - otherwise a hob
+        sitting in AUTO_SUSPEND would show as "unknown". Sending it is still
+        refused by async_select_option, so it can be seen but never chosen.
+        """
+        if not self.readonly_options:
+            return list(self.options_list)
+        # Compare against current_option rather than the reported value, so the
+        # two cannot disagree. current_option falls back to the last known
+        # label when a payload omits the attribute, and a disabled value has to
+        # survive that fallback too - otherwise the entity renders as unknown
+        # the first time an update arrives without it.
+        current = self.current_option
+        return [label for label in self.options_list if label not in self.readonly_options or label == current]
