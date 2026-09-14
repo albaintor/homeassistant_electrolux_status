@@ -71,9 +71,9 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
                 )
             self._errors["base"] = "invalid_auth"
 
-            return await self._show_config_form(user_input)
+            return await self.(user_input)
 
-        return await self._show_config_form(user_input)
+        return await self.(user_input)
 
     async def async_step_reauth(
         self, entry_data: Mapping[str, Any]
@@ -106,6 +106,10 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
+        # NOTE: self.show_advanced_options is deprecated as of HA 2026.6, when
+        # the "Advanced Mode" user toggle was removed from Home Assistant
+        # entirely. These fields are now always shown, matching HA's own
+        # new default behaviour, instead of being gated behind that flag.
         data_schema = {
             vol.Required(CONF_USERNAME): TextSelector(
                 TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
@@ -120,29 +124,24 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
                     type=TextSelectorType.TEXT, autocomplete="country-code"
                 )
             ),
-        }
-        if self.show_advanced_options:
-            data_schema.update(
+            vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
                 {
-                    vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
-                        {
-                            "select": {
-                                "options": list(languages.keys()),
-                                "mode": "dropdown",
-                            }
-                        }
-                    ),
-                    vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+                    "select": {
+                        "options": list(languages.keys()),
+                        "mode": "dropdown",
+                    }
                 }
-            )
+            ),
+            vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
+            vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
+            vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+        }
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
         )
-
+    
     async def _test_credentials(self, username, password, country_code):
         """Return true if credentials is valid."""
         try:

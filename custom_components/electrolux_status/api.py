@@ -593,6 +593,7 @@ class Appliance:
         # Add static attribute
         # these are attributes that are not in the capability entry
         # but are returned by the api independantly
+        added_static_attributes: set[str] = set()
         for static_attribute in STATIC_ATTRIBUTES:
             _LOGGER.debug("Electrolux static_attribute %s", static_attribute)
             # attr not found in state, next attr
@@ -611,7 +612,21 @@ class Appliance:
                 capabilities[keys[-1]] = catalog_item.capability_info
                 _LOGGER.debug("Electrolux adding static_attribute %s", static_attribute)
                 entities.extend(entity)
+                added_static_attributes.add(static_attribute)
 
+        # For each capability src
+        if capabilities_names:
+            for capability in capabilities_names:
+                if capability in added_static_attributes:
+                    _LOGGER.debug(
+                        "Electrolux skip capability %s, already added via STATIC_ATTRIBUTES",
+                        capability,
+                    )
+                    continue
+                if entity := self.get_entity(capability):
+                    entities.extend(entity)
+                else:
+                    _LOGGER.debug("Could not create entity for capability %s", capability)
         # For each capability src
         if capabilities_names:
             for capability in capabilities_names:
