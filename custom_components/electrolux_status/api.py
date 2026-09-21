@@ -580,6 +580,9 @@ class Appliance:
         self.data: ElectroluxLibraryEntity = data
         self.entities: list[ElectroluxEntity] = []
         entities: list[ElectroluxEntity] = []
+        # Static attributes already turned into entities. Some appliances also report them in
+        # their capabilities, and creating them twice produces a duplicate unique ID.
+        processed_attributes: set[str] = set()
         # Extraction of the appliance capabilities & mapping to the known entities of the component
         # [ "applianceState", "autoDosing",..., "userSelections/analogTemperature",...]
         capabilities_names = self.data.sources_list()
@@ -611,10 +614,13 @@ class Appliance:
                 capabilities[keys[-1]] = catalog_item.capability_info
                 _LOGGER.debug("Electrolux adding static_attribute %s", static_attribute)
                 entities.extend(entity)
+                processed_attributes.add(static_attribute)
 
         # For each capability src
         if capabilities_names:
             for capability in capabilities_names:
+                if capability in processed_attributes:
+                    continue
                 if entity := self.get_entity(capability):
                     entities.extend(entity)
                 else:
