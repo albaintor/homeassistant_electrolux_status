@@ -121,7 +121,11 @@ def _async_remove_old_device_identifiers(
     all_api_ids = set(appliances.appliances) if appliances else set()
 
     if all_api_ids:  # only complete if we got the device list from the api
-        device_list = list(device_registry.devices.values())  # <-- make a list copy
+        # Only this config entry's devices; list copy because we remove while iterating.
+        # (device_registry.devices as a mapping is deprecated, removed in HA 2027.9)
+        device_list = list(
+            dr.async_entries_for_config_entry(device_registry, config_entry.entry_id)
+        )
         for device in device_list:
             # Only check devices for this domain
             for identifier in device.identifiers:
