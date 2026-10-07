@@ -6,14 +6,13 @@ from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.switch import SwitchDeviceClass
 from homeassistant.const import (
+    EntityCategory,
     UnitOfPower,
     UnitOfRatio,
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolume,
 )
-from homeassistant.helpers.entity import EntityCategory
-
 from .catalog_purifier import A9
 from .catalog_refrigerator import EHE6899SA
 from .model import ElectroluxDevice
