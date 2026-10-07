@@ -3,7 +3,6 @@
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
-    PERCENTAGE,
     UnitOfDensity,
     UnitOfRatio,
     UnitOfTemperature,
@@ -21,7 +20,7 @@ A9 = {
     ),
     "Humidity": ElectroluxDevice(
         device_class=SensorDeviceClass.HUMIDITY,
-        unit=PERCENTAGE,
+        unit=UnitOfRatio.PERCENTAGE,
         entity_category=None,
         friendly_name="Humidity",
     ),
@@ -85,7 +84,7 @@ A9 = {
     ),
     "FilterLife": ElectroluxDevice(
         device_class=None,
-        unit=PERCENTAGE,
+        unit=UnitOfRatio.PERCENTAGE,
         entity_category=None,
         entity_icon="mdi:air-filter",
         friendly_name="Filter Life",
