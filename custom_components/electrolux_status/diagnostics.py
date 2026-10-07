@@ -79,10 +79,24 @@ async def _async_get_diagnostics(
             }
         else:
             data["appliances_detail"][appliance_id] = {
-                "capabilities": await app_entry.api.get_appliance_capabilities(appliance_id),
-                "state": await app_entry.api.get_appliance_state(appliance_id),
+                "capabilities": await _safe_call(app_entry.api.get_appliance_capabilities(appliance_id)),
+                "state": await _safe_call(app_entry.api.get_appliance_state(appliance_id)),
             }
     return async_redact_data(data, REDACT_CONFIG)
+
+
+async def _safe_call(coro: Any) -> Any:
+    """Await a coroutine, returning the error instead of raising.
+
+    Not every appliance exposes every endpoint - robot vacuums return 404 for
+    /capabilities, for instance. Letting that propagate made the whole
+    diagnostics download fail with a 500, which is exactly when a user most
+    needs it.
+    """
+    try:
+        return await coro
+    except Exception as err:  # noqa: BLE001
+        return {"error": f"{type(err).__name__}: {err}"}
 
 
 @callback

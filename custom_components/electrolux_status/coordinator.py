@@ -372,8 +372,15 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         json.dumps(appliance_capabilities),
                     )
                 except Exception as exception:  # noqa: BLE001
+                    # Pass the exception through a format placeholder. Without
+                    # one, logging cannot format the record and falls back to
+                    # dumping the raw argument - for a ClientResponseError that
+                    # includes the request headers, which carry the account's
+                    # bearer token. str() of the exception carries the status
+                    # and URL only.
                     _LOGGER.warning(
-                        "Electrolux unable to retrieve capabilities, we are going on our own",
+                        "Electrolux unable to retrieve capabilities for %s, we are going on our own: %s",
+                        appliance_id,
                         exception,
                     )
                     # raise ConfigEntryNotReady(
