@@ -120,23 +120,18 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
                     type=TextSelectorType.TEXT, autocomplete="country-code"
                 )
             ),
-        }
-        if self.show_advanced_options:
-            data_schema.update(
+            vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
                 {
-                    vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): selector(
-                        {
-                            "select": {
-                                "options": list(languages.keys()),
-                                "mode": "dropdown",
-                            }
-                        }
-                    ),
-                    vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
-                    vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+                    "select": {
+                        "options": list(languages.keys()),
+                        "mode": "dropdown",
+                    }
                 }
-            )
+            ),
+            vol.Optional(CONF_NOTIFICATION_DEFAULT, default=True): cv.boolean,
+            vol.Optional(CONF_NOTIFICATION_WARNING, default=False): cv.boolean,
+            vol.Optional(CONF_NOTIFICATION_DIAG, default=False): cv.boolean,
+        }
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(data_schema),
