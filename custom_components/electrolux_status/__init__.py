@@ -121,7 +121,7 @@ def _async_remove_old_device_identifiers(
     all_api_ids = set(appliances.appliances) if appliances else set()
 
     if all_api_ids:  # only complete if we got the device list from the api
-        device_list = list(device_registry.devices.values())  # <-- make a list copy
+        device_list = list(device_registry.devices)  # Make a copy before removals
         for device in device_list:
             # Only check devices for this domain
             for identifier in device.identifiers:
