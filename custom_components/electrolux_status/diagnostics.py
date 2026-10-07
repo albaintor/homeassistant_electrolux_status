@@ -75,7 +75,7 @@ async def _async_get_diagnostics(
             appliance_capabilities = json.loads(appliance_definition_json)
             data["appliances_detail"][appliance_id] = {
                 "capabilities": appliance_capabilities,
-                "state": await app_entry.api.get_appliance_state(appliance_id),
+                "state": await _safe_call(app_entry.api.get_appliance_state(appliance_id)),
             }
         else:
             data["appliances_detail"][appliance_id] = {
@@ -96,7 +96,8 @@ async def _safe_call(coro: Any) -> Any:
     try:
         return await coro
     except Exception as err:  # noqa: BLE001
-        return {"error": f"{type(err).__name__}: {err}"}
+        # str(err) of a ClientResponseError carries the URL, which holds the appliance id
+        return {"error": type(err).__name__, "status": getattr(err, "status", None)}
 
 
 @callback
