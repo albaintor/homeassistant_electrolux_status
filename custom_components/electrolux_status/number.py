@@ -51,11 +51,11 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
         else:
             value = self.extract_value()
 
-        if not value:
+        if value is None:
             value = self.capability.get("default", None)
             if value == "INVALID_OR_NOT_SET_TIME":
                 value = self.capability.get("min", None)
-        if not value:
+        if value is None:
             return self._cached_value
         if isinstance(self.unit, UnitOfTemperature):
             value = round(value, 2)
