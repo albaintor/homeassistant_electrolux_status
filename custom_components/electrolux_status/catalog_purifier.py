@@ -3,12 +3,11 @@
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
+    EntityCategory,
     UnitOfDensity,
     UnitOfRatio,
     UnitOfTemperature,
 )
-from homeassistant.helpers.entity import EntityCategory
-
 from .model import ElectroluxDevice
 
 A9 = {
