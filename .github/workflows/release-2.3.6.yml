@@ -1,0 +1,47 @@
+name: Publish v2.3.6
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(python -c 'import json; print(json.load(open("custom_components/electrolux_status/manifest.json"))["version"])')"
+          test "$version" = "2.3.6"
+
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "Release v$version already exists"
+            exit 0
+          fi
+
+          cat > /tmp/release-notes.md <<'EOF'
+          ## Changes
+
+          - Update deprecated Home Assistant concentration and percentage units to current enums.
+          - Update device registry and config-flow APIs for Home Assistant 2026.10 compatibility.
+          - Relax the aiofiles dependency so Home Assistant can manage the compatible version.
+          - Prevent duplicate entities when static attributes are also exposed as capabilities.
+          - Preserve legitimate numeric zero values in number entities.
+          - Fix temperature number slider step handling.
+          - Prevent sensitive bearer-token data from leaking through malformed capability error logging.
+          - Keep diagnostics available when an appliance does not expose every API endpoint.
+
+          Minimum supported Home Assistant version is now 2026.7.0.
+          EOF
+
+          gh release create "v$version" \
+            --target "$GITHUB_SHA" \
+            --title "v$version - Home Assistant 2026.10 compatibility" \
+            --notes-file /tmp/release-notes.md
