@@ -6,8 +6,8 @@ from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.switch import SwitchDeviceClass
 from homeassistant.const import (
-    PERCENTAGE,
     UnitOfPower,
+    UnitOfRatio,
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolume,
@@ -649,7 +649,7 @@ CATALOG_BASE: dict[str, ElectroluxDevice] = {
     "sensorHumidity": ElectroluxDevice(
         capability_info={"access": "read", "type": "number"},
         device_class=SensorDeviceClass.HUMIDITY,
-        unit=PERCENTAGE,
+        unit=UnitOfRatio.PERCENTAGE,
         entity_category=None,
         entity_icon="mdi:water-opacity",
         friendly_name="Humidity",
