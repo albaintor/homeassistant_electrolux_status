@@ -36,7 +36,7 @@ languages = {
     "nederlands": "nl",
     "Norsk": "no",
     "Polski": "pl",
-    "Português Brasil": "pt_br",
+    "Português Brasil": "pt-BR",
     "Português": "pt",
     "Română": "ro",
     "rusesc": "ru",
@@ -47,6 +47,10 @@ languages = {
     "Türk": "tr",
     "Ukrayna": "uk",
 }
+
+# Kept by hand: machine translation would overwrite them and can break {placeholders}. The code is
+# the file name Home Assistant loads (pt-BR.json, not pt_br.json).
+HAND_WRITTEN = {"pt-BR"}
 
 translator = Translator()
 
@@ -69,7 +73,7 @@ def translate_dict(data, dest_language):
 
 # Generate translations for each target language
 for language_name, language_code in languages.items():
-    if language_code == "en":  # Skip English
+    if language_code == "en" or language_code in HAND_WRITTEN:  # Skip English and hand written
         continue
     print(f"Processing {language_name} ({language_code}.json)")  # noqa: T201
     translated_data = translate_dict(en_data, language_code)

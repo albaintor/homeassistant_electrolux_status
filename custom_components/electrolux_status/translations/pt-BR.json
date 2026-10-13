@@ -1,0 +1,127 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "O dispositivo já está configurado",
+            "already_configured_account": "Conta já está configurada",
+            "reconfigure_successful": "A reconfiguração foi bem sucedida",
+            "single_instance_allowed": "Já configurado. Só é possivel uma configuração."
+        },
+        "error": {
+            "invalid_auth": "Autenticação inválida"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Idioma",
+                    "notifications": "Ativar notificações para avisos de nível de alerta",
+                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
+                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
+                    "password": "Senha",
+                    "username": "Nome de Usuário"
+                },
+                "description": "Se precisar de ajuda com a configuração, visite:  homepage",
+                "title": "Electrolux"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "language": "Idioma",
+                    "notifications": "Ativar notificações para avisos de nível de alerta",
+                    "notifications_diagnostic": "Aumentar notificações para avisos de nível de diagnóstico",
+                    "notifications_warning": "Aumentar notificações para avisos de nível de alerta",
+                    "password": "Senha",
+                    "renew_interval": "Intervalo de atualização do WebSocket (segundos)"
+                }
+            }
+        }
+    },
+    "entity": {
+        "button": {
+            "command_off": {
+                "name": "Desligar"
+            },
+            "command_on": {
+                "name": "Ligar"
+            },
+            "command_pause": {
+                "name": "Pausar"
+            },
+            "command_resume": {
+                "name": "Continuar"
+            },
+            "command_start": {
+                "name": "Iniciar"
+            },
+            "command_stopreset": {
+                "name": "Parar e reiniciar"
+            }
+        },
+        "number": {
+            "latam_advance_phase": {
+                "name": "Avançar etapa"
+            }
+        },
+        "select": {
+            "latam_program": {
+                "name": "Programa",
+                "state": {
+                    "duvet": "Edredom",
+                    "heavy_jeans": "Pesado / jeans",
+                    "stain_removal": "Tira manchas",
+                    "machine_clean": "Limpeza da máquina",
+                    "darks": "Roupa escura",
+                    "colors": "Cores",
+                    "whites": "Brancas",
+                    "delicate_sport": "Delicado / esporte",
+                    "normal": "Normal",
+                    "quick": "Rápido"
+                }
+            },
+            "latam_wash_level": {
+                "name": "Nível de roupas",
+                "state": {
+                    "extra_low": "Extra baixo",
+                    "extra_low_to_low": "Extra baixo / baixo",
+                    "low": "Baixo",
+                    "low_to_medium": "Baixo / médio",
+                    "medium": "Médio",
+                    "medium_to_high": "Médio / alto",
+                    "high": "Alto",
+                    "high_to_duvet": "Alto / edredom",
+                    "duvet": "Edredom"
+                }
+            }
+        },
+        "sensor": {
+            "latam_counter_basket": {
+                "name": "Ciclos desde a manutenção do cesto"
+            },
+            "latam_counter_hose": {
+                "name": "Ciclos desde a manutenção da mangueira"
+            },
+            "latam_counter_lint": {
+                "name": "Ciclos desde a limpeza do filtro de fiapos"
+            },
+            "latam_counter_preventive": {
+                "name": "Ciclos desde a manutenção preventiva"
+            }
+        },
+        "switch": {
+            "latam_extra_rinse": {
+                "name": "Enxágue extra"
+            },
+            "latam_turbo_agitation": {
+                "name": "Turbo agitação"
+            },
+            "latam_turbo_spin": {
+                "name": "Turbo centrifugação"
+            },
+            "latam_water_reuse": {
+                "name": "Reuso de água"
+            }
+        }
+    }
+}

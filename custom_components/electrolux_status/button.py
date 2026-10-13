@@ -17,6 +17,10 @@ from .model import ElectroluxDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# Root executeCommand values with a translated name under entity.button.command_<value>. A command
+# inside a container keeps its own name, which carries the container.
+TRANSLATED_COMMANDS = {"OFF", "ON", "PAUSE", "RESUME", "START", "STOPRESET"}
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -75,6 +79,8 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
             catalog_entry=catalog_entry,
         )
         self.val_to_send = val_to_send
+        if entity_attr == "executeCommand" and not entity_source and str(val_to_send).upper() in TRANSLATED_COMMANDS:
+            self._attr_translation_key = f"command_{str(val_to_send).lower()}"
 
     @property
     def entity_domain(self):
@@ -89,6 +95,8 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
+        if self.translation_key and self.platform_data:
+            return super().name
         name = self._name
         if self.catalog_entry and self.catalog_entry.friendly_name:
             name = f"{self.get_appliance.name} {self.catalog_entry.friendly_name.lower()}"
@@ -108,19 +116,9 @@ class ElectroluxButton(ElectroluxEntity, ButtonEntity):
     async def send_command(self) -> bool:
         """Send a command to the device."""
         client: OneAppApi = self.api
-        value = self.val_to_send
-        if self.entity_source:
-            if self.entity_source == "userSelections":
-                command = {
-                    self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
-                        self.entity_attr: value,
-                    },
-                }
-            else:
-                command = {self.entity_source: {self.entity_attr: value}}
-        else:
-            command = {self.entity_attr: value}
+        command = self.build_command(self.val_to_send)
+        if command is None:
+            return False
         _LOGGER.debug("Electrolux send command %s", command)
         result = await client.execute_appliance_command(self.pnc_id, command)
         _LOGGER.debug("Electrolux send command result %s", result)
