@@ -55,6 +55,8 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
         # Electrolux returns strings for some true/false states
         if value is not None and isinstance(value, str):
             value = string_to_boolean(value, False)
+        elif isinstance(value, int) and not isinstance(value, bool):
+            value = value != 0
 
         if value is None:
             return self._cached_value
@@ -67,19 +69,13 @@ class ElectroluxSwitch(ElectroluxEntity, SwitchEntity):
         # Electrolux bug - needs string not bool
         if "values" in self.capability:
             value = "ON" if value else "OFF"
+        elif self.capability.get("type") in ("int", "number"):
+            # Numeric on/off attributes (LATAM wash options) take 1 and 0, not true and false
+            value = int(value)
 
-        if self.entity_source:
-            if self.entity_source == "userSelections":
-                command = {
-                    self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
-                        self.entity_attr: value,
-                    },
-                }
-            else:
-                command = {self.entity_source: {self.entity_attr: value}}
-        else:
-            command = {self.entity_attr: value}
+        command = self.build_command(value)
+        if command is None:
+            return
         _LOGGER.debug("Electrolux set value %s", value)
         result = await client.execute_appliance_command(self.pnc_id, command)
         _LOGGER.debug("Electrolux set value result %s", result)

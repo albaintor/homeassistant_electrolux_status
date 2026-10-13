@@ -37,5 +37,133 @@
         }
       }
     }
+  },
+  "entity": {
+    "button": {
+      "command_off": {
+        "name": "Off"
+      },
+      "command_on": {
+        "name": "On"
+      },
+      "command_pause": {
+        "name": "Pause"
+      },
+      "command_resume": {
+        "name": "Resume"
+      },
+      "command_start": {
+        "name": "Start"
+      },
+      "command_stopreset": {
+        "name": "Stop and reset"
+      }
+    },
+    "number": {
+      "latam_advance_phase": {
+        "name": "Advance phase"
+      }
+    },
+    "select": {
+      "latam_program": {
+        "name": "Program",
+        "state": {
+          "duvet": "Duvet",
+          "heavy_jeans": "Heavy / jeans",
+          "stain_removal": "Stain removal",
+          "machine_clean": "Machine clean",
+          "darks": "Darks",
+          "colors": "Colors",
+          "whites": "Whites",
+          "delicate_sport": "Delicate / sport",
+          "normal": "Normal",
+          "quick": "Quick"
+        }
+      },
+      "latam_wash_level": {
+        "name": "Wash level",
+        "state": {
+          "extra_low": "Extra low",
+          "extra_low_to_low": "Extra low / low",
+          "low": "Low",
+          "low_to_medium": "Low / medium",
+          "medium": "Medium",
+          "medium_to_high": "Medium / high",
+          "high": "High",
+          "high_to_duvet": "High / duvet",
+          "duvet": "Duvet"
+        }
+      }
+    },
+    "sensor": {
+      "latam_counter_basket": {
+        "name": "Cycles since basket service"
+      },
+      "latam_counter_hose": {
+        "name": "Cycles since hose service"
+      },
+      "latam_counter_lint": {
+        "name": "Cycles since lint filter service"
+      },
+      "latam_counter_preventive": {
+        "name": "Cycles since preventive service"
+      }
+    },
+    "switch": {
+      "latam_extra_rinse": {
+        "name": "Extra rinse"
+      },
+      "latam_turbo_agitation": {
+        "name": "Turbo agitation"
+      },
+      "latam_turbo_spin": {
+        "name": "Turbo spin"
+      },
+      "latam_water_reuse": {
+        "name": "Water reuse"
+      }
+    },
+    "climate": {
+      "air_conditioner": {
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "auto": "Auto",
+              "low": "Low",
+              "medium": "Medium",
+              "high": "High",
+              "turbo": "Turbo"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "on": "Oscillate",
+              "off": "Off",
+              "position_0": "Position 0",
+              "position_1": "Position 1",
+              "position_2": "Position 2",
+              "position_3": "Position 3",
+              "position_4": "Position 4",
+              "position_5": "Position 5",
+              "position_6": "Position 6"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "none": "None",
+              "sleep": "Sleep",
+              "comfort": "Comfort",
+              "auto_sense": "Auto sense"
+            }
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "climate_migration": {
+      "title": "{appliance} is now a climate entity",
+      "description": "The air conditioner controls of {appliance} moved into {climate}. These entities are no longer provided and can be removed from the device page: {entities}. Automations and dashboards that used them should call the climate actions instead, such as climate.set_hvac_mode, climate.set_temperature, climate.set_fan_mode, climate.set_swing_mode and climate.set_preset_mode."
+    }
   }
 }

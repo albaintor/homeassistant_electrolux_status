@@ -93,6 +93,9 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         """Convert input to label string value."""
         if value is None:
             return None
+        if self.translation_key:
+            # The option is the translation key, and Home Assistant shows the translated label
+            return str(value).lower()
         if isinstance(value, str):
             value = value.replace("_", " ").title()
         if self.unit == UnitOfTemperature.CELSIUS:
@@ -157,24 +160,18 @@ class ElectroluxSelect(ElectroluxEntity, SelectEntity):
         if value is None:
             return
 
+        if self.catalog_entry and self.catalog_entry.value_mapping_on_write:
+            reverse_mapping = {token: raw for raw, token in self.catalog_entry.value_mapping.items()}
+            value = reverse_mapping.get(value, value)
+
         _LOGGER.debug(
             "Electrolux select option before reported status %s", self.appliance_status["properties"]["reported"]
         )
 
         client: OneAppApi = self.api
-        command: dict[str, Any] = {}
-        if self.entity_source:
-            if self.entity_source == "userSelections":
-                command = {
-                    self.entity_source: {
-                        "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
-                        self.entity_attr: value,
-                    },
-                }
-            else:
-                command = {self.entity_source: {self.entity_attr: value}}
-        else:
-            command = {self.entity_attr: value}
+        command = self.build_command(value)
+        if command is None:
+            return
 
         _LOGGER.debug("Electrolux select option %s", command)
         result = await client.execute_appliance_command(self.pnc_id, command)

@@ -15,6 +15,7 @@ from homeassistant.const import (
 )
 from .catalog_purifier import A9
 from .catalog_refrigerator import EHE6899SA
+from .catalog_washer_latam import WASHER_LATAM, WASHER_LWI13
 from .model import ElectroluxDevice
 
 # definitions of model explicit overrides. These will be used to
@@ -22,6 +23,7 @@ from .model import ElectroluxDevice
 CATALOG_MODEL: dict[str, dict[str, ElectroluxDevice]] = {
     "EHE6899SA": EHE6899SA,
     "A9": A9,
+    "LWI13_127V_MVT": WASHER_LWI13,
 }
 
 CATALOG_BASE: dict[str, ElectroluxDevice] = {
@@ -916,4 +918,6 @@ CATALOG_BASE: dict[str, ElectroluxDevice] = {
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_icon="mdi:cup-outline",
     ),
+    # LATAM washers: keyed on capabilities only those appliances report, see the module docstring
+    **WASHER_LATAM,
 }
