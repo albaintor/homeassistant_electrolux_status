@@ -2,7 +2,7 @@
 
 import asyncio
 import base64
-from datetime import UTC, timedelta
+from datetime import UTC, datetime, timedelta
 import json
 import logging
 from typing import Any
@@ -304,8 +304,11 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         await asyncio.sleep(self._token_expiry)
 
         # manipulate the token expiry time to force an early token refresh
+        # pyelectroluxocp sets and checks expiresAt against datetime.now(), a naive local time, so the
+        # fake expiry must use that clock: a naive UTC time lies hours in the future west of UTC, and
+        # the client would keep the expiring token until then.
         _LOGGER.debug("Executing Electrolux token_renewal_task")
-        fake_expiry = (dt_util.utcnow() - timedelta(minutes=10)).replace(tzinfo=None)
+        fake_expiry = datetime.now() - timedelta(minutes=10)  # noqa: DTZ005
         self.api._user_token.expiresAt = fake_expiry  # noqa: SLF001
         await self.async_login()
 
