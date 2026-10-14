@@ -55,6 +55,11 @@ class ElectroluxDevice:
     # those values from integer back to dictionary
     value_mapping: dict[int, str] = field(default_factory=dict)
 
+    # a select normally writes back the token it displays. Some appliances
+    # only accept the integer they report, so this applies value_mapping
+    # in reverse before the value is sent
+    value_mapping_on_write: bool = False
+
     # some on/off entiites derive their state from different api values
     # for instance, the state of the iceMaker is derived from
     # "iceMaker/applianceState" and controlled via "iceMaker/executeCommand"
@@ -75,6 +80,25 @@ class ElectroluxDevice:
     entity_icons_value_map: dict[str, str] | None = None
 
     entity_value_named: bool = False
+
+    # name and select options come from translations/<language>.json under
+    # entity.<platform>.<translation_key>, so Home Assistant shows them in
+    # each user's language. Select options become the lowercase tokens
+    translation_key: str | None = None
+
+    # when one of these raw values is written, the listed sibling attributes
+    # of the same container are written with it. Mirrors what the
+    # manufacturer app does, for example a program's default options
+    write_defaults: dict[Any, dict[str, Any]] = field(default_factory=dict)
+
+    # write_defaults only apply while another attribute ("source/attr") holds
+    # one of these raw values, for example while no wash cycle is under way
+    write_defaults_when: tuple[str, frozenset] | None = None
+
+    # the entity is only available while another attribute ("source/attr")
+    # holds one of these raw values. For options the appliance ignores
+    # under some programs
+    available_when: tuple[str, frozenset] | None = None
 
 
 class ElectroluxTokenStore(TypedDict):

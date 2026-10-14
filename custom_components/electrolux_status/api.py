@@ -16,12 +16,15 @@ from homeassistant.const import Platform, UnitOfTemperature
 
 from .binary_sensor import ElectroluxBinarySensor
 from .button import ElectroluxButton
+from .catalog_air_conditioner import AC_ABSORBED_CAPABILITIES, AC_APPLIANCE_TYPES, AC_SELF_DRYING
 from .catalog_core import CATALOG_BASE, CATALOG_MODEL
+from .climate import ElectroluxClimate
 from .const import (
     ATTRIBUTES_BLACKLIST,
     ATTRIBUTES_WHITELIST,
     BINARY_SENSOR,
     BUTTON,
+    CLIMATE,
     NUMBER,
     PLATFORMS,
     RENAME_RULES,
@@ -616,6 +619,17 @@ class Appliance:
                 entities.extend(entity)
                 processed_attributes.add(static_attribute)
 
+        # Air conditioners get one climate entity, and the capabilities it drives stop being
+        # separate entities.
+        if self.appliance_type in AC_APPLIANCE_TYPES and capabilities_names:
+            absorbed = [name for name in AC_ABSORBED_CAPABILITIES if name in capabilities_names]
+            # The climate drives the Celsius target; a Fahrenheit-only model keeps its own control.
+            if "targetTemperatureC" not in absorbed and "targetTemperatureF" in absorbed:
+                absorbed.remove("targetTemperatureF")
+            if absorbed:
+                entities.append(self.get_climate_entity(absorbed))
+                processed_attributes.update(absorbed)
+
         # For each capability src
         if capabilities_names:
             for capability in capabilities_names:
@@ -630,6 +644,25 @@ class Appliance:
         self.entities = entities
         for entity in entities:
             entity.setup(data)
+
+    def get_climate_entity(self, absorbed: list[str]) -> ElectroluxClimate:
+        """Return the climate entity that drives the absorbed capabilities."""
+        return ElectroluxClimate(
+            coordinator=self.coordinator,
+            name=self.name,
+            config_entry=self.coordinator.config_entry,
+            pnc_id=self.pnc_id,
+            entity_type=CLIMATE,
+            entity_name="climate",
+            entity_attr="climate",
+            entity_source=None,
+            capability={name: self.data.get_capability(name) for name in absorbed},
+            drying_capability=self.data.get_capability(AC_SELF_DRYING[0]),
+            unit=None,
+            device_class=None,
+            entity_category=None,
+            icon=None,
+        )
 
     def update_reported_data(self, reported_data: dict[str, Any]):
         """Update the reported data."""

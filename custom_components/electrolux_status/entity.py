@@ -19,6 +19,17 @@ from .model import ElectroluxDevice
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
+def name_translation_key(name: str | None) -> str | None:
+    """Return the translation key for an entity whose generated English name is name.
+
+    The generated name already comes from the attribute (container included), so the key is that
+    name in lowercase with anything outside a-z and 0-9 turned into single underscores.
+    """
+    if not name:
+        return None
+    return re.sub(r"_+", "_", re.sub(r"[^a-z0-9]", "_", name.lower())).strip("_") or None
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -95,6 +106,12 @@ class ElectroluxEntity(CoordinatorEntity):
         self.entity_id = f"{_domain}.{_object}"
         if catalog_entry:
             self.entity_registry_enabled_default = catalog_entry.entity_registry_enabled_default
+            if catalog_entry.translation_key:
+                self._attr_translation_key = catalog_entry.translation_key
+        if getattr(self, "_attr_translation_key", None) is None:
+            # Every other entity is named through a key derived from its generated English name,
+            # so translating it only takes a line in each language file.
+            self._attr_translation_key = name_translation_key(self._fallback_name())
         _LOGGER.debug("Electrolux new entity %s for appliance %s", name, pnc_id)
 
     def setup(self, data):
@@ -121,6 +138,18 @@ class ElectroluxEntity(CoordinatorEntity):
     #     if connection_state and connection_state != "disconnected":
     #         return True
     #     return False
+
+    @property
+    def available(self) -> bool:
+        """Return False while the appliance would ignore this entity, per the catalog."""
+        if not super().available:
+            return False
+        if self.catalog_entry and self.catalog_entry.available_when:
+            path, allowed = self.catalog_entry.available_when
+            if getattr(self, "appliance_status", None) is None:
+                return True
+            return self.get_state_attr(path) in allowed
+        return True
 
     @property
     def should_poll(self) -> bool:
@@ -160,8 +189,25 @@ class ElectroluxEntity(CoordinatorEntity):
         return self.appliance_status.get("properties", {}).get("reported", {})
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
+    def name(self) -> str | None:
+        """Return the translated name when this platform has a text for the key, else the generated one."""
+        if (hasattr(self, "_attr_name") and self.platform_data) or self._has_translated_name():
+            return super().name
+        return self._fallback_name()
+
+    def _has_translated_name(self) -> bool:
+        """Return True once the entity is on its platform and its key has a name text there.
+
+        Asking before the entity is on its platform would cache a missing name.
+        """
+        platform_data = self.platform_data
+        if not platform_data or not self.translation_key:
+            return False
+        # An empty text counts as missing, as Home Assistant itself treats it when naming.
+        return bool(platform_data.platform_translations.get(self._name_translation_key))
+
+    def _fallback_name(self) -> str:
+        """Return the English name generated from the attribute, the name used before translations."""
         if self.catalog_entry and self.catalog_entry.friendly_name:
             return self.catalog_entry.friendly_name.capitalize()
         return self._name
@@ -222,6 +268,37 @@ class ElectroluxEntity(CoordinatorEntity):
                 else:
                     return root.get(attribute, None)
         return None
+
+    def build_command(self, value: Any) -> dict[str, Any] | None:
+        """Return the command that writes value to this entity's attribute.
+
+        Sibling attributes the catalog lists in write_defaults for this value go in the same
+        command. Returns None when the command cannot be built.
+        """
+        siblings: dict[str, Any] = {}
+        if self.catalog_entry and self.catalog_entry.write_defaults:
+            gate = self.catalog_entry.write_defaults_when
+            if gate is None or self.get_state_attr(gate[0]) in gate[1]:
+                siblings = self.catalog_entry.write_defaults.get(value, {})
+        if self.entity_source == "latamUserSelections":
+            # LATAM appliances misread a partial latamUserSelections and apply it to programId
+            # (issue #155), so the whole container goes back with only these attributes changed.
+            current_selections = self.reported_state.get("latamUserSelections", {})
+            if not current_selections:
+                _LOGGER.error("Could not retrieve current latamUserSelections to build command.")
+                return None
+            return {"latamUserSelections": {**current_selections, **siblings, self.entity_attr: value}}
+        if self.entity_source == "userSelections":
+            return {
+                self.entity_source: {
+                    "programUID": self.reported_state["userSelections"]["programUID"],
+                    **siblings,
+                    self.entity_attr: value,
+                },
+            }
+        if self.entity_source:
+            return {self.entity_source: {**siblings, self.entity_attr: value}}
+        return {**siblings, self.entity_attr: value}
 
     def update(self, appliance_status: ApplienceStatusResponse):
         """Update the appliance status."""

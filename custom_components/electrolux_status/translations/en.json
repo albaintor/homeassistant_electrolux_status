@@ -37,5 +37,438 @@
                 }
             }
         }
+    },
+    "entity": {
+        "button": {
+            "command_off": {
+                "name": "Off"
+            },
+            "command_on": {
+                "name": "On"
+            },
+            "command_pause": {
+                "name": "Pause"
+            },
+            "command_resume": {
+                "name": "Resume"
+            },
+            "command_start": {
+                "name": "Start"
+            },
+            "command_stopreset": {
+                "name": "Stop and reset"
+            },
+            "air_filter_state_reset": {
+                "name": "Air filter state reset"
+            },
+            "water_filter_state_reset": {
+                "name": "Water filter state reset"
+            }
+        },
+        "number": {
+            "latam_advance_phase": {
+                "name": "Advance phase"
+            },
+            "freezer_target_temperature_c": {
+                "name": "Freezer target temperature c"
+            },
+            "fridge_target_temperature_c": {
+                "name": "Fridge target temperature c"
+            },
+            "start_time": {
+                "name": "Start time"
+            },
+            "stop_time": {
+                "name": "Stop time"
+            },
+            "target_temperature_c": {
+                "name": "Target temperature c"
+            }
+        },
+        "select": {
+            "latam_program": {
+                "name": "Program",
+                "state": {
+                    "duvet": "Duvet",
+                    "heavy_jeans": "Heavy / jeans",
+                    "stain_removal": "Stain removal",
+                    "machine_clean": "Machine clean",
+                    "darks": "Darks",
+                    "colors": "Colors",
+                    "whites": "Whites",
+                    "delicate_sport": "Delicate / sport",
+                    "normal": "Normal",
+                    "quick": "Quick"
+                }
+            },
+            "latam_wash_level": {
+                "name": "Wash level",
+                "state": {
+                    "extra_low": "Extra low",
+                    "extra_low_to_low": "Extra low / low",
+                    "low": "Low",
+                    "low_to_medium": "Low / medium",
+                    "medium": "Medium",
+                    "medium_to_high": "Medium / high",
+                    "high": "High",
+                    "high_to_duvet": "High / duvet",
+                    "duvet": "Duvet"
+                }
+            },
+            "analog_spin_speed": {
+                "name": "Analog spin speed"
+            },
+            "analog_temperature": {
+                "name": "Analog temperature"
+            },
+            "default_extra_rinse": {
+                "name": "Default extra rinse"
+            },
+            "end_of_cycle_sound": {
+                "name": "End of cycle sound"
+            },
+            "extra_cavity_clone_target_temperature_mode": {
+                "name": "Extra cavity clone target temperature mode"
+            },
+            "extra_cavity_target_temperature_c": {
+                "name": "Extra cavity target temperature c"
+            },
+            "sound_volume": {
+                "name": "Sound volume"
+            }
+        },
+        "sensor": {
+            "latam_counter_basket": {
+                "name": "Cycles since basket service"
+            },
+            "latam_counter_hose": {
+                "name": "Cycles since hose service"
+            },
+            "latam_counter_lint": {
+                "name": "Cycles since lint filter service"
+            },
+            "latam_counter_preventive": {
+                "name": "Cycles since preventive service"
+            },
+            "air_filter_life_time": {
+                "name": "Air filter life time"
+            },
+            "air_filter_life_time_buy_threshold": {
+                "name": "Air filter life time buy threshold"
+            },
+            "air_filter_life_time_change_threshold": {
+                "name": "Air filter life time change threshold"
+            },
+            "air_filter_state": {
+                "name": "Air filter state"
+            },
+            "alerts": {
+                "name": "Alerts"
+            },
+            "ambient_temperature_c": {
+                "name": "Ambient temperature c"
+            },
+            "appliance_mode": {
+                "name": "Appliance mode"
+            },
+            "appliance_state": {
+                "name": "Appliance state"
+            },
+            "appliance_total_working_time": {
+                "name": "Appliance total working time"
+            },
+            "clean_air_mode": {
+                "name": "Clean air mode"
+            },
+            "connectivity_state": {
+                "name": "Connectivity state"
+            },
+            "current_energy_use_percent": {
+                "name": "Current energy use percent"
+            },
+            "cycle_phase": {
+                "name": "Cycle phase"
+            },
+            "cycle_sub_phase": {
+                "name": "Cycle sub phase"
+            },
+            "defrost_routine_state": {
+                "name": "Defrost routine state"
+            },
+            "defrost_temperature": {
+                "name": "Defrost temperature"
+            },
+            "display_food_probe_temperature": {
+                "name": "Display food probe temperature"
+            },
+            "display_temperature": {
+                "name": "Display temperature"
+            },
+            "eco2": {
+                "name": "Eco2"
+            },
+            "evaporator_defrost_state": {
+                "name": "Evaporator defrost state"
+            },
+            "extra_cavity_alerts": {
+                "name": "Extra cavity alerts"
+            },
+            "extra_cavity_temperature_adjusting_state": {
+                "name": "Extra cavity temperature adjusting state"
+            },
+            "filter_life": {
+                "name": "Filter life"
+            },
+            "filter_state": {
+                "name": "Filter state"
+            },
+            "filter_type": {
+                "name": "Filter type"
+            },
+            "freezer_alerts": {
+                "name": "Freezer alerts"
+            },
+            "freezer_fast_mode_time_to_end": {
+                "name": "Freezer fast mode time to end"
+            },
+            "fridge_alerts": {
+                "name": "Fridge alerts"
+            },
+            "fridge_fast_mode_time_to_end": {
+                "name": "Fridge fast mode time to end"
+            },
+            "humidity": {
+                "name": "Humidity"
+            },
+            "ice_maker_alerts": {
+                "name": "Ice maker alerts"
+            },
+            "ice_maker_defrost_temperature_c": {
+                "name": "Ice maker defrost temperature c"
+            },
+            "ice_maker_defrost_temperature_f": {
+                "name": "Ice maker defrost temperature f"
+            },
+            "ice_maker_ice_dispenser_state": {
+                "name": "Ice maker ice dispenser state"
+            },
+            "ice_maker_ice_tray_water_fill_setting": {
+                "name": "Ice maker ice tray water fill setting"
+            },
+            "network_interface_link_quality_indicator": {
+                "name": "Network interface link quality indicator"
+            },
+            "oven_process_identifier": {
+                "name": "Oven process identifier"
+            },
+            "pm1": {
+                "name": "Pm1"
+            },
+            "pm10": {
+                "name": "Pm10"
+            },
+            "pm2_5": {
+                "name": "Pm2.5"
+            },
+            "program_uid": {
+                "name": "Program uid"
+            },
+            "reminder_time": {
+                "name": "Reminder time"
+            },
+            "remote_control": {
+                "name": "Remote control"
+            },
+            "running_time": {
+                "name": "Running time"
+            },
+            "sensor_temperature": {
+                "name": "Sensor temperature"
+            },
+            "steam_value": {
+                "name": "Steam value"
+            },
+            "target_microwave_power": {
+                "name": "Target microwave power"
+            },
+            "target_temperature_f": {
+                "name": "Target temperature f"
+            },
+            "temperature": {
+                "name": "Temperature"
+            },
+            "time_to_end": {
+                "name": "Time to end"
+            },
+            "total_cycle_counter": {
+                "name": "Total cycle counter"
+            },
+            "total_washing_time": {
+                "name": "Total washing time"
+            },
+            "tvoc": {
+                "name": "Tvoc"
+            },
+            "water_filter_flow": {
+                "name": "Water filter flow"
+            },
+            "water_filter_flow_buy_threshold": {
+                "name": "Water filter flow buy threshold"
+            },
+            "water_filter_flow_change_threshold": {
+                "name": "Water filter flow change threshold"
+            },
+            "water_filter_life_time": {
+                "name": "Water filter life time"
+            },
+            "water_filter_life_time_buy_threshold": {
+                "name": "Water filter life time buy threshold"
+            },
+            "water_filter_life_time_change_threshold": {
+                "name": "Water filter life time change threshold"
+            },
+            "water_filter_state": {
+                "name": "Water filter state"
+            },
+            "water_hardness": {
+                "name": "Water hardness"
+            },
+            "water_level": {
+                "name": "Water level"
+            },
+            "water_softener_mode": {
+                "name": "Water softener mode"
+            }
+        },
+        "switch": {
+            "latam_extra_rinse": {
+                "name": "Extra rinse"
+            },
+            "latam_turbo_agitation": {
+                "name": "Turbo agitation"
+            },
+            "latam_turbo_spin": {
+                "name": "Turbo spin"
+            },
+            "latam_water_reuse": {
+                "name": "Water reuse"
+            },
+            "batch_scheduler_mode": {
+                "name": "Batch scheduler mode"
+            },
+            "child_lock_external": {
+                "name": "Child lock external"
+            },
+            "child_lock_internal": {
+                "name": "Child lock internal"
+            },
+            "freezer_fast_mode": {
+                "name": "Freezer fast mode"
+            },
+            "fridge_fast_mode": {
+                "name": "Fridge fast mode"
+            },
+            "ice_maker": {
+                "name": "Ice maker"
+            },
+            "ui_2lock_mode": {
+                "name": "Ui 2lock mode"
+            },
+            "ui_lock_mode": {
+                "name": "Ui lock mode"
+            },
+            "vacation_holiday_mode": {
+                "name": "Vacation holiday mode"
+            }
+        },
+        "climate": {
+            "air_conditioner": {
+                "state_attributes": {
+                    "fan_mode": {
+                        "state": {
+                            "auto": "Auto",
+                            "low": "Low",
+                            "medium": "Medium",
+                            "high": "High",
+                            "turbo": "Turbo"
+                        }
+                    },
+                    "swing_mode": {
+                        "state": {
+                            "on": "Oscillate",
+                            "off": "Off",
+                            "position_0": "Position 0",
+                            "position_1": "Position 1",
+                            "position_2": "Position 2",
+                            "position_3": "Position 3",
+                            "position_4": "Position 4",
+                            "position_5": "Position 5",
+                            "position_6": "Position 6"
+                        }
+                    },
+                    "preset_mode": {
+                        "state": {
+                            "none": "None",
+                            "sleep": "Sleep",
+                            "comfort": "Comfort",
+                            "auto_sense": "Auto sense"
+                        }
+                    }
+                }
+            }
+        },
+        "binary_sensor": {
+            "door_lock": {
+                "name": "Door lock"
+            },
+            "door_open": {
+                "name": "Door open"
+            },
+            "door_state": {
+                "name": "Door state"
+            },
+            "extra_cavity_appliance_state": {
+                "name": "Extra cavity appliance state"
+            },
+            "extra_cavity_door_state": {
+                "name": "Extra cavity door state"
+            },
+            "extra_cavity_fan_state": {
+                "name": "Extra cavity fan state"
+            },
+            "freezer_appliance_state": {
+                "name": "Freezer appliance state"
+            },
+            "freezer_door_state": {
+                "name": "Freezer door state"
+            },
+            "fridge_appliance_state": {
+                "name": "Fridge appliance state"
+            },
+            "fridge_door_state": {
+                "name": "Fridge door state"
+            },
+            "ice_maker_appliance_state": {
+                "name": "Ice maker appliance state"
+            },
+            "ice_maker_evaporator_fan_state": {
+                "name": "Ice maker evaporator fan state"
+            },
+            "pre_wash_phase": {
+                "name": "Pre wash phase"
+            },
+            "tank_a_reserve": {
+                "name": "Tank a reserve"
+            },
+            "tank_b_reserve": {
+                "name": "Tank b reserve"
+            }
+        }
+    },
+    "issues": {
+        "climate_migration": {
+            "title": "{appliance} is now a climate entity",
+            "description": "The air conditioner controls of {appliance} moved into {climate}. These entities are no longer provided and can be removed from the device page: {entities}. Automations and dashboards that used them should call the climate actions instead, such as climate.set_hvac_mode, climate.set_temperature, climate.set_fan_mode, climate.set_swing_mode and climate.set_preset_mode."
+        }
     }
 }
