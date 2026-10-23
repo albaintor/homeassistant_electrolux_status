@@ -13,6 +13,7 @@ from pyelectroluxocp import OneAppApi
 from pyelectroluxocp.apiModels import UserTokenResponse
 from pyelectroluxocp.oneAppApiClient import UserToken
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
 from homeassistant.helpers.storage import Store
@@ -40,6 +41,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         client: OneAppApi,
         renew_interval: int,
         username: str,
+        config_entry: ConfigEntry | None = None,
     ) -> None:
         """Initialize."""
         self.api = client
@@ -52,9 +54,23 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         self._accountid = username
         self._token: UserToken | None = None
         self._token_store: ElectroluxTokenStore | None = None
+        self._tasks: set[asyncio.Task] = set()
+        self._closing = False
+        self._closed = False
+        self._shutdown_lock = asyncio.Lock()
         self._store: Store[ElectroluxTokenStore] = Store(hass, STORAGE_VERSION, DOMAIN)
 
-        super().__init__(hass, _LOGGER, name=DOMAIN)
+        super().__init__(hass, _LOGGER, name=DOMAIN, config_entry=config_entry)
+
+    def _create_task(self, coro, name):
+        """Track integration work for config-entry teardown."""
+        if self._closing:
+            coro.close()
+            return None
+        task = self.hass.async_create_background_task(coro, name)
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
+        return task
 
     @property
     def accountid(self) -> str:
@@ -234,6 +250,8 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
 
     def incoming_data(self, data: dict[str, dict[str, Any]]):
         """Process incoming data."""
+        if self._closing:
+            return
         _LOGGER.debug("Electrolux appliance state updated %s", json.dumps(data))
         # Update reported data
         appliances: Appliances = self.data.get("appliances", None)
@@ -250,29 +268,42 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                         do_deferred = True
                         break
             if do_deferred:
-                asyncio.create_task(self.deferred_update(appliance_id, 70))
+                self._create_task(self.deferred_update(appliance_id, 70), "Electrolux deferred update")
 
     def listen_websocket(self):
         """Listen for state changes."""
+        if self._closing:
+            return
         appliances: Appliances = self.data.get("appliances", None)
         ids = appliances.get_appliance_ids()
         _LOGGER.debug("Electrolux listen_websocket for appliances %s", ",".join(ids))
         if ids is None or len(ids) == 0:
             return
-        self._websocket = asyncio.create_task(self.api.watch_for_appliance_state_updates(ids, self.incoming_data))
+        if self._websocket and not self._websocket.done():
+            return
+        self._websocket = self._create_task(
+            self.api.watch_for_appliance_state_updates(ids, self.incoming_data),
+            "Electrolux websocket",
+        )
 
     async def launch_websocket_renewal_task(self):
         """Start the renewal of websocket."""
+        if self._closing:
+            return
         if self.renew_task:
             self.renew_task.cancel()
             self.renew_task = None
-        self.renew_task = asyncio.create_task(self.renew_websocket(), name="Electrolux renewal websocket")
+        self.renew_task = self._create_task(self.renew_websocket(), "Electrolux renewal websocket")
 
     async def renew_websocket(self):
         """Renew websocket state."""
         while True:
             await asyncio.sleep(self.renew_interval)
             _LOGGER.debug("Electrolux renew_websocket")
+            if self._websocket:
+                self._websocket.cancel()
+                await asyncio.gather(self._websocket, return_exceptions=True)
+                self._websocket = None
             try:
                 await self.api.disconnect_websocket()
             except Exception as ex:  # noqa: BLE001
@@ -282,14 +313,17 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
     def _cancel_token_task(self):
         """Cancel the running token renewal task."""
         if self.token_task:
-            self.token_task.cancel()
+            if self.token_task is not asyncio.current_task():
+                self.token_task.cancel()
             self.token_task = None
 
     async def launch_token_renewal_task(self):
         """Start the renewal of token."""
+        if self._closing:
+            return
         _LOGGER.debug("configuring token_renewal_task")
         self._cancel_token_task()
-        self.token_task = asyncio.create_task(self.token_renewal_task(), name="Electrolux renewal token")
+        self.token_task = self._create_task(self.token_renewal_task(), "Electrolux renewal token")
 
     async def token_renewal_task(self):
         """Renew token."""
@@ -310,17 +344,25 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
         await self.async_login()
 
     async def close_websocket(self):
-        """Close websocket."""
-        if self.renew_task:
-            self.renew_task.cancel()
-            self.renew_task = None
-        if self.token_task:
-            self.token_task.cancel()
-            self.token_task = None
-        try:
-            await self.api.disconnect_websocket()
-        except Exception as ex:  # noqa: BLE001
-            _LOGGER.error("Electrolux close_websocket could not close websocket %s", ex)
+        """Close the coordinator and its API resources."""
+        await self.async_shutdown()
+
+    async def async_shutdown(self):
+        """Drain entry-owned tasks before closing the SDK's own HTTP sessions."""
+        async with self._shutdown_lock:
+            if self._closed:
+                return
+            self._closing = True
+            if begin_shutdown := getattr(self.api, "begin_shutdown", None):
+                begin_shutdown()
+            await super().async_shutdown()
+            tasks = tuple(task for task in self._tasks if task is not asyncio.current_task())
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            self._websocket = self.renew_task = self.token_task = None
+            await self.api.close()
+            self._closed = True
 
     async def setup_entities(self):
         """Configure entities."""

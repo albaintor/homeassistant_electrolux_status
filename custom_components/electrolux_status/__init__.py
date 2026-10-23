@@ -14,7 +14,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -41,70 +40,64 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up this integration using UI."""
-    if hass.data.get(DOMAIN) is None:
-        hass.data.setdefault(DOMAIN, {})
+    """Set up the entry and unwind its resources if startup fails."""
+    hass.data.setdefault(DOMAIN, {})
+    renew_interval = entry.options.get(CONF_RENEW_INTERVAL) or DEFAULT_WEBSOCKET_RENEWAL_DELAY
+    client = None
+    coordinator = None
+    try:
+        # The SDK closes its retry-client sessions. Let it own those sessions
+        # rather than lending it Home Assistant's shared session/connector.
+        client = get_electrolux_session(
+            entry.data.get(CONF_USERNAME),
+            entry.data.get(CONF_PASSWORD),
+            entry.data.get(CONF_COUNTRY_CODE, DEFAULT_COUNTRY_CODE),
+        )
+        coordinator = ElectroluxCoordinator(
+            hass,
+            client=client,
+            renew_interval=renew_interval,
+            username=entry.data.get(CONF_USERNAME),
+            config_entry=entry,
+        )
+        await coordinator.get_stored_token()
+        if not await coordinator.async_login():
+            raise ConfigEntryAuthFailed("Electrolux wrong credentials")
 
-    renew_interval = DEFAULT_WEBSOCKET_RENEWAL_DELAY
-    if entry.options.get(CONF_RENEW_INTERVAL):
-        renew_interval = entry.options[CONF_RENEW_INTERVAL]
+        hass.data[DOMAIN][entry.entry_id] = coordinator
+        await coordinator.setup_entities()
+        coordinator.listen_websocket()
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
-    country_code = entry.data.get(CONF_COUNTRY_CODE, DEFAULT_COUNTRY_CODE)
-    # language = languages.get(entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE), "eng")
-    session = async_get_clientsession(hass)
+        async def async_stop(_event):
+            """Accept the stop event and drain this entry's resources."""
+            await coordinator.async_shutdown()
 
-    client = get_electrolux_session(username, password, country_code, session)
-    coordinator = ElectroluxCoordinator(
-        hass,
-        client=client,
-        renew_interval=renew_interval,
-        username=username,
-    )
+        entry.async_on_unload(hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, async_stop))
+        entry.async_on_unload(entry.add_update_listener(update_listener))
+        await coordinator.async_config_entry_first_refresh()
+        if not coordinator.last_update_success:
+            raise ConfigEntryNotReady
+        coordinator.platforms.extend(PLATFORMS)
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    await coordinator.get_stored_token()
-    if not await coordinator.async_login():
-        raise ConfigEntryAuthFailed("Electrolux wrong credentials")
-
-    # Bug ?
-    if coordinator.config_entry is None:
-        coordinator.config_entry = entry
-
-    hass.data[DOMAIN][entry.entry_id] = coordinator
-
-    # Initialize entities
-    _LOGGER.debug("async_setup_entry setup_entities")
-    await coordinator.setup_entities()
-    _LOGGER.debug("async_setup_entry listen_websocket")
-    coordinator.listen_websocket()
-    # _LOGGER.debug("async_setup_entry launch_websocket_renewal_task")
-    # await coordinator.launch_websocket_renewal_task()
-
-    entry.async_on_unload(hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.api.close))
-
-    entry.async_on_unload(entry.add_update_listener(update_listener))
-
-    _LOGGER.debug("async_setup_entry async_config_entry_first_refresh")
-    # Fill in the values for first time
-    await coordinator.async_config_entry_first_refresh()
-
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
-
-    _LOGGER.debug("async_setup_entry extend PLATFORMS")
-    coordinator.platforms.extend(PLATFORMS)
-
-    # Call async_setup_entry in entity files
-    _LOGGER.debug("async_setup_entry async_forward_entry_setups")
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    # Fix for https://github.com/albaintor/homeassistant_electrolux_status/issues/160
-    # Issue introduced in upgrade to 2.2.0, can probably be removed at some stage
-    _async_remove_old_device_identifiers(hass, entry)
-
-    _LOGGER.debug("async_setup_entry OVER")
-    return True
+        # Preserve the existing device-identifier migration.
+        _async_remove_old_device_identifiers(hass, entry)
+        return True
+    except BaseException:
+        try:
+            if coordinator is not None:
+                await coordinator.async_shutdown()
+            elif client is not None:
+                await client.close()
+        except Exception as error:
+            _LOGGER.error("Failed-entry cleanup could not finish (%s)", type(error).__name__)
+        domain_data = hass.data.get(DOMAIN)
+        if domain_data is not None:
+            if domain_data.get(entry.entry_id) is coordinator:
+                domain_data.pop(entry.entry_id, None)
+            if not domain_data:
+                hass.data.pop(DOMAIN, None)
+        raise
 
 
 @callback
@@ -163,10 +156,9 @@ async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> Non
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
     coordinator: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
-    await coordinator.close_websocket()
-
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
+        await coordinator.async_shutdown()
         hass.data[DOMAIN].pop(entry.entry_id, None)
         if not hass.data[DOMAIN]:
             hass.data.pop(DOMAIN, None)
@@ -177,5 +169,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
     _LOGGER.debug("Electrolux async_reload_entry %s", entry)
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)
+    await hass.config_entries.async_reload(entry.entry_id)

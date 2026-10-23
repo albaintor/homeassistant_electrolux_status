@@ -17,13 +17,14 @@ from .const import (
     CONF_NOTIFICATION_WARNING,
     NAME,
 )
+from .client import ManagedOneAppApi
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-def get_electrolux_session(username, password, country_code, client_session) -> OneAppApi:
+def get_electrolux_session(username, password, country_code, client_session=None) -> OneAppApi:
     """Return OneAppApi Session."""
-    return OneAppApi(username, password, country_code, client_session)
+    return ManagedOneAppApi(username, password, country_code, client_session)
 
 
 def should_send_notification(config_entry, alert_severity, alert_status):
