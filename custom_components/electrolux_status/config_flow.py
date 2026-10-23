@@ -15,7 +15,6 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_COUNTRY_CODE, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
@@ -142,14 +141,16 @@ class ElectroluxStatusFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username, password, country_code):
         """Return true if credentials is valid."""
+        client = None
         try:
-            client = get_electrolux_session(
-                username, password, country_code, async_get_clientsession(self.hass)
-            )
+            client = get_electrolux_session(username, password, country_code)
             await client.get_appliances_list()
         except Exception as inst:  # pylint: disable=broad-except  # noqa: BLE001
             _LOGGER.error("Authentication to electrolux failed: %s", inst)
             return False
+        finally:
+            if client is not None:
+                await client.close()
         return True
 
 
