@@ -187,7 +187,7 @@ class ElectroluxCoordinator(DataUpdateCoordinator):
                 if self._token is None or self._token.token != token.token:
                     # update the token_expiry only if the token changed
                     await self.update_token_lifetime(token)
-                _LOGGER.debug("Electrolux logged in successfully, %s", token.token)
+                _LOGGER.debug("Electrolux logged in successfully")
                 return True
             _LOGGER.debug("Electrolux wrong credentials")
         except ClientResponseError as ex:
