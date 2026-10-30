@@ -14,6 +14,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntry
 
+from .api import Appliances
 from .const import DOMAIN, LOOKUP_DIRECTORY_PATH
 from .coordinator import ElectroluxCoordinator
 
@@ -52,10 +53,40 @@ async def _async_get_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     app_entry: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
-    user_metadata = await app_entry.api.get_user_metadata()
-    appliances_list = await app_entry.api.get_appliances_list()
-    appliances_info = await app_entry.api.get_appliances_info(
-        [x["applianceId"] for x in appliances_list]
+    # The coordinator keeps the last known state and the capabilities loaded
+    # at setup in memory. Used as a fallback so diagnostics stay meaningful
+    # while the Electrolux API is down or rate limiting logins.
+    cached_appliances: Appliances | None = (app_entry.data or {}).get("appliances")
+
+    # Every API call that diagnostics makes can fail: when the Electrolux API is
+    # entirely down (rate limiting, refusing sessions, unreachable) an unhandled
+    # exception here aborts the download with a 500 - and that is exactly the
+    # file users need in order to report the outage. Route the remaining direct
+    # calls through _safe_call like the per-appliance calls already do.
+    user_metadata = await _safe_call(app_entry.api.get_user_metadata())
+    appliances_list = await _safe_call(app_entry.api.get_appliances_list())
+    if not isinstance(appliances_list, list):
+        # Live list failed; fall back to the appliances the coordinator manages
+        # so the rest of the diagnostics can still be reported.
+        appliances_list = (
+            [
+                {
+                    "applianceId": pnc_id,
+                    "applianceData": {
+                        "applianceName": appliance.name,
+                        "modelName": appliance.model,
+                    },
+                    "from_cache": True,
+                }
+                for pnc_id, appliance in cached_appliances.get_appliances().items()
+            ]
+            if cached_appliances
+            else []
+        )
+    appliances_info = await _safe_call(
+        app_entry.api.get_appliances_info(
+            [x["applianceId"] for x in appliances_list]
+        )
     )
     data = {
         "user_metadata": user_metadata,
@@ -82,6 +113,18 @@ async def _async_get_diagnostics(
                 "capabilities": await _safe_call(app_entry.api.get_appliance_capabilities(appliance_id)),
                 "state": await _safe_call(app_entry.api.get_appliance_state(appliance_id)),
             }
+        if cached_appliances:
+            # The coordinator's last known state and its capabilities as merged
+            # with the catalog at setup. When the live calls above return error
+            # stubs this is the section that answers questions; note it is
+            # richer than the raw /capabilities response, which omits
+            # state-only attributes the catalog knows about.
+            cached_appliance = cached_appliances.get_appliance(appliance_id)
+            if cached_appliance:
+                data["appliances_detail"][appliance_id]["cached"] = {
+                    "state": cached_appliance.state,
+                    "capabilities": cached_appliance.capabilities,
+                }
     return async_redact_data(data, REDACT_CONFIG)
 
 
