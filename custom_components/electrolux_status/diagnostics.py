@@ -52,10 +52,21 @@ async def _async_get_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     app_entry: ElectroluxCoordinator = hass.data[DOMAIN][entry.entry_id]
-    user_metadata = await app_entry.api.get_user_metadata()
-    appliances_list = await app_entry.api.get_appliances_list()
-    appliances_info = await app_entry.api.get_appliances_info(
-        [x["applianceId"] for x in appliances_list]
+    # Every API call that diagnostics makes can fail: when the Electrolux API is
+    # entirely down (rate limiting, refusing sessions, unreachable) an unhandled
+    # exception here aborts the download with a 500 - and that is exactly the
+    # file users need in order to report the outage. Route the remaining direct
+    # calls through _safe_call like the per-appliance calls already do.
+    user_metadata = await _safe_call(app_entry.api.get_user_metadata())
+    appliances_list = await _safe_call(app_entry.api.get_appliances_list())
+    if not isinstance(appliances_list, list):
+        # _safe_call returned an error: report zero appliances rather than
+        # failing the download or iterating over the error message itself.
+        appliances_list = []
+    appliances_info = await _safe_call(
+        app_entry.api.get_appliances_info(
+            [x["applianceId"] for x in appliances_list]
+        )
     )
     data = {
         "user_metadata": user_metadata,
