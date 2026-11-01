@@ -118,9 +118,23 @@ class ElectroluxNumber(ElectroluxEntity, NumberEntity):
 
         # Original logic as a fallback for other entities
         elif self.entity_source == "userSelections":
+            reported = self.appliance_status.get("properties", {}).get("reported", {})
+            # Some appliances report userSelections.programUID as None while the
+            # real UID sits in cyclePersonalization.programUID. Sending null makes
+            # the cloud reject the whole command, so fall back before giving up.
+            program_uid = reported.get("userSelections", {}).get("programUID") or reported.get(
+                "cyclePersonalization", {}
+            ).get("programUID")
+            if program_uid is None:
+                _LOGGER.error(
+                    "No programUID in userSelections or cyclePersonalization; "
+                    "refusing to send a command the API will reject"
+                )
+                return
+
             command = {
                 self.entity_source: {
-                    "programUID": self.appliance_status["properties"]["reported"]["userSelections"]["programUID"],
+                    "programUID": program_uid,
                     self.entity_attr: value,
                 },
             }
